@@ -15,7 +15,20 @@
       "Bash(git commit:*)",
       "Bash(git push:*)",
       "Bash(npm run dev)",
-      "Bash(npm run lint)"
+      "Bash(npm run lint)",
+      "Bash(npm run validate-index:*)",
+      "Bash(npm run sync-index:*)",
+      "Bash(cat:*)",
+      "Bash(curl:*)",
+      "Bash(python:*)",
+      "Bash(npx tsc:*)",
+      "Bash(git reset:*)",
+      "Bash(npx next lint)",
+      "Bash(pnpm add:*)",
+      "Bash(npm run sync-index:all:*)",
+      "Bash(npm run:*)",
+      "Bash(test:*)",
+      "Bash(timeout 15 pnpm dev)"
     ],
     "deny": [],
     "ask": []
