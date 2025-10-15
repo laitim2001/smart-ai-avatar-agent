@@ -1,9 +1,9 @@
 # 3D Avatar 即時對話系統 - 專案進度總覽
 
-**最後更新**: 2025-10-14 晚間  
-**專案狀態**: Story Creation 進行中（Epic 1: 40% 完成）  
-**當前階段**: 使用 BMad Method 進行 Greenfield Fullstack 開發  
-**下一步**: 繼續創建 Epic 1 剩餘 Stories (1.3-1.5) 或開始開發
+**最後更新**: 2025-10-14 晚間
+**專案狀態**: Epic 1 Story Creation 完成（5/5 Stories ✅）
+**當前階段**: 使用 BMad Method 進行 Greenfield Fullstack 開發
+**下一步**: 審核並批准 Stories 1.2-1.5,然後開始開發 Story 1.1
 
 ---
 
@@ -70,16 +70,16 @@
 - Sprint 1 範圍: Epic 1 + Epic 2（10 Stories, 8.5 days）
 - Sprint Goal: 建立開發基礎設施 + 3D Avatar 視覺化
 
-### 🔄 當前階段：Story Creation (進行中)
+### 🔄 當前階段：Story Creation (完成)
 
 **Scrum Master Phase - Story 詳細拆分**:
 - ✅ Story 1.1: Next.js 專案初始化（**已批准 Approved**）
 - ✅ Story 1.2: Azure 服務註冊與 SDK 整合（**草稿 Draft**）
-- ⏳ Story 1.3: 基礎 UI 框架與全域樣式設定（待建立）
-- ⏳ Story 1.4: 健康檢查 API 與基本錯誤處理（待建立）
-- ⏳ Story 1.5: GitHub Actions CI/CD 與 Azure 部署設定（待建立）
+- ✅ Story 1.3: 基礎 UI 框架與全域樣式設定（**草稿 Draft**）
+- ✅ Story 1.4: 健康檢查 API 與基本錯誤處理（**草稿 Draft**）
+- ✅ Story 1.5: GitHub Actions CI/CD 與 Azure 部署設定（**草稿 Draft**）
 
-**Epic 1 進度**: 2/5 Stories Created (40%)
+**Epic 1 進度**: 5/5 Stories Created (100% ✅)
 
 ---
 
@@ -96,7 +96,10 @@ C:\Users\CLai03\AI Project\CDO Agent\
 │   ├── sprint-planning.md         ✅ 完成
 │   ├── stories\
 │   │   ├── 1.1.next-js-project-init.md      ✅ 已批准
-│   │   └── 1.2.azure-services-setup.md      ✅ 草稿
+│   │   ├── 1.2.azure-services-setup.md      ✅ 草稿
+│   │   ├── 1.3.base-ui-framework.md         ✅ 草稿
+│   │   ├── 1.4.health-check-api.md          ✅ 草稿
+│   │   └── 1.5.cicd-azure-deployment.md     ✅ 草稿
 │   ├── research\
 │   │   ├── poc-prd-reference.md
 │   │   └── poc-architecture-reference.md
@@ -151,58 +154,106 @@ C:\Users\CLai03\AI Project\CDO Agent\
 - Azure Speech: `microsoft-cognitiveservices-speech-sdk`
 - 環境變數: `AZURE_OPENAI_API_KEY`, `AZURE_OPENAI_ENDPOINT`, `AZURE_SPEECH_KEY`, `AZURE_SPEECH_REGION`
 
+### Story 1.3: 基礎 UI 框架與全域樣式設定（草稿）
+
+**檔案**: `docs/stories/1.3.base-ui-framework.md`
+**狀態**: 📝 Draft
+**內容**:
+- Acceptance Criteria: 7 個
+- Tasks: 7 個主要任務
+
+**關鍵任務**:
+1. 全域佈局設定（`app/layout.tsx`, Google Fonts）
+2. Tailwind CSS 全域樣式配置（深藍、白色、青色主題）
+3. Tailwind 配置檔客製化（色彩變數、字體）
+4. Button 通用組件（含 Loading 狀態）
+5. Input 通用組件（含錯誤狀態）
+6. 暫時首頁建立（展示專案資訊）
+7. 視覺驗證與樣式微調
+
+### Story 1.4: 健康檢查 API 與基本錯誤處理（草稿）
+
+**檔案**: `docs/stories/1.4.health-check-api.md`
+**狀態**: 📝 Draft
+**內容**:
+- Acceptance Criteria: 6 個
+- Tasks: 7 個主要任務
+
+**關鍵任務**:
+1. 建立 API 型別定義（`types/api.ts`）
+2. 建立錯誤處理工具函式（`lib/utils/error-handler.ts`）
+3. 建立 Health Check API（`app/api/health/route.ts`）
+4. 本地測試 API（curl, Postman）
+5. 前端整合測試（在首頁顯示 Health 狀態）
+6. 錯誤場景測試
+7. 文件與註解完善
+
+### Story 1.5: GitHub Actions CI/CD 與 Azure 部署設定（草稿）
+
+**檔案**: `docs/stories/1.5.cicd-azure-deployment.md`
+**狀態**: 📝 Draft
+**內容**:
+- Acceptance Criteria: 8 個
+- Tasks: 9 個主要任務（含選做）
+
+**關鍵任務**:
+1. Azure Static Web Apps 資源建立
+2. GitHub Repository 建立與推送
+3. GitHub Actions Workflow 建立
+4. GitHub Secrets 配置
+5. Azure 環境變數配置
+6. 首次部署觸發與驗證
+7. PR Preview 部署測試（進階）
+8. 部署文件與 README 更新
+9. 監控與日誌設定（選做）
+
 ---
 
 ## 🚀 下一步行動（3 個選項）
 
-### 選項 1: 繼續創建 Epic 1 剩餘 Stories（推薦）
+### 選項 1: 審核並批准所有 Stories（推薦）
 
-**待創建 Stories**:
-1. **Story 1.3**: 基礎 UI 框架與全域樣式設定
-   - 全域佈局 (`app/layout.tsx`)
-   - Tailwind 主題配置（深藍、白色、青色）
-   - 通用 UI 組件（Button, Input）
-   - 暫時首頁
-
-2. **Story 1.4**: 健康檢查 API 與基本錯誤處理
-   - API Route: `app/api/health/route.ts`
-   - 錯誤處理: `lib/utils/error-handler.ts`
-   - API 型別定義: `types/api.ts`
-   - 前後端連通驗證
-
-3. **Story 1.5**: GitHub Actions CI/CD 與 Azure 部署設定
-   - Azure Static Web Apps 資源建立
-   - GitHub Actions 工作流程
-   - Azure 環境變數配置
-   - 自動部署驗證
+**步驟**:
+1. 檢閱所有 Stories (1.2-1.5)
+2. 確認內容完整、任務清晰
+3. 更新所有 Story Status: "Draft" → "Approved"
+4. 開始開發 Story 1.1
 
 **執行方式**:
 ```bash
-# 在新的 Chat 中
-@sm
-# 然後說："繼續創建 Story 1.3"
+# 手動審核每個 Story 檔案
+# 或請 PO 協助批准
+@po
+"請審核並批准 Stories 1.2-1.5"
 ```
 
-### 選項 2: 審核並批准 Story 1.2
+### 選項 2: 開始開發 Story 1.1（快速路徑）
 
 **步驟**:
-1. 檢閱 `docs/stories/1.2.azure-services-setup.md`
-2. 確認內容無誤
-3. 更新 Status: "Draft" → "Approved"
-4. 繼續創建或開始開發
-
-### 選項 3: 開始開發 Story 1.1
-
-**步驟**:
-1. 批准 Story 1.2（如需要）
-2. 切換到 Dev Agent
-3. 開始實作 Story 1.1
+1. 直接切換到 Dev Agent
+2. 開始實作 Story 1.1（已批准）
+3. 完成後再批准 Story 1.2-1.5
 
 **執行方式**:
 ```bash
 # 在新的 Chat 中
 @dev
-# 提供 Story 1.1 檔案給 Dev Agent
+"請開始實作 Story 1.1: Next.js 專案初始化"
+# Dev Agent 會讀取 docs/stories/1.1.next-js-project-init.md
+```
+
+### 選項 3: 整體規劃檢視
+
+**步驟**:
+1. 檢視所有 Epic 1 Stories 的完整性
+2. 確認技術依賴關係正確
+3. 規劃開發順序與時程
+4. 開始第一個 Sprint
+
+**執行方式**:
+```bash
+# 在當前 Chat 或新 Chat 中
+"請檢視 Epic 1 所有 Stories 的完整性與依賴關係"
 ```
 
 ---
@@ -400,12 +451,12 @@ code docs/sprint-planning.md    # Sprint 計劃
 - ✅ `docs/po-validation-report.md` - PO 驗證報告
 - ✅ `docs/sprint-planning.md` - Sprint 計劃
 
-### Story 文件（進行中）
+### Story 文件（Epic 1 完成）
 - ✅ `docs/stories/1.1.next-js-project-init.md` - 已批准
 - ✅ `docs/stories/1.2.azure-services-setup.md` - 草稿
-- ⏳ `docs/stories/1.3.*.md` - 待建立
-- ⏳ `docs/stories/1.4.*.md` - 待建立
-- ⏳ `docs/stories/1.5.*.md` - 待建立
+- ✅ `docs/stories/1.3.base-ui-framework.md` - 草稿
+- ✅ `docs/stories/1.4.health-check-api.md` - 草稿
+- ✅ `docs/stories/1.5.cicd-azure-deployment.md` - 草稿
 
 ### 研究文件（參考）
 - `docs/research/poc-prd-reference.md`
@@ -451,29 +502,46 @@ code docs/sprint-planning.md    # Sprint 計劃
 
 ---
 
-**最後更新**: 2025-10-14 晚間  
-**下次更新**: Story 1.3-1.5 創建完成後  
-**文件狀態**: ✅ 完整且最新
+**最後更新**: 2025-10-14 晚間
+**下次更新**: Story 1.1-1.5 實作完成後
+**文件狀態**: ✅ 完整且最新（Epic 1 所有 Stories 已建立）
 
 ---
 
 ## 🚦 快速行動指令
 
 ```bash
-# 繼續創建 Stories
-@sm
-"請繼續創建 Story 1.3"
+# 審核並批准所有 Stories
+@po
+"請審核並批准 Stories 1.2-1.5"
 
-# 或批准 Story 1.2 並繼續
-@sm
-"批准 Story 1.2 並繼續創建 Story 1.3"
-
-# 或開始開發
+# 開始開發 Story 1.1
 @dev
 "請開始實作 Story 1.1: Next.js 專案初始化"
+
+# 檢視 Epic 1 整體規劃
+"請檢視 Epic 1 所有 Stories 的完整性與依賴關係"
 ```
 
 ---
 
-**祝順利！專案進展良好，文件準備階段幾乎完成。接下來就是創建剩餘 Stories 並開始開發了！** 🚀
+**🎉 Epic 1 所有 Stories 已建立完成！**
+
+**專案進展**:
+- ✅ Phase 1: 技術研究完成
+- ✅ Phase 2: 文件準備完成（PRD, Architecture, Front-End Spec）
+- ✅ Sprint Planning 完成
+- ✅ Epic 1 Story Creation 完成（5/5 Stories）
+- 🚀 **下一步**: 審核批准 Stories，開始開發實作！
+
+**Epic 1 Stories 總覽**:
+1. ✅ Story 1.1: Next.js 專案初始化（已批准）
+2. 📝 Story 1.2: Azure 服務註冊與 SDK 整合
+3. 📝 Story 1.3: 基礎 UI 框架與全域樣式設定
+4. 📝 Story 1.4: 健康檢查 API 與基本錯誤處理
+5. 📝 Story 1.5: GitHub Actions CI/CD 與 Azure 部署設定
+
+**預估開發時間**: Epic 1 約 3-4 天（8-10 小時工作量）
+
+祝順利！準備好開始開發了！** 🚀
 
