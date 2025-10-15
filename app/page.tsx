@@ -1,13 +1,27 @@
 'use client'
 
 import { useEffect, useState } from 'react'
-import { Button } from '@/components/ui/button'
+import dynamic from 'next/dynamic'
+import { Button } from '@/components/ui/Button'
 import { checkHealth } from '@/lib/api/client'
 import type { HealthCheckResponse } from '@/types/api'
-import AvatarCanvas from '@/components/avatar/AvatarCanvas'
 import AvatarSelector from '@/components/avatar/AvatarSelector'
 import AvatarChangeButton from '@/components/avatar/AvatarChangeButton'
 import ChatInterface from '@/components/chat/ChatInterface'
+
+// Dynamic import for AvatarCanvas to reduce initial bundle size
+// Three.js 相關組件使用動態載入，減少首屏 Bundle 大小
+const AvatarCanvas = dynamic(() => import('@/components/avatar/AvatarCanvas'), {
+  ssr: false,
+  loading: () => (
+    <div className="w-full h-full flex items-center justify-center bg-gradient-to-b from-slate-900 to-slate-800">
+      <div className="text-center">
+        <div className="inline-block w-12 h-12 border-4 border-cyan-500 border-t-transparent rounded-full animate-spin mb-4" />
+        <p className="text-white text-lg">載入 3D Avatar...</p>
+      </div>
+    </div>
+  ),
+})
 
 export default function Home() {
   const [healthStatus, setHealthStatus] = useState<HealthCheckResponse | null>(

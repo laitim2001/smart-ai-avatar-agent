@@ -70,11 +70,11 @@ export default function AvatarSelector() {
               <div
                 key={avatar.id}
                 className={`
-                  bg-slate-700 rounded-lg p-4 cursor-pointer transition-all
+                  bg-slate-700 rounded-lg p-4 cursor-pointer transition-all duration-200
                   ${
                     isSelected
-                      ? 'ring-4 ring-blue-500 shadow-xl'
-                      : 'hover:bg-slate-600 hover:scale-105'
+                      ? 'ring-4 ring-blue-500 shadow-2xl scale-105'
+                      : 'hover:bg-slate-600 hover:scale-105 hover:shadow-xl'
                   }
                 `}
                 onClick={() => {

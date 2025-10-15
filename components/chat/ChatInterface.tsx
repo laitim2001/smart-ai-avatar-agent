@@ -81,9 +81,11 @@ export default function ChatInterface() {
               className={`flex ${
                 message.role === 'user' ? 'justify-end' : 'justify-start'
               }`}
+              role="article"
+              aria-label={`${message.role === 'user' ? '使用者' : 'Avatar'} 訊息`}
             >
               <div
-                className={`max-w-[70%] rounded-lg px-4 py-2 ${
+                className={`max-w-[70%] rounded-lg px-4 py-2 shadow-sm transition-shadow hover:shadow-md ${
                   message.role === 'user'
                     ? 'bg-blue-600 text-white'
                     : 'bg-gray-200 dark:bg-gray-700 text-gray-900 dark:text-gray-100'
@@ -112,15 +114,21 @@ export default function ChatInterface() {
             value={input}
             onChange={(e) => setInput(e.target.value)}
             onKeyDown={handleKeyDown}
-            placeholder="輸入訊息與 Avatar 對話..."
+            placeholder="輸入訊息與 Avatar 對話... (按 Enter 送出)"
             disabled={isLoading}
             rows={1}
+            aria-label="對話輸入框"
+            aria-describedby="chat-input-hint"
             className="flex-1 resize-none rounded-lg border border-gray-300 dark:border-gray-600 px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500 disabled:bg-gray-100 dark:disabled:bg-gray-700 disabled:cursor-not-allowed dark:bg-gray-900 dark:text-gray-100"
           />
+          <span id="chat-input-hint" className="sr-only">
+            按 Enter 送出訊息，Shift+Enter 換行
+          </span>
           <button
             onClick={sendMessage}
             disabled={isLoading || input.trim() === ''}
-            className="bg-blue-600 text-white px-6 py-2 rounded-lg hover:bg-blue-700 disabled:bg-gray-300 dark:disabled:bg-gray-600 disabled:cursor-not-allowed transition-colors flex items-center justify-center space-x-2"
+            aria-label="送出訊息"
+            className="bg-blue-600 text-white px-6 py-2 rounded-lg hover:bg-blue-700 hover:scale-105 active:scale-95 disabled:bg-gray-300 dark:disabled:bg-gray-600 disabled:cursor-not-allowed transition-all duration-200 flex items-center justify-center space-x-2 shadow-md hover:shadow-lg"
           >
             {isLoading ? (
               <>
@@ -134,7 +142,8 @@ export default function ChatInterface() {
           <button
             onClick={handleClear}
             disabled={isLoading || messages.length === 0}
-            className="bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-200 px-4 py-2 rounded-lg hover:bg-gray-300 dark:hover:bg-gray-600 disabled:bg-gray-100 dark:disabled:bg-gray-800 disabled:cursor-not-allowed transition-colors"
+            aria-label="清除所有對話"
+            className="bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-200 px-4 py-2 rounded-lg hover:bg-gray-300 dark:hover:bg-gray-600 hover:scale-105 active:scale-95 disabled:bg-gray-100 dark:disabled:bg-gray-800 disabled:cursor-not-allowed transition-all duration-200 shadow-sm hover:shadow-md"
           >
             清除
           </button>

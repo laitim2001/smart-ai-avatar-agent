@@ -203,34 +203,41 @@ export function useAvatarAnimation(
   }, [audioState])
 
   // Animation loop (runs every frame at 60fps)
+  // 效能優化：只在需要時執行動畫計算
   useFrame((state) => {
+    // Early return if avatar not ready
     if (!avatarRef.current) return
 
     const time = state.clock.getElapsedTime()
 
     // 1. Breathing Animation (chest scale variation)
+    // 優化：只在 enableBreathing 且 chest node 存在時計算
     if (enableBreathing && chestNodeRef.current) {
       const breathScale = calculateBreathingScale(time, breathingRate, breathingAmplitude)
       chestNodeRef.current.scale.set(breathScale, breathScale, breathScale)
     }
 
     // 2. Blinking Animation (eyesClosed blendshape)
-    if (enableBlinking && headMeshRef.current && eyesClosedIndexRef.current !== null) {
+    // 優化：只在 enableBlinking 且相關 refs 存在時計算
+    if (enableBlinking && headMeshRef.current?.morphTargetInfluences && eyesClosedIndexRef.current !== null) {
       const blinkValue = blinkController.current.update(time)
-
-      // Update eyesClosed blendshape
-      if (headMeshRef.current.morphTargetInfluences) {
-        headMeshRef.current.morphTargetInfluences[eyesClosedIndexRef.current] = blinkValue
-      }
+      headMeshRef.current.morphTargetInfluences[eyesClosedIndexRef.current] = blinkValue
     }
 
     // 3. Smile Animation (mouthSmile blendshape)
-    if (headMeshRef.current && smileIndexRef.current !== null) {
-      const smileValue = smileController.current.update(time)
-
-      // Update mouthSmile blendshape
-      if (headMeshRef.current.morphTargetInfluences) {
+    // 優化：合併條件檢查，減少重複判斷
+    if (headMeshRef.current?.morphTargetInfluences) {
+      if (smileIndexRef.current !== null) {
+        const smileValue = smileController.current.update(time)
         headMeshRef.current.morphTargetInfluences[smileIndexRef.current] = smileValue
+      }
+
+      // 5. Lip Sync Animation (viseme blendshapes)
+      // 優化：只在音訊播放中且 Lip Sync 已初始化時執行
+      if (lipSyncInitialized.current && audioState === 'playing') {
+        const audioPlayer = getAudioPlayer()
+        const audioContextTime = audioPlayer.getAudioContextTime()
+        lipSyncController.current.update(audioContextTime)
       }
     }
 
@@ -238,14 +245,6 @@ export function useAvatarAnimation(
     if (headBoneRef.current) {
       const nodAngle = headNodController.current.update(time)
       headBoneRef.current.rotation.x = nodAngle
-    }
-
-    // 5. Lip Sync Animation (viseme blendshapes)
-    if (lipSyncInitialized.current && audioState === 'playing') {
-      const audioPlayer = getAudioPlayer()
-      const audioContextTime = audioPlayer.getAudioContextTime()
-
-      lipSyncController.current.update(audioContextTime)
     }
   })
 

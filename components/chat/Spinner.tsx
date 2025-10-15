@@ -2,7 +2,7 @@
  * Loading Spinner 組件
  *
  * 顯示旋轉動畫的 Loading 指示器，用於表示處理中的狀態。
- * 採用 SVG 實作，支援深色模式，尺寸為 20x20 像素。
+ * 採用 SVG 實作，支援深色模式，使用品牌色（青色 #06B6D4）。
  *
  * @component
  * @example
@@ -36,7 +36,7 @@ export default function Spinner() {
         strokeWidth="4"
       />
       <path
-        className="opacity-75"
+        className="opacity-75 text-cyan-500"
         fill="currentColor"
         d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
       />

@@ -81,14 +81,19 @@ export default function AvatarCanvas() {
         }}
       >
         {/* 環境光 - 提供均勻基礎照明，避免場景過暗 */}
-        <ambientLight intensity={0.5} />
+        <ambientLight intensity={0.6} />
 
-        {/* 方向光 - 模擬主光源（如太陽光），從右上方照射 */}
+        {/* 方向光 - 模擬主光源，優化陰影設定以提升效能 */}
         <directionalLight
           position={[5, 5, 5]}
-          intensity={1}
+          intensity={0.8}
           castShadow
-          shadow-mapSize={[1024, 1024]}
+          shadow-mapSize={[512, 512]}
+          shadow-camera-far={15}
+          shadow-camera-left={-5}
+          shadow-camera-right={5}
+          shadow-camera-top={5}
+          shadow-camera-bottom={-5}
         />
 
         {/* OrbitControls - 開發階段用於旋轉、縮放視角 */}

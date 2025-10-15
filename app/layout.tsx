@@ -1,5 +1,6 @@
 import type { Metadata } from 'next'
 import { Inter, Noto_Sans_TC } from 'next/font/google'
+import { ErrorBoundary } from '@/components/ErrorBoundary'
 import './globals.css'
 
 // 英數字體：Inter（現代感、可讀性高）
@@ -38,7 +39,9 @@ export default function RootLayout({
 }) {
   return (
     <html lang="zh-TW" className={`${inter.variable} ${notoSansTC.variable}`}>
-      <body className="font-sans antialiased">{children}</body>
+      <body className="font-sans antialiased">
+        <ErrorBoundary>{children}</ErrorBoundary>
+      </body>
     </html>
   )
 }

@@ -10,6 +10,83 @@ import { getAudioPlayer } from '@/lib/audio/player'
 import { VisemeData } from '@/types/lipsync'
 
 /**
+ * TTS 快取項目
+ */
+interface TTSCacheItem {
+  audioBlob: Blob
+  visemes: VisemeData[]
+  duration: number
+  timestamp: number
+}
+
+/**
+ * TTS 快取管理器
+ */
+class TTSCache {
+  private cache = new Map<string, TTSCacheItem>()
+  private readonly MAX_CACHE_SIZE = 50
+  private readonly CACHE_EXPIRY_MS = 1000 * 60 * 30 // 30 分鐘
+
+  /**
+   * 生成快取 key（正規化文字）
+   */
+  private normalizeKey(text: string): string {
+    return text.trim().toLowerCase()
+  }
+
+  /**
+   * 取得快取項目
+   */
+  get(text: string): TTSCacheItem | null {
+    const key = this.normalizeKey(text)
+    const item = this.cache.get(key)
+
+    if (!item) return null
+
+    // 檢查是否過期
+    const isExpired = Date.now() - item.timestamp > this.CACHE_EXPIRY_MS
+    if (isExpired) {
+      this.cache.delete(key)
+      return null
+    }
+
+    return item
+  }
+
+  /**
+   * 設定快取項目
+   */
+  set(text: string, item: Omit<TTSCacheItem, 'timestamp'>): void {
+    const key = this.normalizeKey(text)
+
+    // 如果快取已滿，移除最舊的項目
+    if (this.cache.size >= this.MAX_CACHE_SIZE) {
+      const firstKey = this.cache.keys().next().value
+      if (firstKey) {
+        this.cache.delete(firstKey)
+      }
+    }
+
+    this.cache.set(key, {
+      ...item,
+      timestamp: Date.now(),
+    })
+
+    console.log(`[TTSCache] Cached item for text (${text.length} chars), cache size: ${this.cache.size}`)
+  }
+
+  /**
+   * 清空快取
+   */
+  clear(): void {
+    this.cache.clear()
+  }
+}
+
+// 全域 TTS 快取實例
+const ttsCache = new TTSCache()
+
+/**
  * 將 base64 字串轉換為 Blob
  *
  * @param base64 - base64 編碼字串
@@ -69,26 +146,48 @@ export const useAudioStore = create<AudioStore>((set, get) => ({
       // 更新狀態為 Loading
       set({ state: AudioState.LOADING })
 
-      // 呼叫 TTS API
-      const response = await fetch('/api/tts', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ text }),
-      })
+      // 檢查快取
+      const cachedItem = ttsCache.get(text)
+      let audioBlob: Blob
+      let visemes: VisemeData[]
 
-      if (!response.ok) {
-        const errorData = await response.json().catch(() => ({}))
-        throw new Error(errorData.error || 'TTS API request failed')
+      if (cachedItem) {
+        console.log('[TTSCache] Cache hit, using cached audio')
+        audioBlob = cachedItem.audioBlob
+        visemes = cachedItem.visemes
+      } else {
+        console.log('[TTSCache] Cache miss, calling TTS API')
+
+        // 呼叫 TTS API
+        const response = await fetch('/api/tts', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({ text }),
+        })
+
+        if (!response.ok) {
+          const errorData = await response.json().catch(() => ({}))
+          throw new Error(errorData.error || 'TTS API request failed')
+        }
+
+        // 取得 TTS 回應（包含音訊與 Viseme 數據）
+        const data = await response.json()
+        const { audio: audioBase64, visemes: visemesData, duration } = data
+
+        // 將 base64 音訊轉換為 Blob
+        audioBlob = base64ToBlob(audioBase64, 'audio/mpeg')
+        visemes = visemesData as VisemeData[]
+
+        // 儲存到快取
+        ttsCache.set(text, {
+          audioBlob,
+          visemes,
+          duration,
+        })
       }
 
-      // 取得 TTS 回應（包含音訊與 Viseme 數據）
-      const data = await response.json()
-      const { audio: audioBase64, visemes, duration } = data
-
-      // 將 base64 音訊轉換為 Blob
-      const audioBlob = base64ToBlob(audioBase64, 'audio/mpeg')
       const audioUrl = URL.createObjectURL(audioBlob)
 
       // 載入音訊
@@ -155,8 +254,15 @@ export const useAudioStore = create<AudioStore>((set, get) => ({
   },
 
   stopAudio: () => {
+    const { currentAudio } = get()
     const audioPlayer = getAudioPlayer()
     audioPlayer.stop()
+
+    // 清理 Blob URL 防止記憶體洩漏
+    if (currentAudio?.url) {
+      URL.revokeObjectURL(currentAudio.url)
+    }
+
     set({
       currentAudio: null,
       currentVisemes: null,

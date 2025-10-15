@@ -8,6 +8,7 @@ import { create } from 'zustand'
 import { Message, ChatStore } from '@/types/chat'
 import { sendChatMessage } from '@/lib/api/chat'
 import { useAudioStore } from './audioStore'
+import { getFriendlyErrorMessage } from '@/lib/utils/error-messages'
 
 /**
  * Chat Store Hook
@@ -132,20 +133,8 @@ export const useChatStore = create<ChatStore>((set, get) => ({
       (error) => {
         console.error('[Chat Error]', error)
 
-        // 分類錯誤類型
-        let errorMessage = '抱歉，我遇到了一些問題。'
-
-        if (
-          error.includes('network') ||
-          error.includes('fetch failed') ||
-          !navigator.onLine
-        ) {
-          errorMessage = '網路連線不穩定，請檢查網路設定。'
-        } else if (error.includes('timeout')) {
-          errorMessage = 'Avatar 正在思考中，請稍候再試...'
-        } else if (error.includes('quota')) {
-          errorMessage = 'Avatar 目前忙碌中，請稍後再試。'
-        }
+        // 使用友善錯誤訊息工具
+        const errorMessage = getFriendlyErrorMessage(error)
 
         // 移除臨時 Avatar 訊息，加入錯誤訊息
         set((state) => ({

@@ -3,7 +3,7 @@
 > **目標**: 提供專案所有檔案的完整索引與說明，讓 AI 助手和開發者快速定位所需資源
 > **維護頻率**: 每個 Story 完成後更新
 > **最後更新**: 2025-10-15 (Story 1.1 完成)
-> **版本**: v1.1.6
+> **版本**: v1.1.7
 
 ---
 
@@ -181,7 +181,7 @@ agent-brain/
 **UI 基礎組件** (`components/ui/`):
 | 檔案路徑 | 狀態 | 說明 | Story |
 |---------|------|------|-------|
-| `components/ui/Button.tsx` | ⏳ | 通用按鈕組件 | 1.3 |
+| `components/ui/Button.tsx` | ✅ | 通用按鈕組件 | 1.3 |
 | `components/ui/Input.tsx` | ⏳ | 輸入框組件 | 1.3 |
 | `components/ui/Card.tsx` | ⏳ | 卡片容器 | 1.3 |
 | `components/ui/Loading.tsx` | ⏳ | 載入動畫 | 1.3 |

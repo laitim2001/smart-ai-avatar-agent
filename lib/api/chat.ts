@@ -5,6 +5,7 @@
  */
 
 import { ChatMessage } from '@/types/chat'
+import { retryAsync } from '@/lib/utils/retry'
 
 /**
  * SSE 串流回調函式型別
@@ -38,13 +39,29 @@ export async function sendChatMessage(
   onError: OnErrorCallback
 ): Promise<void> {
   try {
-    const response = await fetch('/api/chat', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
+    // 使用 retryAsync 包裝 fetch 請求，支援自動重試
+    const response = await retryAsync(
+      async () => {
+        const res = await fetch('/api/chat', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({ messages }),
+        })
+
+        // 如果是 5xx 錯誤，拋出錯誤以觸發重試
+        if (res.status >= 500) {
+          throw new Error(`Server error: ${res.status}`)
+        }
+
+        return res
       },
-      body: JSON.stringify({ messages }),
-    })
+      {
+        maxRetries: 1, // 最多重試 1 次
+        retryDelay: 1000, // 重試延遲 1 秒
+      }
+    )
 
     if (!response.ok) {
       const error = await response.json()
