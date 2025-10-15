@@ -7,6 +7,26 @@
 import { create } from 'zustand'
 import { AudioState, AudioItem, AudioStore } from '@/types/audio'
 import { getAudioPlayer } from '@/lib/audio/player'
+import { VisemeData } from '@/types/lipsync'
+
+/**
+ * 將 base64 字串轉換為 Blob
+ *
+ * @param base64 - base64 編碼字串
+ * @param contentType - MIME 類型，預設 'audio/mpeg'
+ * @returns {Blob} Blob 物件
+ */
+function base64ToBlob(base64: string, contentType: string = 'audio/mpeg'): Blob {
+  const byteCharacters = atob(base64)
+  const byteNumbers = new Array(byteCharacters.length)
+
+  for (let i = 0; i < byteCharacters.length; i++) {
+    byteNumbers[i] = byteCharacters.charCodeAt(i)
+  }
+
+  const byteArray = new Uint8Array(byteNumbers)
+  return new Blob([byteArray], { type: contentType })
+}
 
 /**
  * Audio Store Hook
@@ -32,6 +52,7 @@ export const useAudioStore = create<AudioStore>((set, get) => ({
   queue: [],
   currentAudio: null,
   volume: 1.0,
+  currentVisemes: null, // 新增：當前音訊的 Viseme 數據
 
   // Actions
 
@@ -62,8 +83,12 @@ export const useAudioStore = create<AudioStore>((set, get) => ({
         throw new Error(errorData.error || 'TTS API request failed')
       }
 
-      // 取得音訊 Blob
-      const audioBlob = await response.blob()
+      // 取得 TTS 回應（包含音訊與 Viseme 數據）
+      const data = await response.json()
+      const { audio: audioBase64, visemes, duration } = data
+
+      // 將 base64 音訊轉換為 Blob
+      const audioBlob = base64ToBlob(audioBase64, 'audio/mpeg')
       const audioUrl = URL.createObjectURL(audioBlob)
 
       // 載入音訊
@@ -82,6 +107,7 @@ export const useAudioStore = create<AudioStore>((set, get) => ({
       // 更新狀態並播放
       set({
         currentAudio: audioItem,
+        currentVisemes: visemes as VisemeData[],
         state: AudioState.PLAYING,
       })
 
@@ -89,6 +115,7 @@ export const useAudioStore = create<AudioStore>((set, get) => ({
         // 播放結束回調
         set({
           currentAudio: null,
+          currentVisemes: null,
           state: AudioState.IDLE,
         })
 
@@ -103,6 +130,7 @@ export const useAudioStore = create<AudioStore>((set, get) => ({
       console.error('[Audio Error]', error)
       set({
         currentAudio: null,
+        currentVisemes: null,
         state: AudioState.IDLE,
       })
       throw error
@@ -131,6 +159,7 @@ export const useAudioStore = create<AudioStore>((set, get) => ({
     audioPlayer.stop()
     set({
       currentAudio: null,
+      currentVisemes: null,
       state: AudioState.IDLE,
     })
   },

@@ -24,6 +24,10 @@ import {
 } from '@/lib/avatar/animations'
 import { BLENDSHAPES } from '@/lib/avatar/constants'
 import { AvatarAnimationControls } from '@/types/avatar'
+import { getLipSyncController } from '@/lib/lipsync/controller'
+import { useAudioStore } from '@/stores/audioStore'
+import { getAudioPlayer } from '@/lib/audio/player'
+import { VisemeData } from '@/types/lipsync'
 
 /**
  * Animation configuration options
@@ -68,7 +72,7 @@ export interface UseAvatarAnimationOptions {
  * ```
  */
 export function useAvatarAnimation(
-  avatarRef: React.RefObject<Group>,
+  avatarRef: React.RefObject<Group | null>,
   options: UseAvatarAnimationOptions = {}
 ) {
   const {
@@ -82,6 +86,7 @@ export function useAvatarAnimation(
   const blinkController = useRef(new BlinkController())
   const smileController = useRef(new ExpressionController())
   const headNodController = useRef(new HeadNodController())
+  const lipSyncController = useRef(getLipSyncController())
 
   // Cached node references (avoid repeated scene traversal)
   const chestNodeRef = useRef<Object3D | null>(null)
@@ -89,6 +94,13 @@ export function useAvatarAnimation(
   const headBoneRef = useRef<Object3D | null>(null)
   const eyesClosedIndexRef = useRef<number | null>(null)
   const smileIndexRef = useRef<number | null>(null)
+
+  // Lip Sync 相關狀態
+  const lipSyncInitialized = useRef(false)
+  const previousVisemes = useRef<VisemeData[] | null>(null)
+
+  // 訂閱音訊狀態（用於啟動 Lip Sync）
+  const { currentVisemes, state: audioState } = useAudioStore()
 
   // Initialize node references when Avatar loads
   useEffect(() => {
@@ -149,7 +161,46 @@ export function useAvatarAnimation(
     } else {
       console.warn('[useAvatarAnimation] Head bone not found, nodding animation disabled')
     }
+
+    // Initialize Lip Sync Controller
+    if (headMeshRef.current && !lipSyncInitialized.current) {
+      const success = lipSyncController.current.initialize(headMeshRef.current)
+      lipSyncInitialized.current = success
+      if (success) {
+        console.log('[useAvatarAnimation] Lip Sync controller initialized')
+      }
+    }
   }, [avatarRef, enableBreathing, enableBlinking])
+
+  // 監聽 Viseme 數據變化，啟動 Lip Sync
+  useEffect(() => {
+    if (!currentVisemes || currentVisemes === previousVisemes.current) {
+      return
+    }
+
+    previousVisemes.current = currentVisemes
+
+    if (audioState === 'playing' && currentVisemes.length > 0) {
+      const audioPlayer = getAudioPlayer()
+      const audioContextTime = audioPlayer.getAudioContextTime()
+
+      console.log(
+        `[useAvatarAnimation] 啟動 Lip Sync，Viseme 數量: ${currentVisemes.length}，音訊開始時間: ${audioContextTime.toFixed(3)}s`
+      )
+
+      lipSyncController.current.start(currentVisemes, audioContextTime)
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [currentVisemes, audioState])
+
+  // 監聽音訊停止，停止 Lip Sync
+  useEffect(() => {
+    if (audioState === 'idle') {
+      lipSyncController.current.stop()
+      previousVisemes.current = null
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [audioState])
 
   // Animation loop (runs every frame at 60fps)
   useFrame((state) => {
@@ -187,6 +238,14 @@ export function useAvatarAnimation(
     if (headBoneRef.current) {
       const nodAngle = headNodController.current.update(time)
       headBoneRef.current.rotation.x = nodAngle
+    }
+
+    // 5. Lip Sync Animation (viseme blendshapes)
+    if (lipSyncInitialized.current && audioState === 'playing') {
+      const audioPlayer = getAudioPlayer()
+      const audioContextTime = audioPlayer.getAudioContextTime()
+
+      lipSyncController.current.update(audioContextTime)
     }
   })
 

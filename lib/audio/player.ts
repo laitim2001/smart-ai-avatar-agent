@@ -132,6 +132,31 @@ export class AudioPlayer {
   }
 
   /**
+   * 取得 AudioContext 的當前時間（秒）
+   * 用於 Lip Sync 同步
+   * @returns {number} AudioContext.currentTime
+   */
+  getAudioContextTime(): number {
+    return this.audioContext?.currentTime || 0
+  }
+
+  /**
+   * 取得音訊開始播放的時間點（秒）
+   * @returns {number} 開始時間
+   */
+  getStartTime(): number {
+    return this.startTime
+  }
+
+  /**
+   * 檢查是否正在播放
+   * @returns {boolean} 是否正在播放
+   */
+  isPlaying(): boolean {
+    return this.currentSource !== null && !this.isPaused
+  }
+
+  /**
    * 取得音訊長度（秒）
    * @returns {number} 音訊長度
    */

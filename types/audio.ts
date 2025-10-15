@@ -3,6 +3,8 @@
  * @module types/audio
  */
 
+import { VisemeData } from './lipsync'
+
 /**
  * 音訊播放狀態列舉
  * @enum {string}
@@ -41,6 +43,7 @@ export interface AudioItem {
  * @property {AudioState} state - 當前播放狀態
  * @property {AudioItem[]} queue - 音訊播放佇列
  * @property {AudioItem | null} currentAudio - 當前播放的音訊
+ * @property {VisemeData[] | null} currentVisemes - 當前音訊的 Viseme 時間軸
  * @property {number} volume - 音量（0-1）
  */
 export interface AudioStore {
@@ -48,6 +51,7 @@ export interface AudioStore {
   state: AudioState
   queue: AudioItem[]
   currentAudio: AudioItem | null
+  currentVisemes: VisemeData[] | null
   volume: number
 
   // Actions

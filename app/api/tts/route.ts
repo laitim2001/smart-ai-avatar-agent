@@ -1,12 +1,13 @@
 /**
- * TTS API Route - 文字轉語音
+ * TTS API Route - 文字轉語音（支援 Viseme 數據）
  * @module app/api/tts/route
- * @description 接收文字，使用 Azure Speech Services 轉換為語音（MP3 格式）
+ * @description 接收文字，使用 Azure Speech Services 轉換為語音（MP3 格式）並返回 Viseme 時間軸
  */
 
 import { NextRequest, NextResponse } from 'next/server'
 import * as sdk from 'microsoft-cognitiveservices-speech-sdk'
 import { getSpeechConfig, DEFAULT_VOICE } from '@/lib/azure/speech'
+import { VisemeData } from '@/types/lipsync'
 
 export const runtime = 'nodejs' // Azure Speech SDK 需要 Node.js runtime
 
@@ -120,7 +121,22 @@ export async function POST(request: NextRequest) {
     // 7. 建立 TTS 合成器
     const synthesizer = new sdk.SpeechSynthesizer(speechConfig, null)
 
-    // 8. 執行 TTS 轉換（Promise 包裝）
+    // 8. 收集 Viseme 數據
+    const visemes: VisemeData[] = []
+
+    // 註冊 Viseme 事件監聽器
+    synthesizer.visemeReceived = (sender, event) => {
+      // Azure Speech SDK audioOffset 單位為 100-nanosecond ticks
+      // 轉換為秒：audioOffset / 10,000,000
+      const timeInSeconds = event.audioOffset / 10000000
+
+      visemes.push({
+        time: timeInSeconds,
+        visemeId: event.visemeId,
+      })
+    }
+
+    // 9. 執行 TTS 轉換（Promise 包裝）
     const audioBuffer = await new Promise<Buffer>((resolve, reject) => {
       const timeoutId = setTimeout(() => {
         synthesizer.close()
@@ -152,19 +168,31 @@ export async function POST(request: NextRequest) {
       )
     })
 
-    // 9. 計算音訊長度（估算）
+    // 10. 計算音訊長度（估算）
     // MP3 32kbps: ~4KB/秒
     const estimatedDuration = audioBuffer.length / (32 * 1024 / 8)
 
-    // 10. 返回音訊檔案
-    return new NextResponse(audioBuffer, {
-      status: 200,
-      headers: {
-        'Content-Type': 'audio/mpeg',
-        'Content-Length': audioBuffer.length.toString(),
-        'X-Audio-Duration': estimatedDuration.toFixed(2),
-        'Cache-Control': 'public, max-age=3600', // 快取 1 小時
-      },
+    // 11. 計算 Viseme 持續時間
+    for (let i = 0; i < visemes.length - 1; i++) {
+      const current = visemes[i]
+      const next = visemes[i + 1]
+      current.duration = next.time - current.time
+    }
+
+    // 最後一個 Viseme 的持續時間
+    if (visemes.length > 0) {
+      const lastViseme = visemes[visemes.length - 1]
+      lastViseme.duration = 0.1 // 預設 100ms
+    }
+
+    console.log(`[TTS API] 生成 ${visemes.length} 個 Viseme，音訊長度 ${estimatedDuration.toFixed(2)}s`)
+
+    // 12. 返回 JSON 格式（音訊 + Viseme 數據）
+    return NextResponse.json({
+      audio: audioBuffer.toString('base64'),
+      visemes: visemes,
+      duration: estimatedDuration,
+      format: 'audio/mpeg',
     })
   } catch (error) {
     console.error('[TTS API Error]', error)
