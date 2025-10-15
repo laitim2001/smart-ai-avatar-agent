@@ -129,6 +129,16 @@ npm run format
 
 ## 📚 專案文件
 
+### 使用者文件
+- **[使用者指南](docs/USER_GUIDE.md)** - 完整操作手冊與常見問題
+- **[瀏覽器相容性報告](docs/BROWSER_COMPATIBILITY.md)** - 支援的瀏覽器與效能評估
+
+### 技術文件
+- **[POC 技術驗證報告](docs/POC_TECHNICAL_REPORT.md)** - 技術可行性驗證與成果總結
+- **[Azure 部署指南](docs/AZURE_DEPLOYMENT.md)** - 完整的生產部署流程
+- **[生產檢查清單](docs/PRODUCTION_CHECKLIST.md)** - 部署前後檢查項目
+
+### 開發文件
 - **[快速開始指南](QUICK_START.md)** - 5 分鐘快速上手
 - **[開發路線圖](DEVELOPMENT_ROADMAP.md)** - 12 週完整開發計畫
 - **[專案總覽](PROJECT_OVERVIEW.md)** - 架構與技術細節
