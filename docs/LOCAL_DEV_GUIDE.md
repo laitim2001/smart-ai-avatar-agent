@@ -74,8 +74,8 @@ docker-compose ps
 **預期輸出**:
 ```
 NAME                  IMAGE                 STATUS              PORTS
-smart-avatar-db       postgres:16-alpine    Up 10 seconds       0.0.0.0:5432->5432/tcp
-smart-avatar-redis    redis:7-alpine        Up 10 seconds       0.0.0.0:6379->6379/tcp
+smart-avatar-db       postgres:16-alpine    Up 10 seconds       0.0.0.0:5435->5432/tcp
+smart-avatar-redis    redis:7-alpine        Up 10 seconds       0.0.0.0:6380->6379/tcp
 ```
 
 ### 步驟 3: 驗證服務連線
@@ -363,7 +363,7 @@ TTL rate-limit:login:127.0.0.1
 
 ### 問題 2: PostgreSQL 連線失敗
 
-**錯誤訊息**: `Can't reach database server at localhost:5432`
+**錯誤訊息**: `Can't reach database server at localhost:5435`
 
 **檢查步驟**:
 ```bash
@@ -373,12 +373,12 @@ docker-compose ps
 # 2. 檢查 PostgreSQL 日誌
 docker logs smart-avatar-db
 
-# 3. 確認 Port 5432 未被佔用
+# 3. 確認 Port 5435 未被佔用
 # Windows:
-netstat -ano | findstr :5432
+netstat -ano | findstr :5435
 
 # macOS/Linux:
-lsof -i :5432
+lsof -i :5435
 
 # 4. 重啟服務
 docker-compose restart postgres
@@ -409,7 +409,7 @@ npx prisma generate
 # 確認 .env.local 包含 Redis 密碼
 cat .env.local | grep REDIS_URL
 
-# 應顯示: redis://:dev_redis_password@localhost:6379
+# 應顯示: redis://:dev_redis_password@localhost:6380
 
 # 手動測試連線
 docker exec -it smart-avatar-redis redis-cli -a dev_redis_password PING
@@ -418,21 +418,21 @@ docker exec -it smart-avatar-redis redis-cli -a dev_redis_password PING
 
 ### 問題 5: Port 衝突
 
-**錯誤訊息**: `Port 5432/6379/3000 is already in use`
+**錯誤訊息**: `Port 5435/6380/3000 is already in use`
 
 **解決方法**:
 
-**PostgreSQL (5432)**:
+**PostgreSQL (5435)**:
 ```bash
 # Windows: 找出佔用 Port 的程式
-netstat -ano | findstr :5432
+netstat -ano | findstr :5435
 
 # 終止程式（替換 PID）
 taskkill /PID <PID> /F
 
 # 或修改 docker-compose.yml 使用其他 Port
 # ports:
-#   - "5433:5432"  # 本地 5433 → 容器 5432
+#   - "5436:5432"  # 本地 5436 → 容器 5432
 ```
 
 **Next.js (3000)**:
@@ -557,8 +557,8 @@ DATABASE_URL="<生產資料庫 URL>" npx prisma migrate deploy
 
 | 服務 | 容器名稱 | Port | 用途 | Volume |
 |------|---------|------|------|--------|
-| postgres | smart-avatar-db | 5432 | 使用者資料、Session | postgres_data |
-| redis | smart-avatar-redis | 6379 | Rate Limiting | redis_data |
+| postgres | smart-avatar-db | 5435 | 使用者資料、Session | postgres_data |
+| redis | smart-avatar-redis | 6380 | Rate Limiting | redis_data |
 
 ### 常用 Prisma 指令
 

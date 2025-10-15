@@ -77,14 +77,14 @@ docker-compose ps
 **預期輸出**:
 ```
 NAME                  IMAGE                 STATUS              PORTS
-smart-avatar-db       postgres:16-alpine    Up 10 seconds       0.0.0.0:5432->5432/tcp
-smart-avatar-redis    redis:7-alpine        Up 10 seconds       0.0.0.0:6379->6379/tcp
+smart-avatar-db       postgres:16-alpine    Up 10 seconds       0.0.0.0:5435->5432/tcp
+smart-avatar-redis    redis:7-alpine        Up 10 seconds       0.0.0.0:6380->6379/tcp
 ```
 
 **✅ 成功標準**: 兩個容器都顯示 `Up`
 
 **❌ 如果失敗**:
-- 檢查 Port 5432 與 6379 是否被佔用
+- 檢查 Port 5435 與 6380 是否被佔用
 - 查看日誌: `docker logs smart-avatar-db`
 - 參考 `docs/LOCAL_DEV_GUIDE.md` 疑難排解章節
 
