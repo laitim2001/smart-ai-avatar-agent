@@ -434,6 +434,7 @@ C:\smart-ai-avatar-agent\
 ├── .github\
 │   └── workflows\
 │       └── azure-static-web-apps.yml       ✅ CI/CD Workflow
+├── CLAUDE.md                               ✅ Claude Code 開發指南
 ├── DEVELOPMENT_STATUS.md                   ✅ 開發進度追蹤
 ├── PROJECT_STATUS.md                       📍 你在這裡
 ├── SPRINT_PLAN.md                          ✅ Sprint 計劃參考
@@ -529,6 +530,7 @@ C:\smart-ai-avatar-agent\
 
 ## 📚 相關文件
 
+- **Claude Code 指南**: `CLAUDE.md` - Claude Code 實例開發指南（包含專案架構、開發命令、技術細節）
 - **開發進度**: `DEVELOPMENT_STATUS.md` - 即時開發進度追蹤
 - **Sprint 計劃**: `SPRINT_PLAN.md` - 完整 Sprint 計劃參考
 - **詳細規劃**: `docs/sprint-planning.md` - 詳細 Sprint 規劃

@@ -366,6 +366,7 @@
 - ✅ Story 3.7 完成: 端到端對話流程整合與優化
 - ✅ **Epic 3 完成**: LLM Conversation & TTS Integration (7/7 Stories 100%)
 - ✅ **Sprint 2 完成**: 所有 7 個 Stories 100% 完成，提前 27 天完成
+- ✅ 建立 CLAUDE.md：為未來 Claude Code 實例提供完整開發指南
 
 **Git 提交** (Epic 3):
 - Commit: `1d221b9` - "feat: 實作對話介面 UI (Story 3.1)"
@@ -454,6 +455,7 @@
 | 2025-10-15 | 更新 Story 1.5 完成狀態，Epic 1 完成 100% | Claude Code |
 | 2025-10-15 (晚) | 更新 Story 2.1-2.5 完成狀態，Epic 2 完成 100%，Sprint 1 完成 | Claude Code |
 | 2025-10-15 (夜) | 更新 Story 3.1-3.7 完成狀態，Epic 3 完成 100%，Sprint 2 完成 | Claude Code |
+| 2025-10-15 (夜) | 加入 CLAUDE.md 文件建立記錄 | Claude Code |
 
 ---
 
