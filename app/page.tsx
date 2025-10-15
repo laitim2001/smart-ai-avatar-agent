@@ -5,6 +5,8 @@ import { Button } from '@/components/ui/button'
 import { checkHealth } from '@/lib/api/client'
 import type { HealthCheckResponse } from '@/types/api'
 import AvatarCanvas from '@/components/avatar/AvatarCanvas'
+import AvatarSelector from '@/components/avatar/AvatarSelector'
+import AvatarChangeButton from '@/components/avatar/AvatarChangeButton'
 
 export default function Home() {
   const [healthStatus, setHealthStatus] = useState<HealthCheckResponse | null>(
@@ -37,6 +39,12 @@ export default function Home() {
     <main className="relative w-full h-screen overflow-hidden">
       {/* 3D Avatar Canvas - 全螢幕 3D 場景 */}
       <AvatarCanvas />
+
+      {/* Avatar Change Button - 右上角觸發按鈕 */}
+      <AvatarChangeButton />
+
+      {/* Avatar Selector Modal - Avatar 選擇器 */}
+      <AvatarSelector />
 
       {/* UI Overlay - 覆蓋在 3D 場景上的資訊面板 */}
       <div className="absolute inset-0 pointer-events-none">

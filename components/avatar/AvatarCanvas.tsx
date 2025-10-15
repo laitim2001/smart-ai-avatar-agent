@@ -1,12 +1,12 @@
 'use client'
 
-import { Suspense, useState, useRef } from 'react'
+import { Suspense, useState, useRef, useEffect } from 'react'
 import { Canvas } from '@react-three/fiber'
 import { OrbitControls } from '@react-three/drei'
 import AvatarModel from './AvatarModel'
 import AvatarControlPanel from './AvatarControlPanel'
 import { AvatarLoader, AvatarError } from './AvatarLoadingState'
-import { DEFAULT_AVATAR_URL } from '@/lib/avatar/constants'
+import { useAvatarStore } from '@/stores/avatarStore'
 import { AvatarAnimationControls } from '@/types/avatar'
 
 /**
@@ -43,16 +43,32 @@ import { AvatarAnimationControls } from '@/types/avatar'
  * @requires @react-three/drei
  */
 export default function AvatarCanvas() {
-  // Avatar 狀態管理
-  const [currentAvatarUrl] = useState(DEFAULT_AVATAR_URL)
+  // 從 Zustand Store 取得當前 Avatar URL
+  const currentAvatarUrl = useAvatarStore((state) => state.currentAvatarUrl)
+
+  // 錯誤狀態
   const [loadError, setLoadError] = useState<string | null>(null)
 
   // Avatar 動畫控制 ref
   const avatarModelRef = useRef<AvatarAnimationControls>(null)
 
+  // 淡入淡出過渡效果狀態
+  const [isTransitioning, setIsTransitioning] = useState(false)
+
+  // Avatar URL 變更時觸發過渡效果
+  useEffect(() => {
+    setIsTransitioning(true)
+    const timer = setTimeout(() => {
+      setIsTransitioning(false)
+    }, 300) // 300ms 淡入淡出
+
+    return () => clearTimeout(timer)
+  }, [currentAvatarUrl])
+
   return (
     <div className="w-full h-screen bg-gradient-to-b from-slate-900 to-slate-800 relative">
       <Canvas
+        className={`transition-opacity duration-300 ${isTransitioning ? 'opacity-0' : 'opacity-100'}`}
         shadows
         camera={{
           position: [0, 1.5, 2],
@@ -94,6 +110,7 @@ export default function AvatarCanvas() {
           ) : (
             // Ready Player Me Avatar 模型
             <AvatarModel
+              key={currentAvatarUrl}  // URL 變更時強制重新掛載組件
               ref={avatarModelRef}
               modelUrl={currentAvatarUrl}
               position={[0, -1, 0]}  // Y軸下移1單位，使頭部在視野中心
