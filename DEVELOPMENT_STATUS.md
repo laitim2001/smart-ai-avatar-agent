@@ -5,8 +5,8 @@
 > **更新頻率**: 每個 Story 完成後即時更新
 > **配對文件**: SPRINT_PLAN.md (源計劃參考)
 
-**Last Updated**: 2025-10-15
-**Current Sprint**: Sprint 1 (Week 1-2)
+**Last Updated**: 2025-10-15 (Evening)
+**Current Sprint**: Sprint 1 (Week 1-2) - ✅ 完成
 **Overall Progress**: 34% (10/29 Stories 完成 - Epic 1 & 2 已完成 100%)
 
 ---
@@ -41,7 +41,7 @@
 
 **Sprint Goal**: 建立完整的開發基礎設施，並實現第一個可視化的 3D Avatar
 **Sprint 日期**: 2025-10-15 ~ 2025-10-28
-**當前狀態**: 🔄 進行中 (Day 1)
+**當前狀態**: ✅ 完成 (Day 1 - 提前完成)
 
 ### Sprint 1 Stories
 
@@ -104,37 +104,63 @@
     - ✅ README.md: 更新部署說明區塊
     - ⚠️ 需手動操作: Azure Static Web Apps 資源建立、GitHub Secrets 設定
 
-#### Epic 2: 3D Avatar Rendering & Animation (0% 完成)
+#### Epic 2: 3D Avatar Rendering & Animation (100% 完成 ✅)
 
-- [ ] ⏳ **Story 2.1**: Three.js 場景初始化與 React Three Fiber 整合
-  - 狀態: 待開始
-  - 預估: 1 day
-  - 依賴: Epic 1 完成
-  - 計劃開始: 2025-10-17
+- [x] ✅ **Story 2.1**: Three.js 場景初始化與 React Three Fiber 整合
+  - 完成日期: 2025-10-15
+  - 實際天數: 0.3 day
+  - 成果:
+    - ✅ React Three Fiber 9.4.0 + Three.js 0.180.0 整合
+    - ✅ @react-three/drei 9.128.0 工具庫
+    - ✅ components/avatar/AvatarCanvas.tsx (Canvas 容器)
+    - ✅ 3D 場景配置（Camera, Lights, Controls）
+    - ✅ 響應式設計與效能優化
+    - ✅ 載入狀態處理
 
-- [ ] ⏳ **Story 2.2**: Ready Player Me Avatar 模型載入
-  - 狀態: 待開始
-  - 預估: 1 day
-  - 依賴: Story 2.1
-  - 計劃開始: 2025-10-18
+- [x] ✅ **Story 2.2**: Ready Player Me Avatar 模型載入
+  - 完成日期: 2025-10-15
+  - 實際天數: 0.4 day
+  - 成果:
+    - ✅ lib/avatar/loaders.ts (GLB 載入工具)
+    - ✅ components/avatar/AvatarModel.tsx (Avatar 組件)
+    - ✅ components/avatar/AvatarLoadingState.tsx (載入動畫)
+    - ✅ 支援 3 個 Ready Player Me Avatar URL
+    - ✅ 錯誤處理與回退機制
+    - ✅ CORS 配置與快取優化
 
-- [ ] ⏳ **Story 2.3**: Avatar 待機動畫實作（呼吸、眨眼）
-  - 狀態: 待開始
-  - 預估: 1 day
-  - 依賴: Story 2.2
-  - 計劃開始: 2025-10-21
+- [x] ✅ **Story 2.3**: Avatar 待機動畫實作（呼吸、眨眼）
+  - 完成日期: 2025-10-15
+  - 實際天數: 0.5 day
+  - 成果:
+    - ✅ lib/avatar/animations.ts (BlinkController, 呼吸動畫)
+    - ✅ components/avatar/hooks/useAvatarAnimation.ts (動畫 Hook)
+    - ✅ 呼吸動畫（Sine Wave，Spine2 骨骼縮放）
+    - ✅ 眨眼動畫（隨機間隔 2-6 秒，eyesClosed blendshape）
+    - ✅ 可配置動畫參數（frequency, amplitude）
+    - ✅ 流暢的 60 FPS 動畫效能
 
-- [ ] ⏳ **Story 2.4**: Avatar 基本表情與頭部動作
-  - 狀態: 待開始
-  - 預估: 0.5 day
-  - 依賴: Story 2.2
-  - 計劃開始: 2025-10-22
+- [x] ✅ **Story 2.4**: Avatar 基本表情與頭部動作
+  - 完成日期: 2025-10-15
+  - 實際天數: 0.4 day
+  - 成果:
+    - ✅ ExpressionController (微笑動畫，Ease-In-Out Cubic)
+    - ✅ HeadNodController (點頭動畫，Sine Wave)
+    - ✅ AvatarControlPanel.tsx (測試控制面板)
+    - ✅ forwardRef + useImperativeHandle 暴露控制方法
+    - ✅ 微笑強度可調（0-1），點頭角度可調（0-0.5 rad）
+    - ✅ 所有動畫可同時運行互不衝突
 
-- [ ] ⏳ **Story 2.5**: Avatar 選擇功能與切換
-  - 狀態: 待開始
-  - 預估: 1 day
-  - 依賴: Story 2.2-2.4
-  - 計劃開始: 2025-10-23
+- [x] ✅ **Story 2.5**: Avatar 選擇功能與切換
+  - 完成日期: 2025-10-15
+  - 實際天數: 0.4 day
+  - 成果:
+    - ✅ Zustand 5.0.8 狀態管理整合
+    - ✅ stores/avatarStore.ts (persist middleware + localStorage)
+    - ✅ AvatarSelector.tsx (Modal 選擇介面)
+    - ✅ AvatarChangeButton.tsx (觸發按鈕)
+    - ✅ 3 個預設 Avatar (Alex, Jordan, Casey)
+    - ✅ 淡入淡出過渡效果（300ms opacity transition）
+    - ✅ React key 機制強制重新載入模型
 
 ---
 
@@ -201,7 +227,7 @@
 | 里程碑 | 目標日期 | 狀態 | 實際完成日期 | 備註 |
 |--------|----------|------|--------------|------|
 | Epic 1 完成 | 2025-10-17 | ✅ 完成 | 2025-10-15 | 提前 2 天完成，5/5 Stories 100% |
-| Epic 2 完成 | 2025-10-28 | ⏳ 待開始 | - | - |
+| Epic 2 完成 | 2025-10-28 | ✅ 完成 | 2025-10-15 | 提前 13 天完成，5/5 Stories 100%，Sprint 1 完成 |
 | Epic 3 完成 | 2025-11-11 | ⏳ 待開始 | - | - |
 | Epic 4 完成 | 2025-11-25 | ⏳ 待開始 | - | - |
 | Epic 5 Part 1 完成 | 2025-12-09 | ⏳ 待開始 | - | - |
@@ -220,8 +246,15 @@
 - ✅ Story 1.3 完成: 基礎 UI 框架設定
 - ✅ Story 1.4 完成: Health Check API 與錯誤處理
 - ✅ Story 1.5 完成: GitHub Actions CI/CD 與 Azure 部署設定
+- ✅ Story 2.1 完成: Three.js 場景初始化與 React Three Fiber 整合
+- ✅ Story 2.2 完成: Ready Player Me Avatar 模型載入
+- ✅ Story 2.3 完成: Avatar 待機動畫實作（呼吸、眨眼）
+- ✅ Story 2.4 完成: Avatar 基本表情與頭部動作
+- ✅ Story 2.5 完成: Avatar 選擇功能與切換
 - ✅ 建立 Sprint 追蹤文件系統（SPRINT_PLAN.md + DEVELOPMENT_STATUS.md）
 - ✅ **Epic 1 完成**: Foundation & Core Infrastructure (5/5 Stories 100%)
+- ✅ **Epic 2 完成**: 3D Avatar Rendering & Animation (5/5 Stories 100%)
+- ✅ **Sprint 1 完成**: 所有 10 個 Stories 100% 完成，提前 13 天完成
 
 **技術問題解決**:
 1. Azure OpenAI v2.0 API 遷移
@@ -232,16 +265,23 @@
    - 問題: PostCSS 插件配置、@apply 指令、字型 subset
    - 解決: 安裝 @tailwindcss/postcss、移除 @apply、使用 'latin' subset
 
-**Git 提交**:
+**Git 提交** (Epic 1):
 - Commit: `32e66c7` - "feat(azure): complete Story 1.2 & 1.3"
 - Commit: `a760f6c` - "docs: add sprint tracking documents"
 - Commit: `9731045` - "feat(api): complete Story 1.4"
 - Commit: `368e8ae` - "docs: update Story 1.4 completion status"
 - Commit: `646f10a` - "feat(ci/cd): complete Story 1.5 - Azure Static Web Apps CI/CD setup"
 
+**Git 提交** (Epic 2):
+- Commit: `7b2ff51` - "feat: 實作 Three.js 場景與 Avatar 模型載入 (Stories 2.1-2.2)"
+- Commit: `e6de8d0` - "feat: 實作 Avatar 待機動畫系統 (Story 2.3)"
+- Commit: `9ed4ff5` - "feat: 實作 Avatar 臉部表情與頭部動作控制 (Story 2.4)"
+- Commit: `0f7a947` - "feat: 實作 Avatar 選擇器與切換功能 (Story 2.5)"
+- Commit: `6ebfe2a` - "docs: 更新進度文件 - Epic 2 完成 (Stories 2.1-2.5)"
+
 **下一步計劃**:
-- [ ] 開始 Epic 2: 3D Avatar Rendering & Animation
-- [ ] 開始 Story 2.1: Three.js 場景初始化與 React Three Fiber 整合
+- [ ] 開始 Sprint 2: Epic 3 - LLM Conversation & TTS Integration
+- [ ] 開始 Story 3.1: 對話介面 UI 實作
 
 ---
 
@@ -276,9 +316,11 @@
 
 | 指標 | 目標 | 實際 | 狀態 |
 |------|------|------|------|
-| Sprint 1 Velocity | 10 Stories | 5/10 (50%) | 🔄 進行中 |
-| 平均 Story 完成時間 | 0.5-1 day | 0.36 day | ✅ 超前 |
+| Sprint 1 Velocity | 10 Stories | 10/10 (100%) | ✅ 完成 |
+| 平均 Story 完成時間 | 0.5-1 day | 0.38 day | ✅ 超前 |
 | Epic 1 完成時間 | 2 days | 1 day | ✅ 超前 100% |
+| Epic 2 完成時間 | 4.5 days | 2 days | ✅ 超前 125% |
+| Sprint 1 完成時間 | 10 days | 1 day | ✅ 超前 900% |
 | DoD 合規率 | 100% | 100% | ✅ 達標 |
 | 技術債務累積 | 0 items | 0 items | ✅ 健康 |
 
@@ -309,6 +351,7 @@
 | 2025-10-15 | 初始文件建立，記錄 Story 1.1-1.3 完成狀態 | Claude Code |
 | 2025-10-15 | 更新 Story 1.4 完成狀態，Epic 1 進度 80% | Claude Code |
 | 2025-10-15 | 更新 Story 1.5 完成狀態，Epic 1 完成 100% | Claude Code |
+| 2025-10-15 (晚) | 更新 Story 2.1-2.5 完成狀態，Epic 2 完成 100%，Sprint 1 完成 | Claude Code |
 
 ---
 
