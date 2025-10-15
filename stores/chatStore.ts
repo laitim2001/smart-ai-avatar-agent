@@ -6,6 +6,7 @@
 
 import { create } from 'zustand'
 import { Message, ChatStore } from '@/types/chat'
+import { sendChatMessage } from '@/lib/api/chat'
 
 /**
  * Chat Store Hook
@@ -34,7 +35,7 @@ export const useChatStore = create<ChatStore>((set, get) => ({
 
   // Actions
   sendMessage: () => {
-    const { input, isLoading } = get()
+    const { input, isLoading, messages } = get()
 
     // 驗證輸入與狀態
     if (input.trim() === '' || isLoading) return
@@ -54,21 +55,56 @@ export const useChatStore = create<ChatStore>((set, get) => ({
       isLoading: true,
     }))
 
-    // 後續 Story 3.3 將整合真實 API
-    // 目前使用模擬回應驗證 Store 運作
-    setTimeout(() => {
-      const avatarMessage: Message = {
-        id: `avatar-${Date.now()}`,
-        role: 'avatar',
-        content: '這是 Avatar 的測試回應（來自 chatStore）',
-        timestamp: new Date(),
-      }
+    // 準備 API 訊息格式（轉換 role）
+    const apiMessages = [...messages, userMessage].map((msg) => ({
+      role: msg.role === 'avatar' ? ('assistant' as const) : ('user' as const),
+      content: msg.content,
+    }))
 
-      set((state) => ({
-        messages: [...state.messages, avatarMessage],
-        isLoading: false,
-      }))
-    }, 1500)
+    // 建立 Avatar 訊息（用於即時更新）
+    const avatarMessageId = `avatar-${Date.now()}`
+    const avatarMessage: Message = {
+      id: avatarMessageId,
+      role: 'avatar',
+      content: '',
+      timestamp: new Date(),
+    }
+
+    // 加入空 Avatar 訊息
+    set((state) => ({
+      messages: [...state.messages, avatarMessage],
+    }))
+
+    // 呼叫 Chat API（SSE 串流）
+    sendChatMessage(
+      apiMessages,
+      // onChunk: 即時更新 Avatar 訊息內容
+      (content) => {
+        set((state) => ({
+          messages: state.messages.map((msg) =>
+            msg.id === avatarMessageId
+              ? { ...msg, content: msg.content + content }
+              : msg
+          ),
+        }))
+      },
+      // onDone: 串流完成
+      () => {
+        set({ isLoading: false })
+      },
+      // onError: 錯誤處理
+      (error) => {
+        console.error('[Chat API Error]', error)
+        set((state) => ({
+          messages: state.messages.map((msg) =>
+            msg.id === avatarMessageId
+              ? { ...msg, content: `錯誤：${error}` }
+              : msg
+          ),
+          isLoading: false,
+        }))
+      }
+    )
   },
 
   addMessage: (message) => {
