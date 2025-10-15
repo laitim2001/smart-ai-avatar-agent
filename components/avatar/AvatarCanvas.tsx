@@ -1,11 +1,13 @@
 'use client'
 
-import { Suspense, useState } from 'react'
+import { Suspense, useState, useRef } from 'react'
 import { Canvas } from '@react-three/fiber'
 import { OrbitControls } from '@react-three/drei'
 import AvatarModel from './AvatarModel'
+import AvatarControlPanel from './AvatarControlPanel'
 import { AvatarLoader, AvatarError } from './AvatarLoadingState'
 import { DEFAULT_AVATAR_URL } from '@/lib/avatar/constants'
+import { AvatarAnimationControls } from '@/types/avatar'
 
 /**
  * AvatarCanvas - Three.js 3D 場景容器組件
@@ -45,8 +47,11 @@ export default function AvatarCanvas() {
   const [currentAvatarUrl] = useState(DEFAULT_AVATAR_URL)
   const [loadError, setLoadError] = useState<string | null>(null)
 
+  // Avatar 動畫控制 ref
+  const avatarModelRef = useRef<AvatarAnimationControls>(null)
+
   return (
-    <div className="w-full h-screen bg-gradient-to-b from-slate-900 to-slate-800">
+    <div className="w-full h-screen bg-gradient-to-b from-slate-900 to-slate-800 relative">
       <Canvas
         shadows
         camera={{
@@ -89,6 +94,7 @@ export default function AvatarCanvas() {
           ) : (
             // Ready Player Me Avatar 模型
             <AvatarModel
+              ref={avatarModelRef}
               modelUrl={currentAvatarUrl}
               position={[0, -1, 0]}  // Y軸下移1單位，使頭部在視野中心
               scale={1}              // 預設縮放，可依實際需求調整
@@ -107,6 +113,9 @@ export default function AvatarCanvas() {
           )}
         </Suspense>
       </Canvas>
+
+      {/* Avatar 動畫控制面板 */}
+      <AvatarControlPanel avatarRef={avatarModelRef} />
     </div>
   )
 }

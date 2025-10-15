@@ -60,3 +60,41 @@ export interface AvatarAnimationState {
   currentAnimation: string | null
   loop: boolean
 }
+
+/**
+ * Avatar 動畫控制介面
+ *
+ * 提供命令式的動畫控制方法，供父組件透過 ref 呼叫。
+ * 使用 forwardRef + useImperativeHandle 模式暴露這些方法。
+ *
+ * @property smile - 觸發微笑動畫
+ * @property nod - 觸發點頭動畫
+ *
+ * @example
+ * ```typescript
+ * const avatarRef = useRef<AvatarAnimationControls>(null);
+ *
+ * // 觸發微笑
+ * avatarRef.current?.smile(1.0, 0.5);
+ *
+ * // 觸發點頭
+ * avatarRef.current?.nod(1.0);
+ * ```
+ */
+export interface AvatarAnimationControls {
+  /**
+   * 觸發微笑動畫
+   *
+   * @param intensity - 微笑強度 (0-1)，預設 1.0（完全微笑）
+   * @param duration - 動畫時長（秒），預設 0.5
+   */
+  smile: (intensity?: number, duration?: number) => void
+
+  /**
+   * 觸發點頭動畫
+   *
+   * @param duration - 點頭時長（秒），預設 1.0
+   * @param angle - 點頭角度（弧度），預設 0.3（約 17 度）
+   */
+  nod: (duration?: number, angle?: number) => void
+}

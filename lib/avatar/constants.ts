@@ -35,3 +35,54 @@ export const DEFAULT_AVATAR_URL = AVATAR_URLS.avatar1
  * Avatar URL 類型
  */
 export type AvatarKey = keyof typeof AVATAR_URLS
+
+/**
+ * Ready Player Me Avatar Blendshapes 常數
+ *
+ * Blendshapes（變形目標）用於控制 Avatar 的臉部表情。
+ * 值範圍：0-1（0 = 無變形，1 = 完全變形）
+ *
+ * @see https://docs.readyplayer.me/ready-player-me/api-reference/avatars/morph-targets
+ */
+export const BLENDSHAPES = {
+  /**
+   * 眼睛閉合（眨眼）
+   * 用於：眨眼動畫、睡眠表情
+   */
+  EYES_CLOSED: 'eyesClosed',
+
+  /**
+   * 微笑表情
+   * 用於：愉快、友好情緒
+   */
+  SMILE: 'mouthSmile',
+
+  /**
+   * 皺眉表情
+   * 用於：不滿、困惑情緒
+   */
+  FROWN: 'mouthFrown',
+
+  /**
+   * 睜大眼睛
+   * 用於：驚訝、專注情緒
+   */
+  EYES_WIDE: 'eyesWide',
+
+  /**
+   * 揚眉
+   * 用於：好奇、疑問情緒
+   */
+  BROW_UP: 'browInnerUp',
+
+  /**
+   * 張嘴
+   * 用於：說話、驚訝
+   */
+  MOUTH_OPEN: 'mouthOpen',
+} as const
+
+/**
+ * Blendshape 名稱類型
+ */
+export type BlendshapeName = typeof BLENDSHAPES[keyof typeof BLENDSHAPES]

@@ -224,3 +224,237 @@ export const DEFAULT_ANIMATION_CONFIG: AnimationConfig = {
     duration: 0.15
   }
 }
+
+/**
+ * Expression Animation Controller
+ *
+ * 管理臉部表情動畫（如微笑、皺眉等）的平滑過渡。
+ * 使用 Ease-In-Out Cubic 曲線確保表情變化自然流暢。
+ *
+ * @example
+ * ```typescript
+ * const smileController = new ExpressionController();
+ *
+ * // 觸發微笑動畫
+ * smileController.trigger(1.0, 0.5); // 完全微笑，0.5秒
+ *
+ * // 在動畫迴圈中更新
+ * useFrame((state) => {
+ *   const time = state.clock.getElapsedTime();
+ *   const smileValue = smileController.update(time);
+ *   headMesh.morphTargetInfluences[smileIndex] = smileValue;
+ * });
+ * ```
+ */
+export class ExpressionController {
+  /** 目標表情值 (0-1) */
+  private targetValue: number = 0
+
+  /** 當前表情值 (0-1) */
+  private currentValue: number = 0
+
+  /** 動畫持續時間（秒） */
+  private animationDuration: number = 0.5
+
+  /** 動畫開始時間（秒） */
+  private startTime: number = 0
+
+  /** 是否正在播放動畫 */
+  private isAnimating: boolean = false
+
+  /**
+   * 觸發表情動畫
+   *
+   * @param value - 目標表情值 (0-1)，0 = 無表情，1 = 完全表情
+   * @param duration - 動畫時長（秒），預設 0.5 秒
+   *
+   * @example
+   * ```typescript
+   * // 淺笑
+   * controller.trigger(0.5, 0.5);
+   *
+   * // 大笑
+   * controller.trigger(1.0, 0.5);
+   *
+   * // 恢復中性表情
+   * controller.trigger(0, 0.3);
+   * ```
+   */
+  trigger(value: number, duration: number = 0.5): void {
+    this.targetValue = Math.max(0, Math.min(1, value)) // 限制在 0-1 範圍
+    this.animationDuration = duration
+    this.startTime = performance.now() / 1000
+    this.isAnimating = true
+  }
+
+  /**
+   * 更新表情值並返回當前值
+   *
+   * Should be called every frame in animation loop.
+   *
+   * @param currentTime - 當前時間（秒）
+   * @returns 當前 Blendshape 值 (0-1)
+   */
+  update(currentTime: number): number {
+    if (!this.isAnimating) {
+      return this.currentValue
+    }
+
+    const elapsed = currentTime - this.startTime
+    const progress = Math.min(elapsed / this.animationDuration, 1)
+
+    // Ease-In-Out Cubic 曲線插值
+    const easedProgress = this.easeInOutCubic(progress)
+    const startValue = this.currentValue
+    this.currentValue = startValue + (this.targetValue - startValue) * easedProgress
+
+    // 動畫完成
+    if (progress >= 1) {
+      this.isAnimating = false
+      this.currentValue = this.targetValue
+    }
+
+    return this.currentValue
+  }
+
+  /**
+   * Ease-In-Out Cubic 緩動函數
+   *
+   * 提供平滑的加速和減速效果：
+   * - 前半段：加速（ease in）
+   * - 後半段：減速（ease out）
+   *
+   * @param t - 進度值 (0-1)
+   * @returns 緩動後的值 (0-1)
+   * @private
+   */
+  private easeInOutCubic(t: number): number {
+    // t < 0.5: 加速階段 4t³
+    // t ≥ 0.5: 減速階段 1 - (-2t + 2)³ / 2
+    return t < 0.5
+      ? 4 * t * t * t
+      : 1 - Math.pow(-2 * t + 2, 3) / 2
+  }
+
+  /**
+   * 重置控制器狀態
+   */
+  reset(): void {
+    this.targetValue = 0
+    this.currentValue = 0
+    this.isAnimating = false
+    this.startTime = 0
+  }
+
+  /**
+   * 獲取當前是否正在播放動畫
+   */
+  get isPlaying(): boolean {
+    return this.isAnimating
+  }
+}
+
+/**
+ * Head Nod Animation Controller
+ *
+ * 管理頭部點頭動畫，使用正弦波模擬自然的點頭動作。
+ * 點頭動作：頭部向下傾斜再回到原位。
+ *
+ * @example
+ * ```typescript
+ * const nodController = new HeadNodController();
+ *
+ * // 觸發點頭動畫
+ * nodController.trigger(1.0); // 1秒完成一次點頭
+ *
+ * // 在動畫迴圈中更新
+ * useFrame((state) => {
+ *   const time = state.clock.getElapsedTime();
+ *   const nodAngle = nodController.update(time);
+ *   headBone.rotation.x = nodAngle; // 控制頭部 X 軸旋轉
+ * });
+ * ```
+ */
+export class HeadNodController {
+  /** 是否正在點頭 */
+  private isNodding: boolean = false
+
+  /** 點頭開始時間（秒） */
+  private nodStartTime: number = 0
+
+  /** 點頭持續時間（秒） */
+  private nodDuration: number = 1.0
+
+  /** 最大點頭角度（弧度） */
+  private maxAngle: number = 0.3 // 約 17 度
+
+  /**
+   * 觸發點頭動畫
+   *
+   * @param duration - 點頭時長（秒），預設 1.0 秒
+   * @param angle - 最大點頭角度（弧度），預設 0.3（約 17 度）
+   *
+   * @example
+   * ```typescript
+   * // 標準點頭
+   * controller.trigger(1.0);
+   *
+   * // 快速點頭
+   * controller.trigger(0.6);
+   *
+   * // 大幅度點頭
+   * controller.trigger(1.0, 0.4);
+   * ```
+   */
+  trigger(duration: number = 1.0, angle: number = 0.3): void {
+    this.isNodding = true
+    this.nodStartTime = performance.now() / 1000
+    this.nodDuration = duration
+    this.maxAngle = angle
+  }
+
+  /**
+   * 更新點頭動畫並返回頭部旋轉角度
+   *
+   * @param currentTime - 當前時間（秒）
+   * @returns X 軸旋轉角度（弧度），0 = 直立，正值 = 向下
+   */
+  update(currentTime: number): number {
+    if (!this.isNodding) {
+      return 0
+    }
+
+    const elapsed = currentTime - this.nodStartTime
+    const progress = elapsed / this.nodDuration
+
+    // 動畫完成
+    if (progress >= 1) {
+      this.isNodding = false
+      return 0
+    }
+
+    // 使用正弦波模擬點頭（向下再向上）
+    // sin(progress * π) 的值域為 [0, 1, 0]
+    // progress = 0.0 → angle = 0（起始）
+    // progress = 0.5 → angle = maxAngle（最低點）
+    // progress = 1.0 → angle = 0（回到原位）
+    const angle = Math.sin(progress * Math.PI) * this.maxAngle
+
+    return angle
+  }
+
+  /**
+   * 重置控制器狀態
+   */
+  reset(): void {
+    this.isNodding = false
+    this.nodStartTime = 0
+  }
+
+  /**
+   * 獲取當前是否正在點頭
+   */
+  get isPlaying(): boolean {
+    return this.isNodding
+  }
+}

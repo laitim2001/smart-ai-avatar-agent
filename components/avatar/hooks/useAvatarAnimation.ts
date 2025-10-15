@@ -16,7 +16,14 @@
 import { useFrame } from '@react-three/fiber'
 import { useEffect, useRef } from 'react'
 import { Group, Object3D, SkinnedMesh } from 'three'
-import { calculateBreathingScale, BlinkController } from '@/lib/avatar/animations'
+import {
+  calculateBreathingScale,
+  BlinkController,
+  ExpressionController,
+  HeadNodController
+} from '@/lib/avatar/animations'
+import { BLENDSHAPES } from '@/lib/avatar/constants'
+import { AvatarAnimationControls } from '@/types/avatar'
 
 /**
  * Animation configuration options
@@ -71,13 +78,17 @@ export function useAvatarAnimation(
     breathingAmplitude = 0.03
   } = options
 
-  // Blink controller instance (persisted across renders)
+  // Animation controller instances (persisted across renders)
   const blinkController = useRef(new BlinkController())
+  const smileController = useRef(new ExpressionController())
+  const headNodController = useRef(new HeadNodController())
 
   // Cached node references (avoid repeated scene traversal)
   const chestNodeRef = useRef<Object3D | null>(null)
   const headMeshRef = useRef<SkinnedMesh | null>(null)
+  const headBoneRef = useRef<Object3D | null>(null)
   const eyesClosedIndexRef = useRef<number | null>(null)
+  const smileIndexRef = useRef<number | null>(null)
 
   // Initialize node references when Avatar loads
   useEffect(() => {
@@ -97,7 +108,7 @@ export function useAvatarAnimation(
       }
     }
 
-    // Find head mesh for blinking animation
+    // Find head mesh for blinking and facial animations
     if (enableBlinking) {
       const headMesh = avatarRef.current.getObjectByName('Wolf3D_Head') as SkinnedMesh
         || avatarRef.current.getObjectByName('Head') as SkinnedMesh
@@ -106,7 +117,7 @@ export function useAvatarAnimation(
         headMeshRef.current = headMesh
 
         // Find eyesClosed blendshape index
-        const eyesClosedIndex = headMesh.morphTargetDictionary['eyesClosed']
+        const eyesClosedIndex = headMesh.morphTargetDictionary[BLENDSHAPES.EYES_CLOSED]
 
         if (eyesClosedIndex !== undefined) {
           eyesClosedIndexRef.current = eyesClosedIndex
@@ -114,9 +125,29 @@ export function useAvatarAnimation(
         } else {
           console.warn('[useAvatarAnimation] eyesClosed blendshape not found')
         }
+
+        // Find smile blendshape index
+        const smileIndex = headMesh.morphTargetDictionary[BLENDSHAPES.SMILE]
+
+        if (smileIndex !== undefined) {
+          smileIndexRef.current = smileIndex
+          console.log('[useAvatarAnimation] mouthSmile blendshape found at index:', smileIndex)
+        } else {
+          console.warn('[useAvatarAnimation] mouthSmile blendshape not found')
+        }
       } else {
         console.warn('[useAvatarAnimation] Head mesh not found, blinking animation disabled')
       }
+    }
+
+    // Find head bone for nodding animation
+    const headBone = avatarRef.current.getObjectByName('Head')
+
+    if (headBone) {
+      headBoneRef.current = headBone
+      console.log('[useAvatarAnimation] Head bone found for nodding')
+    } else {
+      console.warn('[useAvatarAnimation] Head bone not found, nodding animation disabled')
     }
   }, [avatarRef, enableBreathing, enableBlinking])
 
@@ -141,15 +172,36 @@ export function useAvatarAnimation(
         headMeshRef.current.morphTargetInfluences[eyesClosedIndexRef.current] = blinkValue
       }
     }
+
+    // 3. Smile Animation (mouthSmile blendshape)
+    if (headMeshRef.current && smileIndexRef.current !== null) {
+      const smileValue = smileController.current.update(time)
+
+      // Update mouthSmile blendshape
+      if (headMeshRef.current.morphTargetInfluences) {
+        headMeshRef.current.morphTargetInfluences[smileIndexRef.current] = smileValue
+      }
+    }
+
+    // 4. Nod Animation (head bone rotation)
+    if (headBoneRef.current) {
+      const nodAngle = headNodController.current.update(time)
+      headBoneRef.current.rotation.x = nodAngle
+    }
   })
 
   // Cleanup on unmount (useFrame auto-cleanup by React Three Fiber)
   // No manual cleanup needed
 
-  return {
-    /** Whether breathing animation is active */
-    hasBreathing: chestNodeRef.current !== null,
-    /** Whether blinking animation is active */
-    hasBlinking: headMeshRef.current !== null && eyesClosedIndexRef.current !== null
+  // Animation control functions
+  const controls: AvatarAnimationControls = {
+    smile: (intensity: number = 1.0, duration: number = 0.5) => {
+      smileController.current.trigger(intensity, duration)
+    },
+    nod: (duration: number = 1.0, angle: number = 0.3) => {
+      headNodController.current.trigger(duration, angle)
+    }
   }
+
+  return controls
 }

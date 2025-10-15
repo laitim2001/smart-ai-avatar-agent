@@ -1,9 +1,9 @@
 'use client'
 
 import { useGLTF } from '@react-three/drei'
-import { useEffect, useRef } from 'react'
+import { useEffect, useRef, forwardRef, useImperativeHandle } from 'react'
 import { Group } from 'three'
-import { AvatarModelProps } from '@/types/avatar'
+import { AvatarModelProps, AvatarAnimationControls } from '@/types/avatar'
 import { useAvatarAnimation } from './hooks/useAvatarAnimation'
 
 /**
@@ -43,24 +43,22 @@ import { useAvatarAnimation } from './hooks/useAvatarAnimation'
  * @requires @react-three/drei
  * @requires @react-three/fiber
  */
-export default function AvatarModel({
-  modelUrl,
-  position = [0, 0, 0],
-  scale = 1,
-  onLoad,
-  onError
-}: AvatarModelProps) {
-  const groupRef = useRef<Group>(null)
+const AvatarModel = forwardRef<AvatarAnimationControls, AvatarModelProps>(
+  function AvatarModel({ modelUrl, position = [0, 0, 0], scale = 1, onLoad, onError }, ref) {
+    const groupRef = useRef<Group>(null)
 
-  // useGLTF 自動處理載入、快取與 Suspense
-  // 第二個參數 true 表示使用 Draco 壓縮（如果模型有使用）
-  const gltf = useGLTF(modelUrl, true)
+    // useGLTF 自動處理載入、快取與 Suspense
+    // 第二個參數 true 表示使用 Draco 壓縮（如果模型有使用）
+    const gltf = useGLTF(modelUrl, true)
 
-  // 啟用待機動畫（呼吸 + 眨眼）
-  useAvatarAnimation(groupRef, {
-    enableBreathing: true,
-    enableBlinking: true
-  })
+    // 啟用待機動畫與表情控制（呼吸 + 眨眼 + 微笑 + 點頭）
+    const animationControls = useAvatarAnimation(groupRef, {
+      enableBreathing: true,
+      enableBlinking: true
+    })
+
+    // 暴露動畫控制函式給父組件
+    useImperativeHandle(ref, () => animationControls, [animationControls])
 
   // 模型載入成功時的處理
   useEffect(() => {
@@ -95,14 +93,17 @@ export default function AvatarModel({
     // 實際錯誤處理由外層的 Suspense fallback 和 Error Boundary 處理
   }, [onError])
 
-  // 渲染 Avatar 模型
-  // 使用 primitive 組件渲染 Three.js 原生物件
-  return (
-    <group ref={groupRef} position={position} scale={scale}>
-      <primitive object={gltf.scene} />
-    </group>
-  )
-}
+    // 渲染 Avatar 模型
+    // 使用 primitive 組件渲染 Three.js 原生物件
+    return (
+      <group ref={groupRef} position={position} scale={scale}>
+        <primitive object={gltf.scene} />
+      </group>
+    )
+  }
+)
+
+export default AvatarModel
 
 /**
  * 預載入 Avatar 模型
