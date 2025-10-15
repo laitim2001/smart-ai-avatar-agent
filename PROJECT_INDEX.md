@@ -3,7 +3,7 @@
 > **目標**: 提供專案所有檔案的完整索引與說明，讓 AI 助手和開發者快速定位所需資源
 > **維護頻率**: 每個 Story 完成後更新
 > **最後更新**: 2025-10-15 (Story 1.1 完成)
-> **版本**: v1.1.0
+> **版本**: v1.1.1
 
 ---
 
@@ -142,8 +142,8 @@ agent-brain/
 | `agent-brain/KNOWLEDGE_BASE_GUIDE.md` | ✅ | 知識庫結構與模板說明 | 架構變更時 |
 | `agent-brain/MAINTENANCE_GUIDE.md` | ✅ | 維護工作流程與最佳實踐 | 發現新流程時 |
 | `agent-brain/TECHNICAL_FLOW.md` | ✅ | 技術實作流程詳解 | 技術架構變更時 |
-| `agent-brain/core/cdo_faq.md` | ✅ | 高頻問題標準答案 | 每週或收到新問題時 |
-| `agent-brain/core/kpi_dictionary.md` | ✅ | KPI 定義與計算口徑 | KPI 變更時立即更新 |
+| `agent-brain/cdo_faq.md` | ✅ | 高頻問題標準答案 | 每週或收到新問題時 |
+| `agent-brain/kpi_dictionary.md` | ✅ | KPI 定義與計算口徑 | KPI 變更時立即更新 |
 
 **關鍵提醒**:
 - 🔴 每次對話都會載入 `persona.md`
@@ -290,54 +290,54 @@ export const useChatStore = create<ChatState>((set, get) => ({
 | Story | 檔案路徑 | 狀態 | 優先級 | 預估時間 |
 |-------|---------|------|--------|---------|
 | **1.1** | `docs/stories/1.1.next-js-project-init.md` | ✅ | P0 | 1 天 |
-| **1.2** | `docs/stories/1.2.azure-services-setup.md` | ⏳ | P0 | 1 天 |
-| **1.3** | `docs/stories/1.3.base-ui-framework.md` | ⏳ | P0 | 1 天 |
-| **1.4** | `docs/stories/1.4.health-check-api.md` | ⏳ | P0 | 0.5 天 |
-| **1.5** | `docs/stories/1.5.cicd-azure-deployment.md` | ⏳ | P1 | 1 天 |
+| **1.2** | `docs/stories/1.2.azure-services-setup.md` | ✅ | P0 | 1 天 |
+| **1.3** | `docs/stories/1.3.base-ui-framework.md` | ✅ | P0 | 1 天 |
+| **1.4** | `docs/stories/1.4.health-check-api.md` | ✅ | P0 | 0.5 天 |
+| **1.5** | `docs/stories/1.5.cicd-azure-deployment.md` | ✅ | P1 | 1 天 |
 
 ### 5.2 Epic 2: 3D Avatar 視覺化與動畫（5 Stories）
 
 | Story | 檔案路徑 | 狀態 | 優先級 | 預估時間 |
 |-------|---------|------|--------|---------|
-| **2.1** | `docs/stories/2.1.threejs-scene-setup.md` | ⏳ | P0 | 1 天 |
-| **2.2** | `docs/stories/2.2.avatar-model-loading.md` | ⏳ | P0 | 1 天 |
-| **2.3** | `docs/stories/2.3.idle-animations.md` | ⏳ | P0 | 1 天 |
-| **2.4** | `docs/stories/2.4.facial-expressions-head-movements.md` | ⏳ | P1 | 1 天 |
-| **2.5** | `docs/stories/2.5.avatar-selector.md` | ⏳ | P1 | 0.5 天 |
+| **2.1** | `docs/stories/2.1.threejs-scene-setup.md` | ✅ | P0 | 1 天 |
+| **2.2** | `docs/stories/2.2.avatar-model-loading.md` | ✅ | P0 | 1 天 |
+| **2.3** | `docs/stories/2.3.idle-animations.md` | ✅ | P0 | 1 天 |
+| **2.4** | `docs/stories/2.4.facial-expressions-head-movements.md` | ✅ | P1 | 1 天 |
+| **2.5** | `docs/stories/2.5.avatar-selector.md` | ✅ | P1 | 0.5 天 |
 
 ### 5.3 Epic 3: LLM 對話與 TTS 整合（7 Stories）
 
 | Story | 檔案路徑 | 狀態 | 優先級 | 預估時間 |
 |-------|---------|------|--------|---------|
-| **3.1** | `docs/stories/3.1.chat-interface-ui.md` | ⏳ | P0 | 0.5 天 |
-| **3.2** | `docs/stories/3.2.zustand-state-management.md` | ⏳ | P0 | 0.5 天 |
-| **3.3** | `docs/stories/3.3.chat-api-sse.md` | ⏳ | P0 | 1 天 |
-| **3.4** | `docs/stories/3.4.sse-stream-reception.md` | ⏳ | P0 | 1 天 |
-| **3.5** | `docs/stories/3.5.tts-api.md` | ⏳ | P0 | 1 天 |
-| **3.6** | `docs/stories/3.6.web-audio-integration.md` | ⏳ | P0 | 0.5 天 |
-| **3.7** | `docs/stories/3.7.e2e-conversation-flow.md` | ⏳ | P0 | 1 天 |
+| **3.1** | `docs/stories/3.1.chat-interface-ui.md` | ✅ | P0 | 0.5 天 |
+| **3.2** | `docs/stories/3.2.zustand-state-management.md` | ✅ | P0 | 0.5 天 |
+| **3.3** | `docs/stories/3.3.chat-api-sse.md` | ✅ | P0 | 1 天 |
+| **3.4** | `docs/stories/3.4.sse-stream-reception.md` | ✅ | P0 | 1 天 |
+| **3.5** | `docs/stories/3.5.tts-api.md` | ✅ | P0 | 1 天 |
+| **3.6** | `docs/stories/3.6.web-audio-integration.md` | ✅ | P0 | 0.5 天 |
+| **3.7** | `docs/stories/3.7.e2e-conversation-flow.md` | ✅ | P0 | 1 天 |
 
 ### 5.4 Epic 4: Lip Sync 嘴型同步（5 Stories）
 
 | Story | 檔案路徑 | 狀態 | 優先級 | 預估時間 |
 |-------|---------|------|--------|---------|
-| **4.1** | `docs/stories/4.1.audio-analysis-viseme-generation.md` | ⏳ | P0 | 1 天 |
-| **4.2** | `docs/stories/4.2.avatar-blendshape-control.md` | ⏳ | P0 | 1 天 |
-| **4.3** | `docs/stories/4.3.lipsync-controller-audio-sync.md` | ⏳ | P0 | 1 天 |
-| **4.4** | `docs/stories/4.4.lipsync-visual-optimization.md` | ⏳ | P1 | 1 天 |
-| **4.5** | `docs/stories/4.5.lipsync-fallback-error-handling.md` | ⏳ | P1 | 1 天 |
+| **4.1** | `docs/stories/4.1.audio-analysis-viseme-generation.md` | ✅ | P0 | 1 天 |
+| **4.2** | `docs/stories/4.2.avatar-blendshape-control.md` | ✅ | P0 | 1 天 |
+| **4.3** | `docs/stories/4.3.lipsync-controller-audio-sync.md` | ✅ | P0 | 1 天 |
+| **4.4** | `docs/stories/4.4.lipsync-visual-optimization.md` | ✅ | P1 | 1 天 |
+| **4.5** | `docs/stories/4.5.lipsync-fallback-error-handling.md` | ✅ | P1 | 1 天 |
 
 ### 5.5 Epic 5: 效能優化、測試與部署（7 Stories）
 
 | Story | 檔案路徑 | 狀態 | 優先級 | 預估時間 |
 |-------|---------|------|--------|---------|
-| **5.1** | `docs/stories/5.1.performance-optimization.md` | ⏳ | P1 | 2 天 |
-| **5.2** | `docs/stories/5.2.error-handling-ux-enhancement.md` | ⏳ | P1 | 1 天 |
-| **5.3** | `docs/stories/5.3.ui-ux-polish.md` | ⏳ | P1 | 1 天 |
-| **5.4** | `docs/stories/5.4.browser-compatibility-testing.md` | ⏳ | P2 | 1 天 |
-| **5.5** | `docs/stories/5.5.azure-static-web-apps-deployment.md` | ⏳ | P0 | 1 天 |
-| **5.6** | `docs/stories/5.6.technical-validation-report.md` | ⏳ | P1 | 1 天 |
-| **5.7** | `docs/stories/5.7.documentation-deployment-guide.md` | ⏳ | P2 | 0.5 天 |
+| **5.1** | `docs/stories/5.1.performance-optimization.md` | ✅ | P1 | 2 天 |
+| **5.2** | `docs/stories/5.2.error-handling-ux-enhancement.md` | ✅ | P1 | 1 天 |
+| **5.3** | `docs/stories/5.3.ui-ux-polish.md` | ✅ | P1 | 1 天 |
+| **5.4** | `docs/stories/5.4.browser-compatibility-testing.md` | ✅ | P2 | 1 天 |
+| **5.5** | `docs/stories/5.5.azure-static-web-apps-deployment.md` | ✅ | P0 | 1 天 |
+| **5.6** | `docs/stories/5.6.technical-validation-report.md` | ✅ | P1 | 1 天 |
+| **5.7** | `docs/stories/5.7.documentation-deployment-guide.md` | ✅ | P2 | 0.5 天 |
 
 ---
 
@@ -351,7 +351,7 @@ export const useChatStore = create<ChatState>((set, get) => ({
 | `tsconfig.json` | ✅ | TypeScript 配置（嚴格模式） | 1.1 |
 | `next.config.js` | ✅ | Next.js 配置 | 1.1 |
 | `tailwind.config.ts` | ✅ | Tailwind CSS 配置 | 1.1 |
-| `postcss.config.js` | ✅ | PostCSS 配置 | 1.1 |
+| `postcss.config.js` | ⏳ | PostCSS 配置 | 1.1 |
 | `.eslintrc.json` | ✅ | ESLint 規則 | 1.1 |
 | `.prettierrc` | ✅ | Prettier 格式化 | 1.1 |
 | `.env.local.example` | ✅ | 環境變數範例 | 1.1 |
@@ -404,7 +404,7 @@ NEXT_PUBLIC_APP_URL=http://localhost:3000
 
 | 檔案路徑 | 狀態 | 說明 | 用途 |
 |---------|------|------|------|
-| `scripts/generate-index.js` | ⏳ | 自動生成專案索引 | 維護 PROJECT_INDEX.md |
+| `scripts/generate-index.js` | ✅ | 自動生成專案索引 | 維護 PROJECT_INDEX.md |
 | `scripts/validate-knowledge-base.js` | ⏳ | 驗證知識庫格式 | 確保 MD 格式正確 |
 | `scripts/deploy-azure.sh` | ⏳ | Azure 部署腳本 | 自動化部署流程 |
 

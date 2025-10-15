@@ -1,0 +1,25 @@
+#!/usr/bin/env sh
+. "$(dirname -- "$0")/_/husky.sh"
+
+# 索引驗證 - 確保 PROJECT_INDEX.md 與實際檔案系統同步
+echo "🔍 執行索引驗證..."
+
+# 執行驗證
+npm run validate-index
+
+# 如果驗證失敗，阻止 commit
+if [ $? -ne 0 ]; then
+  echo ""
+  echo "❌ 索引驗證失敗！"
+  echo ""
+  echo "💡 建議操作："
+  echo "   1. 執行 'npm run sync-index -- --dry-run' 查看需要更新的內容"
+  echo "   2. 執行 'npm run sync-index' 自動同步索引"
+  echo "   3. 檢查並提交更新後的 PROJECT_INDEX.md"
+  echo "   4. 重新執行 git commit"
+  echo ""
+  exit 1
+fi
+
+echo "✅ 索引驗證通過！"
+echo ""

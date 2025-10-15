@@ -12,7 +12,9 @@
     "start": "next start",
     "lint": "next lint",
     "format": "prettier --write \"**/*.{js,jsx,ts,tsx,json,md}\"",
-    "generate-index": "node scripts/generate-index.js"
+    "generate-index": "node scripts/generate-index.js",
+    "validate-index": "node scripts/validate-index.js",
+    "sync-index": "node scripts/sync-index.js"
   },
   "repository": {
     "type": "git",
