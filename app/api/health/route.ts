@@ -3,76 +3,80 @@
  * API 健康檢查端點 (app/api/health/route.ts)
  * ================================================================
  *
- * 提供 Azure 服務配置狀態的健康檢查 API
+ * 檢查 API 服務健康狀態
  *
- * 端點：GET /api/health
+ * @endpoint GET /api/health
  *
- * 回應範例：
+ * @returns 標準 API 回應格式，包含健康檢查資料
+ *
+ * @example 成功回應
  * ```json
  * {
- *   "status": "ok",
- *   "timestamp": "2025-10-15T12:00:00.000Z",
- *   "services": {
- *     "openai": {
- *       "configured": true,
- *       "deployment": "gpt-4-turbo",
- *       "apiVersion": "2024-02-01"
- *     },
- *     "speech": {
- *       "configured": true,
- *       "defaultVoice": "zh-TW-HsiaoChenNeural",
- *       "region": "eastasia"
- *     }
- *   }
+ *   "success": true,
+ *   "data": {
+ *     "status": "ok",
+ *     "timestamp": "2025-10-15T12:00:00.000Z",
+ *     "version": "1.0.0"
+ *   },
+ *   "timestamp": "2025-10-15T12:00:00.000Z"
  * }
  * ```
+ *
+ * @swagger
+ * /api/health:
+ *   get:
+ *     summary: Health check endpoint
+ *     description: 檢查 API 服務健康狀態
+ *     tags:
+ *       - Health
+ *     responses:
+ *       200:
+ *         description: Service is healthy
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 status:
+ *                   type: string
+ *                   example: ok
+ *                 timestamp:
+ *                   type: string
+ *                   format: date-time
+ *                 version:
+ *                   type: string
+ *                   example: 1.0.0
  */
 
-import { NextResponse } from 'next/server'
-import { getConfigSummary as getOpenAIConfig } from '@/lib/azure/openai'
-import { getConfigSummary as getSpeechConfig } from '@/lib/azure/speech'
+import { NextRequest } from 'next/server'
+import {
+  createSuccessResponse,
+  handleError,
+} from '@/lib/utils/error-handler'
+import type { HealthCheckResponse } from '@/types/api'
 
-export async function GET() {
+/**
+ * Health Check API
+ * GET /api/health
+ *
+ * 檢查 API 服務健康狀態
+ */
+export async function GET(request: NextRequest) {
   try {
-    // 獲取配置摘要（安全，不暴露敏感資訊）
-    const openaiConfig = getOpenAIConfig()
-    const speechConfig = getSpeechConfig()
-
-    // 判斷整體狀態
-    const allConfigured = openaiConfig.configured && speechConfig.configured
-    const status = allConfigured ? 'ok' : 'partial'
-
-    return NextResponse.json({
-      status,
+    const response: HealthCheckResponse = {
+      status: 'ok',
       timestamp: new Date().toISOString(),
-      services: {
-        openai: {
-          configured: openaiConfig.configured,
-          deployment: openaiConfig.deployment,
-          apiVersion: openaiConfig.apiVersion,
-          endpoint: openaiConfig.endpoint,
-        },
-        speech: {
-          configured: speechConfig.configured,
-          defaultVoice: speechConfig.defaultVoice,
-          defaultLanguage: speechConfig.defaultLanguage,
-          region: speechConfig.region,
-        },
-      },
-      message: allConfigured
-        ? 'All Azure services are configured'
-        : 'Some Azure services are not configured',
-    })
+      version: '1.0.0',
+    }
+
+    return createSuccessResponse(response)
   } catch (error) {
-    return NextResponse.json(
-      {
-        status: 'error',
-        timestamp: new Date().toISOString(),
-        error:
-          error instanceof Error ? error.message : 'Unknown error occurred',
-        message: 'Failed to check Azure services configuration',
-      },
-      { status: 500 }
-    )
+    return handleError(error)
   }
 }
+
+/**
+ * Runtime Configuration
+ * 使用 Edge Runtime 以獲得更快的冷啟動
+ */
+export const runtime = 'edge'
