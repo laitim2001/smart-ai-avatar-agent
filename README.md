@@ -163,15 +163,79 @@ npm test -- --coverage
 
 ## 🚀 部署
 
-本專案設計為部署至 **Azure Static Web Apps**：
+### 生產環境
+
+- **平台**: Azure Static Web Apps
+- **部署方式**: GitHub Actions 自動部署
+- **URL**: 部署後自動生成（例如：`https://<app-name>.azurestaticapps.net`）
+
+### 部署流程
+
+本專案採用 **GitHub Actions CI/CD** 自動化部署流程：
+
+1. **推送程式碼至 `main` 分支**
+   ```bash
+   git push origin main
+   ```
+
+2. **GitHub Actions 自動觸發** 並執行：
+   - ✅ ESLint 程式碼檢查
+   - ✅ TypeScript 型別檢查
+   - ✅ Next.js 專案建置
+   - ✅ 部署至 Azure Static Web Apps
+
+3. **約 5-10 分鐘完成部署**
+
+### 環境變數設定
+
+部署前需要在以下位置設定環境變數：
+
+#### 1. GitHub Secrets（CI/CD 使用）
+在 GitHub Repository 設定以下 Secrets：
+- Settings → Secrets and variables → Actions → New repository secret
+
+必要 Secrets：
+- `AZURE_STATIC_WEB_APPS_API_TOKEN` - Azure Static Web Apps 部署 Token
+- `AZURE_OPENAI_API_KEY` - Azure OpenAI API 金鑰
+- `AZURE_OPENAI_ENDPOINT` - Azure OpenAI 端點 URL
+- `AZURE_OPENAI_DEPLOYMENT` - Azure OpenAI 部署名稱
+- `AZURE_SPEECH_KEY` - Azure Speech Services API 金鑰
+- `AZURE_SPEECH_REGION` - Azure Speech Services 區域
+
+#### 2. Azure Static Web Apps 配置（生產環境使用）
+在 Azure Portal 設定環境變數：
+- Azure Portal → Static Web Apps → Configuration → Application settings
+
+必要環境變數：
+```
+AZURE_OPENAI_API_KEY=<your_key>
+AZURE_OPENAI_ENDPOINT=https://<your-resource>.openai.azure.com/
+AZURE_OPENAI_DEPLOYMENT=gpt-4-turbo
+AZURE_SPEECH_KEY=<your_speech_key>
+AZURE_SPEECH_REGION=eastasia
+NODE_ENV=production
+```
+
+### 手動部署（緊急情況）
+
+如需手動部署，可使用 Azure Static Web Apps CLI：
 
 ```bash
+# 安裝 Azure Static Web Apps CLI
+npm install -g @azure/static-web-apps-cli
+
 # 建置專案
 npm run build
 
-# 部署至 Azure (需先設定 Azure CLI)
-# 詳見 docs/stories/5.5.azure-static-web-apps-deployment.md
+# 部署（需要部署 Token）
+swa deploy --app-location . --output-location .next --deployment-token <token>
 ```
+
+### 詳細部署指南
+
+完整的部署設定與疑難排解，請參考：
+- **部署指南**: [docs/deployment-guide.md](docs/deployment-guide.md)
+- **Story 1.5**: [docs/stories/1.5.cicd-azure-deployment.md](docs/stories/1.5.cicd-azure-deployment.md)
 
 ## 🤝 貢獻指南
 
