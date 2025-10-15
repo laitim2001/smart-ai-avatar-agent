@@ -30,6 +30,8 @@
   "homepage": "https://github.com/laitim2001/smart-ai-avatar-agent#readme",
   "dependencies": {
     "@azure/openai": "^2.0.0",
+    "@react-three/drei": "^10.7.6",
+    "@react-three/fiber": "^9.4.0",
     "@tailwindcss/postcss": "^4.1.14",
     "@types/node": "^24.7.2",
     "@types/react": "^19.2.2",
@@ -49,7 +51,11 @@
     "tailwind-merge": "^3.3.1",
     "tailwindcss": "^4.1.14",
     "tailwindcss-animate": "^1.0.7",
+    "three": "^0.180.0",
     "tsx": "^4.20.6",
     "typescript": "^5.9.3"
+  },
+  "devDependencies": {
+    "@types/three": "^0.180.0"
   }
 }
