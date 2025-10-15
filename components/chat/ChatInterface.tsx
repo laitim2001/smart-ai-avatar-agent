@@ -1,22 +1,8 @@
 'use client'
 
-import { useState, useRef, useEffect } from 'react'
+import { useRef, useEffect } from 'react'
 import Spinner from './Spinner'
-
-/**
- * Message 型別定義
- * @interface Message
- * @property {string} id - 唯一識別碼（格式：`user-${timestamp}` 或 `avatar-${timestamp}`）
- * @property {'user' | 'avatar'} role - 訊息來源：使用者或 Avatar
- * @property {string} content - 訊息內容（支援多行文字）
- * @property {Date} timestamp - 訊息時間戳記（用於顯示時間與排序）
- */
-interface Message {
-  id: string
-  role: 'user' | 'avatar'
-  content: string
-  timestamp: Date
-}
+import { useChatStore } from '@/stores/chatStore'
 
 /**
  * 對話介面組件
@@ -38,10 +24,9 @@ interface Message {
  * ```
  */
 export default function ChatInterface() {
-  // 狀態管理
-  const [messages, setMessages] = useState<Message[]>([])
-  const [input, setInput] = useState('')
-  const [isLoading, setIsLoading] = useState(false)
+  // Zustand 狀態管理
+  const { messages, input, isLoading, sendMessage, clearMessages, setInput } =
+    useChatStore()
 
   // Refs
   const messagesEndRef = useRef<HTMLDivElement>(null)
@@ -62,39 +47,9 @@ export default function ChatInterface() {
     if (e.key === 'Enter' && !e.shiftKey) {
       e.preventDefault()
       if (!isLoading && input.trim() !== '') {
-        handleSend()
+        sendMessage()
       }
     }
-  }
-
-  /**
-   * 處理送出訊息
-   */
-  const handleSend = () => {
-    if (input.trim() === '' || isLoading) return
-
-    const userMessage: Message = {
-      id: `user-${Date.now()}`,
-      role: 'user',
-      content: input.trim(),
-      timestamp: new Date(),
-    }
-
-    setMessages((prev) => [...prev, userMessage])
-    setInput('')
-    setIsLoading(true)
-
-    // 模擬 Avatar 回應（後續 Story 3.3 將整合真實 API）
-    setTimeout(() => {
-      const avatarMessage: Message = {
-        id: `avatar-${Date.now()}`,
-        role: 'avatar',
-        content: '這是 Avatar 的測試回應。',
-        timestamp: new Date(),
-      }
-      setMessages((prev) => [...prev, avatarMessage])
-      setIsLoading(false)
-    }, 1500)
   }
 
   /**
@@ -102,7 +57,7 @@ export default function ChatInterface() {
    */
   const handleClear = () => {
     if (window.confirm('確定要清除所有對話紀錄嗎？')) {
-      setMessages([])
+      clearMessages()
     }
   }
 
@@ -163,7 +118,7 @@ export default function ChatInterface() {
             className="flex-1 resize-none rounded-lg border border-gray-300 dark:border-gray-600 px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500 disabled:bg-gray-100 dark:disabled:bg-gray-700 disabled:cursor-not-allowed dark:bg-gray-900 dark:text-gray-100"
           />
           <button
-            onClick={handleSend}
+            onClick={sendMessage}
             disabled={isLoading || input.trim() === ''}
             className="bg-blue-600 text-white px-6 py-2 rounded-lg hover:bg-blue-700 disabled:bg-gray-300 dark:disabled:bg-gray-600 disabled:cursor-not-allowed transition-colors flex items-center justify-center space-x-2"
           >
