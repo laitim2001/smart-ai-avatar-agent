@@ -3,7 +3,7 @@
 > **目標**: 提供專案所有檔案的完整索引與說明，讓 AI 助手和開發者快速定位所需資源
 > **維護頻率**: 每個 Story 完成後更新
 > **最後更新**: 2025-10-15 (Story 1.1 完成)
-> **版本**: v1.1.2
+> **版本**: v1.1.3
 
 ---
 
@@ -197,11 +197,11 @@ agent-brain/
 **Avatar 3D 組件** (`components/avatar/`):
 | 檔案路徑 | 狀態 | 說明 | Story |
 |---------|------|------|-------|
-| `components/avatar/AvatarCanvas.tsx` | ⏳ | Three.js 場景容器 | 2.1 |
-| `components/avatar/AvatarModel.tsx` | ⏳ | 3D Avatar 模型載入 | 2.2 |
+| `components/avatar/AvatarCanvas.tsx` | ✅ | Three.js 場景容器 | 2.1 |
+| `components/avatar/AvatarModel.tsx` | ✅ | 3D Avatar 模型載入 | 2.2 |
 | `components/avatar/LipSyncController.tsx` | ⏳ | Lip Sync 控制器 | 4.3 |
 | `components/avatar/AnimationController.tsx` | ⏳ | 動畫控制器 | 2.3 |
-| `components/avatar/AvatarSelector.tsx` | ⏳ | Avatar 選擇器 | 2.5 |
+| `components/avatar/AvatarSelector.tsx` | ✅ | Avatar 選擇器 | 2.5 |
 
 ---
 
@@ -234,7 +234,7 @@ agent-brain/
 | 檔案路徑 | 狀態 | 說明 | Story | 關鍵功能 |
 |---------|------|------|-------|---------|
 | `lib/utils/audio.ts` | ⏳ | 音訊處理工具 | 3.6 | Web Audio API 封裝 |
-| `lib/utils/error-handler.ts` | ⏳ | 錯誤處理工具 | 5.2 | 統一錯誤處理 |
+| `lib/utils/error-handler.ts` | ✅ | 錯誤處理工具 | 5.2 | 統一錯誤處理 |
 | `lib/utils/logger.ts` | ⏳ | 日誌工具 | 5.2 | 結構化日誌 |
 
 ---
@@ -277,8 +277,8 @@ export const useChatStore = create<ChatState>((set, get) => ({
 |---------|------|------|-------|-----------|
 | `types/chat.ts` | ⏳ | 對話相關型別 | 3.2 | ChatMessage, ConversationHistory |
 | `types/audio.ts` | ⏳ | 音訊相關型別 | 3.2 | AudioConfig, TTSOptions |
-| `types/avatar.ts` | ⏳ | Avatar 相關型別 | 2.1 | AvatarConfig, Animation |
-| `types/api.ts` | ⏳ | API 回應型別 | 3.3 | ChatResponse, HealthCheckResponse |
+| `types/avatar.ts` | ✅ | Avatar 相關型別 | 2.1 | AvatarConfig, Animation |
+| `types/api.ts` | ✅ | API 回應型別 | 3.3 | ChatResponse, HealthCheckResponse |
 | `types/knowledge.ts` | ⏳ | 知識庫型別 | 3.3 | KnowledgeDocument, SearchResult |
 
 ---
