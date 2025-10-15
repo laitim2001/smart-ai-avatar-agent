@@ -7,6 +7,7 @@
 import { create } from 'zustand'
 import { Message, ChatStore } from '@/types/chat'
 import { sendChatMessage } from '@/lib/api/chat'
+import { useAudioStore } from './audioStore'
 
 /**
  * Chat Store Hook
@@ -75,6 +76,9 @@ export const useChatStore = create<ChatStore>((set, get) => ({
       messages: [...state.messages, avatarMessage],
     }))
 
+    // 記錄效能監控時間點
+    const startTime = Date.now()
+
     // 呼叫 Chat API（SSE 串流）
     sendChatMessage(
       apiMessages,
@@ -89,18 +93,71 @@ export const useChatStore = create<ChatStore>((set, get) => ({
         }))
       },
       // onDone: 串流完成
-      () => {
+      async () => {
+        const llmEndTime = Date.now()
+        console.log(
+          `[Performance] LLM Response Time: ${llmEndTime - startTime}ms`
+        )
+
+        // 取得完整回應內容
+        const fullContent =
+          get().messages.find((msg) => msg.id === avatarMessageId)?.content ||
+          ''
+
+        // 更新 Loading 狀態
         set({ isLoading: false })
+
+        // 自動播放語音（非阻塞）
+        try {
+          const ttsStartTime = Date.now()
+          const { speakText } = useAudioStore.getState()
+          await speakText(fullContent)
+          const ttsEndTime = Date.now()
+
+          const totalTime = ttsEndTime - startTime
+          console.log(`[Performance] TTS Time: ${ttsEndTime - ttsStartTime}ms`)
+          console.log(`[Performance] Total E2E Time: ${totalTime}ms`)
+
+          if (totalTime > 2500) {
+            console.warn(
+              `[Performance] E2E delay exceeded target: ${totalTime}ms > 2500ms`
+            )
+          }
+        } catch (ttsError) {
+          console.error('[TTS Error]', ttsError)
+          // TTS 失敗不影響對話，僅無語音
+        }
       },
       // onError: 錯誤處理
       (error) => {
-        console.error('[Chat API Error]', error)
+        console.error('[Chat Error]', error)
+
+        // 分類錯誤類型
+        let errorMessage = '抱歉，我遇到了一些問題。'
+
+        if (
+          error.includes('network') ||
+          error.includes('fetch failed') ||
+          !navigator.onLine
+        ) {
+          errorMessage = '網路連線不穩定，請檢查網路設定。'
+        } else if (error.includes('timeout')) {
+          errorMessage = 'Avatar 正在思考中，請稍候再試...'
+        } else if (error.includes('quota')) {
+          errorMessage = 'Avatar 目前忙碌中，請稍後再試。'
+        }
+
+        // 移除臨時 Avatar 訊息，加入錯誤訊息
         set((state) => ({
-          messages: state.messages.map((msg) =>
-            msg.id === avatarMessageId
-              ? { ...msg, content: `錯誤：${error}` }
-              : msg
-          ),
+          messages: [
+            ...state.messages.filter((m) => m.id !== avatarMessageId),
+            {
+              id: `error-${Date.now()}`,
+              role: 'avatar' as const,
+              content: errorMessage,
+              timestamp: new Date(),
+            },
+          ],
           isLoading: false,
         }))
       }
