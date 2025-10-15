@@ -3,7 +3,7 @@
 > **目標**: 提供專案所有檔案的完整索引與說明，讓 AI 助手和開發者快速定位所需資源
 > **維護頻率**: 每個 Story 完成後更新
 > **最後更新**: 2025-10-15 (Story 1.1 完成)
-> **版本**: v1.1.3
+> **版本**: v1.1.4
 
 ---
 
@@ -168,8 +168,8 @@ agent-brain/
 | 檔案路徑 | 狀態 | 說明 | Story | 優先級 |
 |---------|------|------|-------|--------|
 | `app/api/health/route.ts` | ✅ | 健康檢查 API | 1.4 | P0 |
-| `app/api/chat/route.ts` | ⏳ | LLM 對話 API（SSE 串流） | 3.3 | P0 |
-| `app/api/tts/route.ts` | ⏳ | TTS 語音合成 API | 3.5 | P0 |
+| `app/api/chat/route.ts` | ✅ | LLM 對話 API（SSE 串流） | 3.3 | P0 |
+| `app/api/tts/route.ts` | ✅ | TTS 語音合成 API | 3.5 | P0 |
 | `app/api/stt/route.ts` | ⏳ | STT 語音識別 API（選做） | 5.2 | P2 |
 
 ---
@@ -189,7 +189,7 @@ agent-brain/
 **Chat 對話組件** (`components/chat/`):
 | 檔案路徑 | 狀態 | 說明 | Story |
 |---------|------|------|-------|
-| `components/chat/ChatInterface.tsx` | ⏳ | 對話介面主組件 | 3.1 |
+| `components/chat/ChatInterface.tsx` | ✅ | 對話介面主組件 | 3.1 |
 | `components/chat/MessageBubble.tsx` | ⏳ | 訊息氣泡 | 3.1 |
 | `components/chat/InputArea.tsx` | ⏳ | 輸入區域 | 3.1 |
 | `components/chat/MessageList.tsx` | ⏳ | 訊息列表 | 3.1 |
@@ -275,8 +275,8 @@ export const useChatStore = create<ChatState>((set, get) => ({
 
 | 檔案路徑 | 狀態 | 說明 | Story | 定義的型別 |
 |---------|------|------|-------|-----------|
-| `types/chat.ts` | ⏳ | 對話相關型別 | 3.2 | ChatMessage, ConversationHistory |
-| `types/audio.ts` | ⏳ | 音訊相關型別 | 3.2 | AudioConfig, TTSOptions |
+| `types/chat.ts` | ✅ | 對話相關型別 | 3.2 | ChatMessage, ConversationHistory |
+| `types/audio.ts` | ✅ | 音訊相關型別 | 3.2 | AudioConfig, TTSOptions |
 | `types/avatar.ts` | ✅ | Avatar 相關型別 | 2.1 | AvatarConfig, Animation |
 | `types/api.ts` | ✅ | API 回應型別 | 3.3 | ChatResponse, HealthCheckResponse |
 | `types/knowledge.ts` | ⏳ | 知識庫型別 | 3.3 | KnowledgeDocument, SearchResult |
