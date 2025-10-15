@@ -52,6 +52,13 @@ export interface AudioStore {
 
   // Actions
   /**
+   * 文字轉語音並播放
+   * @param {string} text - 要轉換的文字
+   * @returns {Promise<void>}
+   */
+  speakText: (text: string) => Promise<void>
+
+  /**
    * 播放音訊
    * @param {AudioItem} audio - 要播放的音訊項目
    */

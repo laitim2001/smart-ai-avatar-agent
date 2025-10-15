@@ -6,6 +6,7 @@
 
 import { create } from 'zustand'
 import { AudioState, AudioItem, AudioStore } from '@/types/audio'
+import { getAudioPlayer } from '@/lib/audio/player'
 
 /**
  * Audio Store Hook
@@ -14,15 +15,10 @@ import { AudioState, AudioItem, AudioStore } from '@/types/audio'
  *
  * @example
  * ```tsx
- * const { state, currentAudio, playAudio, pauseAudio } = useAudioStore()
+ * const { state, currentAudio, speakText, pauseAudio } = useAudioStore()
  *
- * // 播放音訊
- * playAudio({
- *   id: 'audio-1',
- *   url: 'https://example.com/audio.mp3',
- *   text: '你好',
- *   timestamp: new Date()
- * })
+ * // 文字轉語音並播放
+ * await speakText('你好，我是 Avatar')
  *
  * // 暫停播放
  * <button onClick={pauseAudio} disabled={state !== AudioState.PLAYING}>
@@ -38,35 +34,113 @@ export const useAudioStore = create<AudioStore>((set, get) => ({
   volume: 1.0,
 
   // Actions
+
+  /**
+   * 文字轉語音並播放
+   * @param {string} text - 要轉換的文字
+   */
+  speakText: async (text: string): Promise<void> => {
+    try {
+      // 停止當前播放
+      const { stopAudio } = get()
+      stopAudio()
+
+      // 更新狀態為 Loading
+      set({ state: AudioState.LOADING })
+
+      // 呼叫 TTS API
+      const response = await fetch('/api/tts', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ text }),
+      })
+
+      if (!response.ok) {
+        const errorData = await response.json().catch(() => ({}))
+        throw new Error(errorData.error || 'TTS API request failed')
+      }
+
+      // 取得音訊 Blob
+      const audioBlob = await response.blob()
+      const audioUrl = URL.createObjectURL(audioBlob)
+
+      // 載入音訊
+      const audioPlayer = getAudioPlayer()
+      const audioBuffer = await audioPlayer.loadAudio(audioUrl)
+
+      // 建立 AudioItem
+      const audioItem: AudioItem = {
+        id: `audio-${Date.now()}`,
+        url: audioUrl,
+        text: text,
+        duration: audioBuffer.duration,
+        timestamp: new Date(),
+      }
+
+      // 更新狀態並播放
+      set({
+        currentAudio: audioItem,
+        state: AudioState.PLAYING,
+      })
+
+      audioPlayer.play(audioBuffer, () => {
+        // 播放結束回調
+        set({
+          currentAudio: null,
+          state: AudioState.IDLE,
+        })
+
+        // 清理 Blob URL
+        URL.revokeObjectURL(audioUrl)
+
+        // 播放下一個音訊（如有）
+        const { playNext } = get()
+        playNext()
+      })
+    } catch (error) {
+      console.error('[Audio Error]', error)
+      set({
+        currentAudio: null,
+        state: AudioState.IDLE,
+      })
+      throw error
+    }
+  },
+
   playAudio: (audio) => {
     set({
       currentAudio: audio,
       state: AudioState.PLAYING,
     })
-    // 實際播放邏輯將在 Story 3.6 實作（Web Audio API）
+    // 由 speakText 處理實際播放
   },
 
   pauseAudio: () => {
     const { state } = get()
     if (state === AudioState.PLAYING) {
+      const audioPlayer = getAudioPlayer()
+      audioPlayer.pause()
       set({ state: AudioState.PAUSED })
-      // 實際暫停邏輯將在 Story 3.6 實作
     }
   },
 
   stopAudio: () => {
+    const audioPlayer = getAudioPlayer()
+    audioPlayer.stop()
     set({
       currentAudio: null,
       state: AudioState.IDLE,
     })
-    // 實際停止邏輯將在 Story 3.6 實作
   },
 
   resumeAudio: () => {
     const { state, currentAudio } = get()
     if (state === AudioState.PAUSED && currentAudio) {
+      const audioPlayer = getAudioPlayer()
+      audioPlayer.resume()
       set({ state: AudioState.PLAYING })
-      // 實際恢復播放邏輯將在 Story 3.6 實作
     }
   },
 
@@ -84,23 +158,16 @@ export const useAudioStore = create<AudioStore>((set, get) => ({
     // 限制音量範圍 0-1
     const clampedVolume = Math.max(0, Math.min(1, volume))
     set({ volume: clampedVolume })
-    // 實際音量調整邏輯將在 Story 3.6 實作
   },
 
   playNext: () => {
-    const { queue } = get()
+    const { queue, speakText } = get()
     if (queue.length > 0) {
       const [nextAudio, ...remainingQueue] = queue
-      set({
-        currentAudio: nextAudio,
-        queue: remainingQueue,
-        state: AudioState.PLAYING,
-      })
-      // 實際播放邏輯將在 Story 3.6 實作
-    } else {
-      set({
-        currentAudio: null,
-        state: AudioState.IDLE,
+      set({ queue: remainingQueue })
+      // 播放下一個音訊
+      speakText(nextAudio.text).catch((error) => {
+        console.error('[PlayNext Error]', error)
       })
     }
   },
