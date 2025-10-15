@@ -4,7 +4,7 @@
  */
 
 /**
- * 訊息介面
+ * 訊息介面（前端使用）
  * @interface Message
  * @property {string} id - 唯一識別碼（格式：`user-${timestamp}` 或 `avatar-${timestamp}`）
  * @property {'user' | 'avatar'} role - 訊息來源：使用者或 Avatar
@@ -16,6 +16,54 @@ export interface Message {
   role: 'user' | 'avatar'
   content: string
   timestamp: Date
+}
+
+/**
+ * Chat API 訊息介面（符合 Azure OpenAI 格式）
+ * @interface ChatMessage
+ * @property {'user' | 'assistant' | 'system'} role - 訊息角色
+ * @property {string} content - 訊息內容
+ */
+export interface ChatMessage {
+  role: 'user' | 'assistant' | 'system'
+  content: string
+}
+
+/**
+ * Chat API 請求介面
+ * @interface ChatRequest
+ * @property {ChatMessage[]} messages - 對話訊息陣列
+ * @property {number} [temperature] - 溫度參數（可選，預設 0.7）
+ * @property {number} [max_tokens] - 最大 tokens 數量（可選，預設 800）
+ */
+export interface ChatRequest {
+  messages: ChatMessage[]
+  temperature?: number
+  max_tokens?: number
+}
+
+/**
+ * SSE Chunk 介面
+ * @interface SSEChunk
+ * @property {string} content - 本次 chunk 的文字內容
+ * @property {boolean} [done] - 是否為最後一個 chunk
+ */
+export interface SSEChunk {
+  content: string
+  done?: boolean
+}
+
+/**
+ * API 錯誤回應介面
+ * @interface ErrorResponse
+ * @property {string} error - 錯誤訊息
+ * @property {string} [code] - 錯誤代碼（如 'TIMEOUT', 'API_ERROR'）
+ * @property {string} timestamp - 錯誤發生時間（ISO 格式）
+ */
+export interface ErrorResponse {
+  error: string
+  code?: string
+  timestamp: string
 }
 
 /**
