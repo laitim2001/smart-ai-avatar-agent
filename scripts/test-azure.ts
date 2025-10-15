@@ -103,22 +103,26 @@ async function testAzureServices() {
     const client = getOpenAIClient()
 
     // 發送簡單的測試請求
-    const response = await client.getChatCompletions(DEPLOYMENT_NAME, [
-      {
-        role: 'system',
-        content: '你是一個友善的助手。請用繁體中文回答。',
-      },
-      {
-        role: 'user',
-        content: '請說"測試成功"三個字。',
-      },
-    ])
+    const response = await client.chat.completions.create({
+      model: DEPLOYMENT_NAME,
+      messages: [
+        {
+          role: 'system',
+          content: '你是一個友善的助手。請用繁體中文回答。',
+        },
+        {
+          role: 'user',
+          content: '請說"測試成功"三個字。',
+        },
+      ],
+      max_tokens: 50,
+    })
 
     const reply = response.choices[0]?.message?.content || '無回應'
 
     console.log(`\n✅ Azure OpenAI 連接成功！`)
     console.log(`📝 測試回應: "${reply.trim()}"`)
-    console.log(`📊 使用 token: ${response.usage?.totalTokens || 0}`)
+    console.log(`📊 使用 token: ${response.usage?.total_tokens || 0}`)
   } catch (error) {
     console.log('\n❌ Azure OpenAI 連接失敗')
     console.log(`錯誤訊息: ${error instanceof Error ? error.message : String(error)}`)

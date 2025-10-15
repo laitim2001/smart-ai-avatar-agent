@@ -30,6 +30,7 @@
   "homepage": "https://github.com/laitim2001/smart-ai-avatar-agent#readme",
   "dependencies": {
     "@azure/openai": "^2.0.0",
+    "@tailwindcss/postcss": "^4.1.14",
     "@types/node": "^24.7.2",
     "@types/react": "^19.2.2",
     "@types/react-dom": "^19.2.2",
@@ -41,6 +42,7 @@
     "eslint-config-next": "^15.5.5",
     "microsoft-cognitiveservices-speech-sdk": "^1.46.0",
     "next": "^15.5.5",
+    "openai": "^6.3.0",
     "postcss": "^8.5.6",
     "react": "^19.2.0",
     "react-dom": "^19.2.0",

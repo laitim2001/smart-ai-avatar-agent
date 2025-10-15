@@ -116,12 +116,13 @@
 @layer base {
   /* 全域邊框色彩 */
   * {
-    @apply border-border;
+    border-color: hsl(var(--border));
   }
 
   /* Body 基礎樣式 */
   body {
-    @apply bg-background text-foreground;
+    background-color: hsl(var(--background));
+    color: hsl(var(--foreground));
     font-feature-settings: "rlig" 1, "calt" 1;
   }
 }

@@ -92,6 +92,16 @@ const config: Config = {
         },
       },
 
+      // 字體系統：繁中 + 英數支援
+      fontFamily: {
+        sans: [
+          'var(--font-noto-sans-tc)',
+          'var(--font-inter)',
+          'system-ui',
+          'sans-serif',
+        ],
+      },
+
       // 圓角半徑：基於 CSS 變數的動態圓角系統
       borderRadius: {
         lg: 'var(--radius)',                    // 大圓角 (8px)

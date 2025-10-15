@@ -22,7 +22,7 @@
  * ```
  */
 
-import { OpenAIClient, AzureKeyCredential } from '@azure/openai'
+import { AzureOpenAI } from 'openai'
 
 /**
  * Azure OpenAI 部署名稱
@@ -43,7 +43,7 @@ export const API_VERSION =
 /**
  * 獲取 Azure OpenAI 客戶端實例
  *
- * @returns {OpenAIClient} Azure OpenAI 客戶端
+ * @returns {AzureOpenAI} Azure OpenAI 客戶端
  * @throws {Error} 當環境變數未配置時拋出錯誤
  *
  * 環境變數要求：
@@ -60,7 +60,7 @@ export const API_VERSION =
  * }
  * ```
  */
-export function getOpenAIClient(): OpenAIClient {
+export function getOpenAIClient(): AzureOpenAI {
   const endpoint = process.env.AZURE_OPENAI_ENDPOINT
   const apiKey = process.env.AZURE_OPENAI_API_KEY
 
@@ -88,7 +88,12 @@ export function getOpenAIClient(): OpenAIClient {
   }
 
   // 建立並返回客戶端實例
-  return new OpenAIClient(endpoint, new AzureKeyCredential(apiKey))
+  return new AzureOpenAI({
+    endpoint,
+    apiKey,
+    apiVersion: API_VERSION,
+    deployment: DEPLOYMENT_NAME,
+  })
 }
 
 /**
