@@ -161,20 +161,159 @@
 
 ---
 
-## Sprint 2 Preview (Week 3-4)
+## Sprint 2-12 完整規劃
 
-### Tentative Scope
+### Sprint 2 Planning (Week 3-4)
 
-**Epic 3: LLM Conversation & TTS Integration (7 Stories)**
+**Sprint Goal**: 實現完整的對話功能（LLM + TTS）
 
-重點：
-- 對話介面 UI
-- Zustand 狀態管理
-- Chat API (SSE)
-- TTS 整合
-- 端到端對話流程
+**Scope**: **Epic 3: LLM Conversation & TTS Integration (全部 7 Stories)**
+
+| Story | Title | Priority | Estimated Days | Dependencies |
+|-------|-------|----------|----------------|--------------|
+| **3.1** | 對話介面 UI 實作 | P0 | 0.5 day | Epic 2 完成 |
+| **3.2** | Zustand 狀態管理設定 | P0 | 0.5 day | Story 3.1 |
+| **3.3** | Chat API 實作（Azure OpenAI + SSE 串流） | P0 | 1 day | Story 3.2 |
+| **3.4** | 前端 SSE 串流接收與顯示 | P0 | 1 day | Story 3.3 |
+| **3.5** | TTS API 實作（Azure Speech 語音合成） | P0 | 1 day | Story 3.3 |
+| **3.6** | Web Audio API 音訊播放整合 | P0 | 0.5 day | Story 3.5 |
+| **3.7** | 端到端對話流程整合與優化 | P0 | 1 day | Story 3.1-3.6 |
+
+**Total Sprint 2**: **7 Stories, 5.5 days**
+
+**Sprint 2 Success Criteria**:
+- ✅ 使用者可輸入文字與 Avatar 對話
+- ✅ LLM 回應即時串流顯示（SSE）
+- ✅ Avatar 語音自動播放（TTS）
+- ✅ 端到端延遲 < 2.5 秒
+- ✅ 可連續對話 10 輪無崩潰
 
 **預期成果**: 可與 Avatar 完整對話（文字 + 語音）
+
+---
+
+### Sprint 3-4 Planning (Week 5-6)
+
+**Sprint Goal**: 實現 Lip Sync 嘴型同步功能
+
+**Scope**: **Epic 4: Lip Sync & Audio-Visual Synchronization (全部 5 Stories)**
+
+| Story | Title | Priority | Estimated Days | Dependencies |
+|-------|-------|----------|----------------|--------------|
+| **4.1** | 音訊分析與 Viseme 數據生成（簡化版） | P0 | 1.5 day | Epic 3 完成 |
+| **4.2** | Avatar Blendshape 控制與嘴型驅動 | P0 | 1 day | Story 4.1 |
+| **4.3** | Lip Sync Controller 與音訊同步 | P0 | 1 day | Story 4.2 |
+| **4.4** | Lip Sync 視覺優化與調校 | P1 | 1 day | Story 4.3 |
+| **4.5** | Lip Sync 降級方案與錯誤處理 | P1 | 0.5 day | Story 4.3 |
+
+**Total Sprint 3-4**: **5 Stories, 5 days**
+
+**Sprint 3-4 Success Criteria**:
+- ✅ Avatar 嘴型與語音同步
+- ✅ 視覺匹配度 ≥ 70%
+- ✅ 視覺延遲 < 100ms
+- ✅ Lip Sync 失敗時優雅降級
+
+**預期成果**: Avatar 嘴型與語音完美同步，提供「真人般」對話體驗
+
+---
+
+### Sprint 5-6 Planning (Week 7-8)
+
+**Sprint Goal**: 效能優化、錯誤處理與 UI/UX 優化
+
+**Scope**: **Epic 5: Polish, Testing & Deployment (Part 1: Stories 5.1-5.3)**
+
+| Story | Title | Priority | Estimated Days | Dependencies |
+|-------|-------|----------|----------------|--------------|
+| **5.1** | 效能優化（3D 渲染與音訊） | P0 | 2 day | Epic 4 完成 |
+| **5.2** | 錯誤處理與使用者體驗完善 | P0 | 1.5 day | Story 5.1 |
+| **5.3** | UI/UX 細節打磨 | P1 | 1.5 day | Story 5.2 |
+
+**Total Sprint 5-6**: **3 Stories, 5 days**
+
+**Sprint 5-6 Success Criteria**:
+- ✅ 3D 渲染 FPS ≥ 30
+- ✅ 首次載入時間 < 5 秒
+- ✅ 記憶體使用 < 500 MB
+- ✅ 全域錯誤處理完善
+- ✅ UI/UX 評分 ≥ 4.0/5.0
+
+**預期成果**: 系統效能達標，使用者體驗流暢專業
+
+---
+
+### Sprint 7-8 Planning (Week 9-10)
+
+**Sprint Goal**: 瀏覽器相容性測試與 Azure 部署
+
+**Scope**: **Epic 5: Polish, Testing & Deployment (Part 2: Stories 5.4-5.5)**
+
+| Story | Title | Priority | Estimated Days | Dependencies |
+|-------|-------|----------|----------------|--------------|
+| **5.4** | 瀏覽器相容性測試 | P0 | 2 day | Story 5.1-5.3 完成 |
+| **5.5** | Azure Static Web Apps 生產部署 | P0 | 1 day | Story 5.4 |
+
+**Total Sprint 7-8**: **2 Stories, 3 days**
+
+**Sprint 7-8 Success Criteria**:
+- ✅ 4 種瀏覽器測試通過（Chrome, Safari, Edge, Firefox）
+- ✅ 3 種裝置測試通過（Desktop, Mobile, Tablet）
+- ✅ 成功部署至 Azure Static Web Apps
+- ✅ 生產環境所有功能正常
+
+**預期成果**: 跨瀏覽器相容性確保，應用程式成功部署至雲端
+
+---
+
+### Sprint 9-10 Planning (Week 11-12)
+
+**Sprint Goal**: 技術驗證報告與完整文件
+
+**Scope**: **Epic 5: Polish, Testing & Deployment (Part 3: Stories 5.6-5.7)**
+
+| Story | Title | Priority | Estimated Days | Dependencies |
+|-------|-------|----------|----------------|--------------|
+| **5.6** | 技術驗證報告撰寫 | P0 | 1.5 day | Story 5.1-5.5 完成 |
+| **5.7** | 使用文件與部署指南 | P0 | 1 day | Story 5.6 |
+
+**Total Sprint 9-10**: **2 Stories, 2.5 days**
+
+**Sprint 9-10 Success Criteria**:
+- ✅ 完整 POC 技術驗證報告（3,000-5,000 字）
+- ✅ 包含截圖與影片 Demo
+- ✅ README.md 更新完整
+- ✅ 部署指南清晰易懂
+- ✅ 使用者指南完整
+
+**預期成果**: POC 完整驗證，所有文件齊全，準備決策
+
+---
+
+## 完整 Sprint 總覽表
+
+| Sprint | Week | Epic | Stories | 預估天數 | 關鍵里程碑 |
+|--------|------|------|---------|----------|------------|
+| **Sprint 1** | 1-2 | Epic 1 + Epic 2 | 10 | 8.5 天 | 3D Avatar 視覺化 |
+| **Sprint 2** | 3-4 | Epic 3 | 7 | 5.5 天 | LLM + TTS 對話功能 |
+| **Sprint 3-4** | 5-6 | Epic 4 | 5 | 5 天 | Lip Sync 嘴型同步 |
+| **Sprint 5-6** | 7-8 | Epic 5 (5.1-5.3) | 3 | 5 天 | 效能優化與 UI/UX |
+| **Sprint 7-8** | 9-10 | Epic 5 (5.4-5.5) | 2 | 3 天 | 瀏覽器測試與部署 |
+| **Sprint 9-10** | 11-12 | Epic 5 (5.6-5.7) | 2 | 2.5 天 | 技術驗證報告 |
+| **總計** | **12 週** | **5 Epics** | **29 Stories** | **29.5 天** | **POC 完成** |
+
+---
+
+## 關鍵里程碑時間表
+
+| 日期 | 里程碑 | 完成標準 |
+|------|--------|----------|
+| **Week 2 (2025-10-28)** | Epic 1-2 完成 | 3D Avatar 可視覺化與動畫 |
+| **Week 4 (2025-11-11)** | Epic 3 完成 | 完整對話功能（文字 + 語音） |
+| **Week 6 (2025-11-25)** | Epic 4 完成 | Lip Sync 嘴型同步 ≥ 70% |
+| **Week 8 (2025-12-09)** | Epic 5 Part 1 完成 | 效能優化與 UI/UX 完善 |
+| **Week 10 (2025-12-23)** | Epic 5 Part 2 完成 | Azure 部署成功 |
+| **Week 12 (2026-01-06)** | **POC 完成** | 技術驗證報告與文件齊全 |
 
 ---
 
@@ -335,7 +474,8 @@ Story 可以開始開發的條件：
 
 ---
 
-**Document Status**: ✅ Complete  
-**Owner**: Bob (Scrum Master)  
-**Last Updated**: 2025-10-14
+**Document Status**: ✅ Complete (包含 Sprint 1-10 完整規劃)
+**Owner**: Bob (Scrum Master)
+**Last Updated**: 2025-10-15
+**Version**: v2.0 (新增 Epic 4-5 完整 Sprint 規劃)
 
