@@ -4,6 +4,7 @@ import { useGLTF } from '@react-three/drei'
 import { useEffect, useRef } from 'react'
 import { Group } from 'three'
 import { AvatarModelProps } from '@/types/avatar'
+import { useAvatarAnimation } from './hooks/useAvatarAnimation'
 
 /**
  * AvatarModel - Ready Player Me 3D Avatar 模型組件
@@ -54,6 +55,12 @@ export default function AvatarModel({
   // useGLTF 自動處理載入、快取與 Suspense
   // 第二個參數 true 表示使用 Draco 壓縮（如果模型有使用）
   const gltf = useGLTF(modelUrl, true)
+
+  // 啟用待機動畫（呼吸 + 眨眼）
+  useAvatarAnimation(groupRef, {
+    enableBreathing: true,
+    enableBlinking: true
+  })
 
   // 模型載入成功時的處理
   useEffect(() => {
