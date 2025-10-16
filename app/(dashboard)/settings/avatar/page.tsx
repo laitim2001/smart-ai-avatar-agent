@@ -2,7 +2,7 @@
 
 /**
  * Avatar Preferences Page
- * Avatar 偏好設定頁面
+ * Avatar 偏好設定頁面 - 整合 AvatarGallery 與 AvatarPreview
  */
 
 import { useEffect, useState } from 'react'
@@ -16,39 +16,20 @@ import {
   CardTitle,
 } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
-import { useAvatarStore } from '@/stores/avatarStore'
-
-const AVAILABLE_AVATARS = [
-  {
-    id: 'alex',
-    url: 'https://models.readyplayer.me/671f7ae90c87f7db88cc12d2.glb',
-    name: 'Alex',
-    description: '友善的助理',
-    preview: '🧑',
-  },
-  {
-    id: 'jordan',
-    url: 'https://models.readyplayer.me/671f7b210c87f7db88cc12d4.glb',
-    name: 'Jordan',
-    description: '專業顧問',
-    preview: '👩',
-  },
-  {
-    id: 'casey',
-    url: 'https://models.readyplayer.me/671f7b400c87f7db88cc12d5.glb',
-    name: 'Casey',
-    description: '活力達人',
-    preview: '🧒',
-  },
-]
+import { useAvatarStore, type AvatarInfo } from '@/stores/avatarStore'
+import AvatarGallery from '@/components/avatar/AvatarGallery'
+import AvatarPreview from '@/components/avatar/AvatarPreview'
 
 export default function AvatarPreferencesPage() {
   const router = useRouter()
   const { status } = useSession()
-  const { currentAvatarId, setAvatar } = useAvatarStore()
-  const [selectedAvatarId, setSelectedAvatarId] = useState<string>(
-    currentAvatarId
-  )
+  const {
+    currentAvatarId,
+    currentAvatarUrl,
+    loadUserPreferences,
+    setAvatar,
+  } = useAvatarStore()
+  const [selectedAvatar, setSelectedAvatar] = useState<AvatarInfo | null>(null)
   const [isLoading, setIsLoading] = useState(false)
   const [isSaving, setIsSaving] = useState(false)
   const [message, setMessage] = useState<{
@@ -65,59 +46,33 @@ export default function AvatarPreferencesPage() {
 
   // 載入使用者偏好
   useEffect(() => {
-    async function loadPreferences() {
-      try {
-        setIsLoading(true)
-        const response = await fetch('/api/user/preferences')
-        const data = await response.json()
-
-        if (response.ok && data.preferences?.defaultAvatarId) {
-          setSelectedAvatarId(data.preferences.defaultAvatarId)
-        }
-      } catch (error) {
-        console.error('載入偏好失敗:', error)
-      } finally {
-        setIsLoading(false)
-      }
-    }
-
     if (status === 'authenticated') {
-      loadPreferences()
+      setIsLoading(true)
+      loadUserPreferences().finally(() => setIsLoading(false))
     }
-  }, [status])
+  }, [status, loadUserPreferences])
 
+  // 處理選擇 Avatar
+  const handleSelectAvatar = (avatar: AvatarInfo) => {
+    setSelectedAvatar(avatar)
+  }
+
+  // 儲存偏好
   async function handleSavePreferences() {
+    if (!selectedAvatar) {
+      setMessage({ type: 'error', text: '請先選擇一個 Avatar' })
+      return
+    }
+
     setIsSaving(true)
     setMessage(null)
 
     try {
-      const selectedAvatar = AVAILABLE_AVATARS.find(
-        (a) => a.id === selectedAvatarId
-      )
-      if (!selectedAvatar) {
-        throw new Error('未選擇有效的 Avatar')
-      }
-
-      // 更新伺服器偏好
-      const response = await fetch('/api/user/preferences', {
-        method: 'PATCH',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          defaultAvatarId: selectedAvatar.id,
-          defaultAvatarUrl: selectedAvatar.url,
-        }),
-      })
-
-      const data = await response.json()
-
-      if (!response.ok) {
-        throw new Error(data.error || '儲存失敗')
-      }
-
-      // 更新本地 store
-      setAvatar(selectedAvatar.id)
+      // 使用 store 的 setAvatar 方法 (自動同步到伺服器)
+      await setAvatar(selectedAvatar.id, true)
 
       setMessage({ type: 'success', text: 'Avatar 偏好已儲存' })
+      setSelectedAvatar(null) // 重置選擇
     } catch (err) {
       setMessage({
         type: 'error',
@@ -146,69 +101,86 @@ export default function AvatarPreferencesPage() {
   }
 
   return (
-    <Card>
-      <CardHeader>
-        <CardTitle>Avatar 偏好</CardTitle>
-        <CardDescription>選擇您的預設 3D Avatar</CardDescription>
-      </CardHeader>
-      <CardContent className="space-y-6">
-        {message && (
-          <div
-            className={`rounded-md p-4 ${
-              message.type === 'success'
-                ? 'bg-green-50 text-green-800'
-                : 'bg-red-50 text-red-800'
-            }`}
-          >
-            <p className="text-sm">{message.text}</p>
+    <div className="space-y-6">
+      {/* 目前 Avatar 預覽 */}
+      <Card>
+        <CardHeader>
+          <CardTitle>目前 Avatar</CardTitle>
+          <CardDescription>您目前使用的 3D Avatar 預覽</CardDescription>
+        </CardHeader>
+        <CardContent>
+          <AvatarPreview
+            avatarUrl={currentAvatarUrl}
+            height={400}
+            showControls={true}
+          />
+        </CardContent>
+      </Card>
+
+      {/* Avatar 選擇 */}
+      <Card>
+        <CardHeader>
+          <CardTitle>選擇 Avatar</CardTitle>
+          <CardDescription>
+            從下方圖庫選擇您喜歡的 Avatar
+          </CardDescription>
+        </CardHeader>
+        <CardContent className="space-y-6">
+          {message && (
+            <div
+              className={`rounded-md p-4 ${
+                message.type === 'success'
+                  ? 'bg-green-50 text-green-800'
+                  : 'bg-red-50 text-red-800'
+              }`}
+            >
+              <p className="text-sm">{message.text}</p>
+            </div>
+          )}
+
+          {/* Avatar 圖庫 */}
+          <AvatarGallery
+            selectionMode={true}
+            onSelect={handleSelectAvatar}
+            selectedId={selectedAvatar?.id || currentAvatarId}
+          />
+
+          {/* 已選擇提示 */}
+          {selectedAvatar && (
+            <div className="p-4 bg-blue-50 border border-blue-200 rounded-lg">
+              <div className="flex items-center gap-3">
+                <div className="text-3xl">{selectedAvatar.thumbnail}</div>
+                <div className="flex-1">
+                  <h4 className="font-medium text-blue-900">
+                    已選擇: {selectedAvatar.name}
+                  </h4>
+                  <p className="text-sm text-blue-700">
+                    {selectedAvatar.description}
+                  </p>
+                </div>
+              </div>
+            </div>
+          )}
+
+          {/* 儲存按鈕 */}
+          <div className="flex justify-end space-x-4 pt-4 border-t">
+            <Button
+              type="button"
+              variant="outline"
+              onClick={() => router.push('/settings')}
+              disabled={isSaving}
+            >
+              取消
+            </Button>
+            <Button
+              onClick={handleSavePreferences}
+              disabled={isSaving || !selectedAvatar}
+            >
+              {isSaving ? '儲存中...' : '儲存變更'}
+            </Button>
           </div>
-        )}
-
-        {/* Avatar 選擇網格 */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-          {AVAILABLE_AVATARS.map((avatar) => {
-            const isSelected = selectedAvatarId === avatar.id
-            return (
-              <button
-                key={avatar.id}
-                onClick={() => setSelectedAvatarId(avatar.id)}
-                className={`p-6 rounded-lg border-2 transition-all ${
-                  isSelected
-                    ? 'border-blue-500 bg-blue-50'
-                    : 'border-gray-200 hover:border-gray-300 bg-white'
-                }`}
-              >
-                <div className="text-6xl mb-4">{avatar.preview}</div>
-                <h3 className="font-semibold text-lg mb-1">{avatar.name}</h3>
-                <p className="text-sm text-gray-600">{avatar.description}</p>
-                {isSelected && (
-                  <div className="mt-3 text-sm text-blue-600 font-medium">
-                    ✓ 已選擇
-                  </div>
-                )}
-              </button>
-            )
-          })}
-        </div>
-
-        {/* 儲存按鈕 */}
-        <div className="flex justify-end space-x-4 pt-4 border-t">
-          <Button
-            type="button"
-            variant="outline"
-            onClick={() => router.push('/settings')}
-            disabled={isSaving}
-          >
-            取消
-          </Button>
-          <Button
-            onClick={handleSavePreferences}
-            disabled={isSaving || selectedAvatarId === currentAvatarId}
-          >
-            {isSaving ? '儲存中...' : '儲存變更'}
-          </Button>
-        </div>
-      </CardContent>
-    </Card>
+        </CardContent>
+      </Card>
+    </div>
   )
 }

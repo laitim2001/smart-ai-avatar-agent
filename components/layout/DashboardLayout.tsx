@@ -1,8 +1,9 @@
 'use client'
 
-import { ReactNode } from 'react'
+import { ReactNode, useEffect } from 'react'
 import { useSession } from 'next-auth/react'
 import { useRouter } from 'next/navigation'
+import { useAvatarStore } from '@/stores/avatarStore'
 import Navigation from './Navigation'
 import Sidebar from './Sidebar'
 
@@ -13,6 +14,17 @@ interface DashboardLayoutProps {
 export default function DashboardLayout({ children }: DashboardLayoutProps) {
   const { status } = useSession()
   const router = useRouter()
+  const { loadUserPreferences, loadAvatars } = useAvatarStore()
+
+  // 當使用者認證成功時,載入 Avatar 偏好
+  useEffect(() => {
+    if (status === 'authenticated') {
+      // 同時載入 Avatar 列表與使用者偏好
+      Promise.all([loadAvatars(), loadUserPreferences()]).catch((error) => {
+        console.error('載入 Avatar 資料失敗:', error)
+      })
+    }
+  }, [status, loadAvatars, loadUserPreferences])
 
   // 認證保護：未登入時重導向至登入頁面
   if (status === 'unauthenticated') {
