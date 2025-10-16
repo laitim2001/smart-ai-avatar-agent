@@ -152,7 +152,7 @@ describe('LanguageSelector', () => {
     })
 
     it('應該正確傳遞 SupportedLanguage 型別', () => {
-      const onChange = vi.fn<[SupportedLanguage], void>()
+      const onChange = vi.fn()
 
       render(
         <LanguageSelector
