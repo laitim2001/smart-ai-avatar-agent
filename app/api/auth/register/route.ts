@@ -12,8 +12,15 @@ import {
   createVerificationToken,
   sendVerificationEmail,
 } from '@/lib/auth/tokens'
+import {
+  rateLimit,
+  RATE_LIMIT_CONFIGS,
+  getClientIp,
+  createRateLimitResponse,
+} from '@/lib/redis/rate-limit'
 
-export const runtime = 'edge'
+// 使用 Node.js runtime (Prisma 需要)
+export const runtime = 'nodejs'
 
 interface RegisterRequest {
   name: string
@@ -23,6 +30,17 @@ interface RegisterRequest {
 
 export async function POST(request: NextRequest) {
   try {
+    // Rate Limiting 檢查
+    const clientIp = getClientIp(request)
+    const rateLimitResult = await rateLimit(
+      `register:${clientIp}`,
+      RATE_LIMIT_CONFIGS.AUTH
+    )
+
+    if (rateLimitResult.limited) {
+      return createRateLimitResponse(rateLimitResult)
+    }
+
     const body: RegisterRequest = await request.json()
     const { name, email, password } = body
 

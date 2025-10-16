@@ -70,3 +70,12 @@ model VerificationToken {
   @@id([identifier, token])
   @@map("verification_tokens")
 }
+
+model PasswordResetToken {
+  identifier String
+  token      String
+  expires    DateTime
+
+  @@id([identifier, token])
+  @@map("password_reset_tokens")
+}

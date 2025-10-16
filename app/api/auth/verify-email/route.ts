@@ -9,7 +9,8 @@ import { NextRequest, NextResponse } from 'next/server'
 import { prisma } from '@/lib/db/prisma'
 import { verifyToken } from '@/lib/auth/tokens'
 
-export const runtime = 'edge'
+// 使用 Node.js runtime (Prisma 需要)
+export const runtime = 'nodejs'
 
 interface VerifyEmailRequest {
   email: string

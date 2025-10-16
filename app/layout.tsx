@@ -1,6 +1,8 @@
 import type { Metadata } from 'next'
 import { Inter, Noto_Sans_TC } from 'next/font/google'
 import { ErrorBoundary } from '@/components/ErrorBoundary'
+import { SessionProvider } from '@/components/providers/SessionProvider'
+import { Toaster } from '@/components/ui/sonner'
 import './globals.css'
 
 // 英數字體：Inter（現代感、可讀性高）
@@ -40,7 +42,10 @@ export default function RootLayout({
   return (
     <html lang="zh-TW" className={`${inter.variable} ${notoSansTC.variable}`}>
       <body className="font-sans antialiased">
-        <ErrorBoundary>{children}</ErrorBoundary>
+        <SessionProvider>
+          <ErrorBoundary>{children}</ErrorBoundary>
+          <Toaster />
+        </SessionProvider>
       </body>
     </html>
   )

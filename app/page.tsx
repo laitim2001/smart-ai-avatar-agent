@@ -8,6 +8,7 @@ import type { HealthCheckResponse } from '@/types/api'
 import AvatarSelector from '@/components/avatar/AvatarSelector'
 import AvatarChangeButton from '@/components/avatar/AvatarChangeButton'
 import ChatInterface from '@/components/chat/ChatInterface'
+import Navigation from '@/components/layout/Navigation'
 
 // Dynamic import for AvatarCanvas to reduce initial bundle size
 // Three.js 相關組件使用動態載入，減少首屏 Bundle 大小
@@ -52,6 +53,9 @@ export default function Home() {
 
   return (
     <main className="flex h-screen bg-gradient-to-b from-slate-900 to-slate-800">
+      {/* 導航列 */}
+      <Navigation />
+
       {/* 左側：Avatar 顯示區 */}
       <div className="flex-1 relative">
         <AvatarCanvas />
