@@ -1,6 +1,6 @@
 'use client'
 
-import { Suspense, useState, useRef, useEffect } from 'react'
+import { Suspense, useState, useRef, useEffect, useMemo } from 'react'
 import { Canvas } from '@react-three/fiber'
 import { OrbitControls } from '@react-three/drei'
 import AvatarModel from './AvatarModel'
@@ -8,6 +8,7 @@ import AvatarControlPanel from './AvatarControlPanel'
 import { AvatarLoader, AvatarError } from './AvatarLoadingState'
 import { useAvatarStore } from '@/stores/avatarStore'
 import { AvatarAnimationControls } from '@/types/avatar'
+import { getPerformanceConfig, logDeviceInfo } from '@/lib/device/detection'
 
 /**
  * AvatarCanvas - Three.js 3D 場景容器組件
@@ -55,6 +56,18 @@ export default function AvatarCanvas() {
   // 淡入淡出過渡效果狀態
   const [isTransitioning, setIsTransitioning] = useState(false)
 
+  // 效能配置 (根據裝置自動調整)
+  const performanceConfig = useMemo(() => {
+    return getPerformanceConfig()
+  }, [])
+
+  // 記錄裝置資訊 (僅開發環境)
+  useEffect(() => {
+    if (process.env.NODE_ENV === 'development') {
+      logDeviceInfo()
+    }
+  }, [])
+
   // Avatar URL 變更時觸發過渡效果
   useEffect(() => {
     setIsTransitioning(true)
@@ -69,26 +82,27 @@ export default function AvatarCanvas() {
     <div className="w-full h-screen bg-gradient-to-b from-slate-900 to-slate-800 relative">
       <Canvas
         className={`transition-opacity duration-300 ${isTransitioning ? 'opacity-0' : 'opacity-100'}`}
-        shadows
+        shadows={performanceConfig.shadows}
         camera={{
           position: [0, 1.5, 2],
           fov: 50
         }}
+        dpr={performanceConfig.pixelRatio}
         gl={{
-          antialias: true,
+          antialias: performanceConfig.antialias,
           alpha: true,
-          powerPreference: 'high-performance'
+          powerPreference: 'high-performance',
         }}
       >
         {/* 環境光 - 提供均勻基礎照明，避免場景過暗 */}
         <ambientLight intensity={0.6} />
 
-        {/* 方向光 - 模擬主光源，優化陰影設定以提升效能 */}
+        {/* 方向光 - 模擬主光源，根據效能等級調整陰影解析度 */}
         <directionalLight
           position={[5, 5, 5]}
           intensity={0.8}
-          castShadow
-          shadow-mapSize={[512, 512]}
+          castShadow={performanceConfig.shadows}
+          shadow-mapSize={[performanceConfig.shadowMapSize, performanceConfig.shadowMapSize]}
           shadow-camera-far={15}
           shadow-camera-left={-5}
           shadow-camera-right={5}
@@ -96,14 +110,22 @@ export default function AvatarCanvas() {
           shadow-camera-bottom={-5}
         />
 
-        {/* OrbitControls - 開發階段用於旋轉、縮放視角 */}
+        {/* OrbitControls - 支援桌面與觸控操作 */}
         <OrbitControls
           enableZoom={true}
-          enablePan={false}
+          enablePan={false}              // 禁用 Pan (避免誤觸)
           enableRotate={true}
+          enableDamping={true}            // 啟用慣性滑動
+          dampingFactor={0.05}            // 慣性因子
+          rotateSpeed={performanceConfig.tier === 'low' ? 0.3 : 0.5}  // 低階裝置降低速度
+          zoomSpeed={0.5}                 // 縮放速度
           minDistance={1}
           maxDistance={5}
           target={[0, 1, 0]}
+          touches={{
+            ONE: 2,    // TOUCH.ROTATE - 單指旋轉
+            TWO: 3,    // TOUCH.DOLLY - 雙指捏合縮放
+          }}
         />
 
         {/* Avatar 模型載入 */}
