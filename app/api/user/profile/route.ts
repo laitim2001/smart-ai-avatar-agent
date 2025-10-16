@@ -8,6 +8,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { auth } from '@/lib/auth/config'
 import { prisma } from '@/lib/db/prisma'
+import { logProfileUpdate } from '@/lib/activity/logger'
 
 // 使用 Node.js runtime (Prisma + NextAuth 需要)
 export const runtime = 'nodejs'
@@ -52,6 +53,13 @@ export async function PATCH(request: NextRequest) {
         email: true,
         emailVerified: true,
       },
+    })
+
+    // 記錄個人資料更新活動
+    await logProfileUpdate(updatedUser.id, {
+      field: 'name',
+      oldValue: session.user.name || null,
+      newValue: name.trim(),
     })
 
     return NextResponse.json({

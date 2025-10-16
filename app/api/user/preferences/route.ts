@@ -9,6 +9,7 @@ import { NextRequest, NextResponse } from 'next/server'
 import { auth } from '@/lib/auth/config'
 import { prisma } from '@/lib/db/prisma'
 import { z } from 'zod'
+import { logAvatarChange } from '@/lib/activity/logger'
 
 // Validation schema for preferences update
 const updatePreferencesSchema = z.object({
@@ -101,18 +102,10 @@ export async function PATCH(request: NextRequest) {
       },
     })
 
-    // 記錄活動
-    await prisma.activityLog.create({
-      data: {
-        userId: user.id,
-        action: 'avatar_change',
-        metadata: {
-          avatarId: validationResult.data.defaultAvatarId,
-          avatarUrl: validationResult.data.defaultAvatarUrl,
-        },
-        ipAddress: request.headers.get('x-forwarded-for') || undefined,
-        userAgent: request.headers.get('user-agent') || undefined,
-      },
+    // 記錄 Avatar 變更活動 (使用統一工具函數)
+    await logAvatarChange(user.id, {
+      avatarId: validationResult.data.defaultAvatarId,
+      avatarUrl: validationResult.data.defaultAvatarUrl,
     })
 
     return NextResponse.json({

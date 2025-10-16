@@ -13,6 +13,7 @@ import {
   hashPassword,
   verifyPassword,
 } from '@/lib/auth/password'
+import { logPasswordChange } from '@/lib/activity/logger'
 
 // Validation schema for password change
 const changePasswordSchema = z.object({
@@ -110,17 +111,9 @@ export async function PATCH(request: NextRequest) {
       data: { password: hashedNewPassword },
     })
 
-    // 記錄活動
-    await prisma.activityLog.create({
-      data: {
-        userId: user.id,
-        action: 'password_change',
-        metadata: {
-          timestamp: new Date().toISOString(),
-        },
-        ipAddress: request.headers.get('x-forwarded-for') || undefined,
-        userAgent: request.headers.get('user-agent') || undefined,
-      },
+    // 記錄密碼變更活動 (使用統一工具函數)
+    await logPasswordChange(user.id, {
+      timestamp: new Date().toISOString(),
     })
 
     return NextResponse.json({
