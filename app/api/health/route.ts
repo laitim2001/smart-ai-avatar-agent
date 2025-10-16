@@ -61,7 +61,7 @@ import type { HealthCheckResponse } from '@/types/api'
  *
  * 檢查 API 服務健康狀態
  */
-export async function GET(request: NextRequest) {
+export async function GET(_request: NextRequest) {
   try {
     const response: HealthCheckResponse = {
       status: 'ok',

@@ -11,7 +11,7 @@ interface DashboardLayoutProps {
 }
 
 export default function DashboardLayout({ children }: DashboardLayoutProps) {
-  const { data: session, status } = useSession()
+  const { status } = useSession()
   const router = useRouter()
 
   // 認證保護：未登入時重導向至登入頁面

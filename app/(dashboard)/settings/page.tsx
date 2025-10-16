@@ -104,14 +104,12 @@ export default function SettingsPage() {
   // 載入中狀態
   if (status === 'loading') {
     return (
-      <div className="container mx-auto max-w-2xl py-8">
-        <Card>
-          <CardHeader>
-            <CardTitle>使用者設定</CardTitle>
-            <CardDescription>載入中...</CardDescription>
-          </CardHeader>
-        </Card>
-      </div>
+      <Card>
+        <CardHeader>
+          <CardTitle>個人資料</CardTitle>
+          <CardDescription>載入中...</CardDescription>
+        </CardHeader>
+      </Card>
     )
   }
 
@@ -121,100 +119,80 @@ export default function SettingsPage() {
   }
 
   return (
-    <div className="container mx-auto max-w-2xl py-8">
-      <Card>
-        <CardHeader>
-          <CardTitle>使用者設定</CardTitle>
-          <CardDescription>管理您的個人資料</CardDescription>
-        </CardHeader>
-        <CardContent>
-          <Form {...form}>
-            <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
-              {message && (
-                <div
-                  className={`rounded-md p-4 ${
-                    message.type === 'success'
-                      ? 'bg-green-50 text-green-800'
-                      : 'bg-red-50 text-red-800'
-                  }`}
-                >
-                  <p className="text-sm">{message.text}</p>
-                </div>
-              )}
-
-              <FormField
-                control={form.control}
-                name="name"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>姓名</FormLabel>
-                    <FormControl>
-                      <Input
-                        placeholder="您的姓名"
-                        {...field}
-                        disabled={isLoading}
-                      />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-
-              <FormField
-                control={form.control}
-                name="email"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Email</FormLabel>
-                    <FormControl>
-                      <Input
-                        type="email"
-                        placeholder="your.email@example.com"
-                        {...field}
-                        disabled={true}
-                      />
-                    </FormControl>
-                    <FormMessage />
-                    <p className="text-sm text-gray-500">
-                      Email 無法修改
-                    </p>
-                  </FormItem>
-                )}
-              />
-
-              <div className="flex justify-end space-x-4">
-                <Button
-                  type="button"
-                  variant="outline"
-                  onClick={() => router.push('/')}
-                  disabled={isLoading}
-                >
-                  取消
-                </Button>
-                <Button type="submit" disabled={isLoading}>
-                  {isLoading ? '儲存中...' : '儲存變更'}
-                </Button>
+    <Card>
+      <CardHeader>
+        <CardTitle>個人資料</CardTitle>
+        <CardDescription>管理您的個人資料設定</CardDescription>
+      </CardHeader>
+      <CardContent>
+        <Form {...form}>
+          <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
+            {message && (
+              <div
+                className={`rounded-md p-4 ${
+                  message.type === 'success'
+                    ? 'bg-green-50 text-green-800'
+                    : 'bg-red-50 text-red-800'
+                }`}
+              >
+                <p className="text-sm">{message.text}</p>
               </div>
-            </form>
-          </Form>
-        </CardContent>
-      </Card>
+            )}
 
-      {/* 密碼變更區塊 */}
-      <Card className="mt-6">
-        <CardHeader>
-          <CardTitle>安全性設定</CardTitle>
-          <CardDescription>變更您的密碼</CardDescription>
-        </CardHeader>
-        <CardContent>
-          <Button
-            variant="outline"
-            onClick={() => router.push('/forgot-password')}
-          >
-            變更密碼
-          </Button>
-        </CardContent>
-      </Card>
-    </div>
+            <FormField
+              control={form.control}
+              name="name"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>姓名</FormLabel>
+                  <FormControl>
+                    <Input
+                      placeholder="您的姓名"
+                      {...field}
+                      disabled={isLoading}
+                    />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+
+            <FormField
+              control={form.control}
+              name="email"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Email</FormLabel>
+                  <FormControl>
+                    <Input
+                      type="email"
+                      placeholder="your.email@example.com"
+                      {...field}
+                      disabled={true}
+                    />
+                  </FormControl>
+                  <FormMessage />
+                  <p className="text-sm text-gray-500">Email 無法修改</p>
+                </FormItem>
+              )}
+            />
+
+            <div className="flex justify-end space-x-4">
+              <Button
+                type="button"
+                variant="outline"
+                onClick={() => router.push('/dashboard')}
+                disabled={isLoading}
+              >
+                取消
+              </Button>
+              <Button type="submit" disabled={isLoading}>
+                {isLoading ? '儲存中...' : '儲存變更'}
+              </Button>
+            </div>
+          </form>
+        </Form>
+      </CardContent>
+    </Card>
   )
 }

@@ -24,6 +24,8 @@ model User {
 
   accounts      Account[]
   sessions      Session[]
+  settings      UserSettings?
+  activityLogs  ActivityLog[]
 
   @@map("users")
 }
@@ -78,4 +80,45 @@ model PasswordResetToken {
 
   @@id([identifier, token])
   @@map("password_reset_tokens")
+}
+
+// Sprint 2: User Settings and Preferences
+model UserSettings {
+  id        String   @id @default(cuid())
+  userId    String   @unique
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  // Avatar preferences
+  defaultAvatarId    String?
+  defaultAvatarUrl   String?
+
+  // Notification settings
+  emailNotifications Boolean @default(true)
+  pushNotifications  Boolean @default(false)
+
+  // Interface preferences
+  theme              String  @default("system")
+  language           String  @default("zh-TW")
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@map("user_settings")
+}
+
+// Sprint 2: User Activity Tracking
+model ActivityLog {
+  id        String   @id @default(cuid())
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  action    String   // "login", "logout", "profile_update", "avatar_change", "password_change"
+  metadata  Json?    // Additional information about the action
+  ipAddress String?
+  userAgent String?
+
+  createdAt DateTime @default(now())
+
+  @@index([userId, createdAt])
+  @@map("activity_logs")
 }
