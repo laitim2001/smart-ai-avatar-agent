@@ -68,7 +68,7 @@ export async function PATCH(request: NextRequest) {
   }
 }
 
-export async function GET(request: NextRequest) {
+export async function GET(_request: NextRequest) {
   try {
     // 檢查使用者認證
     const session = await auth()
