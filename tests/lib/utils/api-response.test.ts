@@ -3,7 +3,7 @@
  * 測試統一 API 回應格式工具
  */
 
-import { describe, it, expect } from 'vitest'
+import { describe, it, expect, vi } from 'vitest'
 import { NextResponse } from 'next/server'
 import {
   successResponse,
