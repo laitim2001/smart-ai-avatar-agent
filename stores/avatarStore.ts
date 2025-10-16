@@ -103,7 +103,7 @@ export const useAvatarStore = create<AvatarState>()(
     {
       name: 'avatar-storage', // localStorage key
       // 只持久化 currentAvatarId，不持久化 isSelectorOpen
-      partializeState: (state) => ({
+      partialize: (state) => ({
         currentAvatarId: state.currentAvatarId,
         currentAvatarUrl: state.currentAvatarUrl,
       }),

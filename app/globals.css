@@ -13,9 +13,7 @@
  * - Radix UI 兼容
  */
 
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+@import "tailwindcss";
 
 @layer base {
   /* ============================================

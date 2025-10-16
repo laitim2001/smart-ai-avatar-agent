@@ -17,7 +17,7 @@ import type { Config } from 'tailwindcss'
 
 const config: Config = {
   // 暗色模式：透過 class 控制
-  darkMode: ['class'],
+  darkMode: 'class',
 
   // 內容掃描：自動偵測使用 Tailwind 類別的檔案
   content: [
