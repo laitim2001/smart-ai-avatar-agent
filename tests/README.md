@@ -11,6 +11,8 @@
 - **lib/auth/password.ts**: 密碼強度驗證、雜湊與驗證
 - **lib/auth/tokens.ts**: Email 驗證 token 產生
 - **lib/redis/rate-limit.ts**: Rate limiting 配置與 IP 提取
+- **lib/activity/logger.ts**: 活動記錄工具函數與便捷函數
+- **lib/utils/api-response.ts**: 統一 API 回應格式工具
 
 #### 執行單元測試
 
@@ -29,9 +31,12 @@ npm run test:coverage
 
 端對端測試使用 Playwright，測試範圍包括：
 
-- **認證流程**: 註冊、登入、密碼重置
-- **路由保護**: Middleware 重導向行為
-- **UI/UX**: 響應式設計、載入狀態
+- **認證流程** (auth-flow.spec.ts): 註冊、登入、密碼重置
+- **路由保護** (auth-flow.spec.ts): Middleware 重導向行為
+- **UI/UX** (auth-flow.spec.ts): 響應式設計、載入狀態
+- **個人資料管理** (profile-flow.spec.ts): 個人資料編輯、密碼變更、表單驗證
+- **Avatar 選擇** (avatar-flow.spec.ts): Avatar 圖庫、3D 預覽、偏好儲存
+- **活動追蹤** (activity-tracking.spec.ts): 活動記錄、API 端點、安全性驗證
 
 #### 執行 E2E 測試
 
@@ -56,6 +61,8 @@ npm run test:e2e:ui
 - ✅ Password utilities (100%)
 - ✅ Token generation (100%)
 - ✅ Rate limit configuration (100%)
+- ✅ Activity logger utilities (100%)
+- ✅ API response utilities (100%)
 - ⚠️ Database operations (需要 integration test)
 
 **E2E 測試**:
@@ -63,7 +70,11 @@ npm run test:e2e:ui
 - ✅ 表單驗證行為
 - ✅ 路由保護與重導向
 - ✅ 響應式設計
-- ⚠️ 完整註冊/登入流程（需要測試資料庫）
+- ✅ 個人資料編輯流程
+- ✅ Avatar 選擇與預覽
+- ✅ 活動記錄 API 端點
+- ⚠️ 完整認證流程（需要測試資料庫）
+- ⚠️ 實際資料儲存驗證（需要測試資料庫）
 
 ### 未來改進
 
