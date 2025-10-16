@@ -5,10 +5,12 @@
  */
 
 import { create } from 'zustand'
+import { persist } from 'zustand/middleware'
 import { Message, ChatStore } from '@/types/chat'
 import { sendChatMessage } from '@/lib/api/chat'
 import { useAudioStore } from './audioStore'
 import { getFriendlyErrorMessage } from '@/lib/utils/error-messages'
+import type { SupportedLanguage } from '@/types/stt'
 
 /**
  * Chat Store Hook
@@ -29,14 +31,18 @@ import { getFriendlyErrorMessage } from '@/lib/utils/error-messages'
  * {messages.map(msg => <div key={msg.id}>{msg.content}</div>)}
  * ```
  */
-export const useChatStore = create<ChatStore>((set, get) => ({
-  // Initial State
-  messages: [],
-  input: '',
-  isLoading: false,
+export const useChatStore = create<ChatStore>()(
+  persist(
+    (set, get) => ({
+      // Initial State
+      messages: [],
+      input: '',
+      isLoading: false,
+      selectedLanguage: 'zh-TW',
+      isTranscribing: false,
 
-  // Actions
-  sendMessage: () => {
+      // Actions
+      sendMessage: () => {
     const { input, isLoading, messages } = get()
 
     // 驗證輸入與狀態
@@ -170,4 +176,58 @@ export const useChatStore = create<ChatStore>((set, get) => ({
   setLoading: (isLoading) => {
     set({ isLoading })
   },
-}))
+
+  setLanguage: (language) => {
+    set({ selectedLanguage: language })
+  },
+
+  transcribeAudio: async (audioBlob: Blob) => {
+    const { selectedLanguage } = get()
+
+    try {
+      set({ isTranscribing: true })
+
+      // 建立 FormData
+      const formData = new FormData()
+      formData.append('audio', audioBlob, 'recording.wav')
+      formData.append('language', selectedLanguage)
+
+      // 呼叫 STT API
+      const response = await fetch('/api/stt', {
+        method: 'POST',
+        body: formData,
+      })
+
+      if (!response.ok) {
+        const error = await response.json()
+        throw new Error(error.error || '語音轉文字失敗')
+      }
+
+      const data = await response.json()
+
+      set({ isTranscribing: false })
+
+      // 返回轉換後的文字
+      return data.data.text
+    } catch (error) {
+      set({ isTranscribing: false })
+
+      console.error('[STT Error]', error)
+
+      // 拋出友善錯誤訊息
+      const errorMessage = error instanceof Error
+        ? error.message
+        : '語音轉文字失敗，請重試'
+
+      throw new Error(errorMessage)
+    }
+  },
+}),
+    {
+      name: 'chat-storage',
+      partialize: (state) => ({
+        selectedLanguage: state.selectedLanguage,
+      }),
+    }
+  )
+)

@@ -3,7 +3,7 @@
 > **目標**: 提供專案所有檔案的完整索引與說明，讓 AI 助手和開發者快速定位所需資源
 > **維護頻率**: 每個 Story 完成後更新
 > **最後更新**: 2025-10-16 (Story 1.1 完成)
-> **版本**: v1.1.15
+> **版本**: v1.1.16
 
 ---
 
@@ -170,7 +170,7 @@ agent-brain/
 | `app/api/health/route.ts` | ✅ | 健康檢查 API | 1.4 | P0 |
 | `app/api/chat/route.ts` | ✅ | LLM 對話 API（SSE 串流） | 3.3 | P0 |
 | `app/api/tts/route.ts` | ✅ | TTS 語音合成 API | 3.5 | P0 |
-| `app/api/stt/route.ts` | ⏳ | STT 語音識別 API（選做） | 5.2 | P2 |
+| `app/api/stt/route.ts` | ✅ | STT 語音識別 API（選做） | 5.2 | P2 |
 
 ---
 

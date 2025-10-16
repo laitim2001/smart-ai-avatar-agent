@@ -1,8 +1,14 @@
 'use client'
 
-import { useRef, useEffect } from 'react'
+import { useRef, useEffect, useState, useCallback } from 'react'
 import Spinner from './Spinner'
 import { useChatStore } from '@/stores/chatStore'
+import { useAudioRecorder } from '@/hooks/useAudioRecorder'
+import { VoiceInputButton } from './VoiceInputButton'
+import { RecordingIndicator } from './RecordingIndicator'
+import { VoiceWaveform } from './VoiceWaveform'
+import { LanguageSelector } from './LanguageSelector'
+import { toast } from 'sonner'
 
 /**
  * 對話介面組件
@@ -10,6 +16,10 @@ import { useChatStore } from '@/stores/chatStore'
  * 提供與 Avatar 對話的使用者介面，包含：
  * - 對話歷史顯示區域（最近 5 則訊息）
  * - 文字輸入框（支援 Enter 送出、Shift+Enter 換行）
+ * - 語音輸入功能（麥克風錄音 + 語音轉文字）
+ * - 語言選擇器（zh-TW、en-US、ja-JP）
+ * - 錄音指示器（時長、音量、進度條）
+ * - 波形視覺化（Canvas 即時繪製）
  * - 送出與清除按鈕（含 Loading 狀態）
  * - 自動滾動到最新訊息
  *
@@ -25,8 +35,33 @@ import { useChatStore } from '@/stores/chatStore'
  */
 export default function ChatInterface() {
   // Zustand 狀態管理
-  const { messages, input, isLoading, sendMessage, clearMessages, setInput } =
-    useChatStore()
+  const {
+    messages,
+    input,
+    isLoading,
+    sendMessage,
+    clearMessages,
+    setInput,
+    selectedLanguage,
+    isTranscribing,
+    setLanguage,
+    transcribeAudio,
+  } = useChatStore()
+
+  // 語音錄音 Hook
+  const {
+    state: recordingState,
+    duration,
+    volume,
+    error: recordingError,
+    waveformData,
+    startRecording,
+    stopRecording,
+    clearError,
+  } = useAudioRecorder()
+
+  // Local state for showing waveform
+  const [showWaveform, setShowWaveform] = useState(false)
 
   // Refs
   const messagesEndRef = useRef<HTMLDivElement>(null)
@@ -60,6 +95,64 @@ export default function ChatInterface() {
       clearMessages()
     }
   }
+
+  /**
+   * 處理開始錄音
+   */
+  const handleStartRecording = useCallback(async () => {
+    try {
+      clearError()
+      await startRecording()
+      setShowWaveform(true)
+    } catch (error) {
+      console.error('[Recording Start Error]', error)
+      toast.error('無法開始錄音，請檢查麥克風權限')
+    }
+  }, [startRecording, clearError])
+
+  /**
+   * 處理停止錄音並轉換為文字
+   */
+  const handleStopRecording = useCallback(async () => {
+    try {
+      // 停止錄音
+      const audioBlob = await stopRecording()
+
+      if (!audioBlob) {
+        toast.error('錄音失敗，請重試')
+        setShowWaveform(false)
+        return
+      }
+
+      setShowWaveform(false)
+
+      // 轉換為文字
+      const text = await transcribeAudio(audioBlob)
+
+      // 更新輸入框
+      setInput(text)
+
+      toast.success('語音轉文字成功')
+    } catch (error) {
+      console.error('[Recording Stop Error]', error)
+
+      const errorMessage =
+        error instanceof Error ? error.message : '語音轉文字失敗，請重試'
+
+      toast.error(errorMessage)
+    }
+  }, [stopRecording, transcribeAudio, setInput])
+
+  /**
+   * 處理錄音錯誤
+   */
+  useEffect(() => {
+    if (recordingError) {
+      console.error('[Recording Error]', recordingError)
+      toast.error(recordingError.message || '錄音發生錯誤')
+      setShowWaveform(false)
+    }
+  }, [recordingError])
 
   // 監聽訊息變更，自動滾動到底部
   useEffect(() => {
@@ -109,13 +202,47 @@ export default function ChatInterface() {
 
       {/* 輸入區域 */}
       <div className="border-t border-gray-200 dark:border-gray-700 p-2 sm:p-4 bg-gray-50 dark:bg-gray-800">
+        {/* 語言選擇器 */}
+        <div className="mb-2">
+          <LanguageSelector
+            value={selectedLanguage}
+            onChange={setLanguage}
+            disabled={isLoading || recordingState === 'recording'}
+            variant="compact"
+          />
+        </div>
+
+        {/* 錄音指示器（錄音中顯示） */}
+        {recordingState === 'recording' && (
+          <div className="mb-2">
+            <RecordingIndicator
+              duration={duration}
+              volume={volume}
+              onStop={handleStopRecording}
+            />
+          </div>
+        )}
+
+        {/* 波形視覺化（錄音中顯示） */}
+        {showWaveform && recordingState === 'recording' && (
+          <div className="mb-2 flex justify-center">
+            <VoiceWaveform
+              waveformData={waveformData}
+              width={300}
+              height={60}
+              className="bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-700"
+            />
+          </div>
+        )}
+
+        {/* 輸入控制區域 */}
         <div className="flex flex-col sm:flex-row items-stretch sm:items-end space-y-2 sm:space-y-0 sm:space-x-2">
           <textarea
             value={input}
             onChange={(e) => setInput(e.target.value)}
             onKeyDown={handleKeyDown}
             placeholder="輸入訊息與 Avatar 對話... (按 Enter 送出)"
-            disabled={isLoading}
+            disabled={isLoading || isTranscribing || recordingState === 'recording'}
             rows={1}
             aria-label="對話輸入框"
             aria-describedby="chat-input-hint"
@@ -124,9 +251,18 @@ export default function ChatInterface() {
           <span id="chat-input-hint" className="sr-only">
             按 Enter 送出訊息，Shift+Enter 換行
           </span>
+
+          {/* 語音輸入按鈕 */}
+          <VoiceInputButton
+            state={recordingState}
+            onStart={handleStartRecording}
+            onStop={handleStopRecording}
+            disabled={isLoading || isTranscribing}
+          />
+
           <button
             onClick={sendMessage}
-            disabled={isLoading || input.trim() === ''}
+            disabled={isLoading || input.trim() === '' || isTranscribing || recordingState === 'recording'}
             aria-label="送出訊息"
             className="bg-blue-600 text-white px-6 py-2 rounded-lg hover:bg-blue-700 hover:scale-105 active:scale-95 disabled:bg-gray-300 dark:disabled:bg-gray-600 disabled:cursor-not-allowed transition-all duration-200 flex items-center justify-center space-x-2 shadow-md hover:shadow-lg"
           >
@@ -141,7 +277,7 @@ export default function ChatInterface() {
           </button>
           <button
             onClick={handleClear}
-            disabled={isLoading || messages.length === 0}
+            disabled={isLoading || messages.length === 0 || isTranscribing || recordingState === 'recording'}
             aria-label="清除所有對話"
             className="bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-200 px-4 py-2 rounded-lg hover:bg-gray-300 dark:hover:bg-gray-600 hover:scale-105 active:scale-95 disabled:bg-gray-100 dark:disabled:bg-gray-800 disabled:cursor-not-allowed transition-all duration-200 shadow-sm hover:shadow-md"
           >

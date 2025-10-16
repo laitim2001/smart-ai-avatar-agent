@@ -6,9 +6,9 @@
 > **é…å°æ–‡ä»¶**: MVP_DEVELOPMENT_PLAN.md (æºè¨ˆåŠƒåƒè€ƒ)
 
 **Last Updated**: 2025-10-16
-**Current Sprint**: Sprint 2 (ä½¿ç”¨è€…å€‹äººè³‡æ–™èˆ‡ Avatar åå¥½)
-**Overall Progress**: âœ… Sprint 2 å®Œæˆ (ä½¿ç”¨è€…å€‹äººè³‡æ–™èˆ‡ Avatar åå¥½ç³»çµ±)
-**ç•¶å‰ç‹€æ…‹**: âœ… Sprint 2 å®Œæˆ - æº–å‚™ Sprint 3
+**Current Sprint**: Sprint 3 (èªéŸ³è¼¸å…¥ç³»çµ± STT)
+**Overall Progress**: ğŸ”„ Sprint 3 é€²è¡Œä¸­ (Phase 3-5 èªéŸ³è¼¸å…¥ UI æ•´åˆå®Œæˆ)
+**ç•¶å‰ç‹€æ…‹**: ğŸ”„ Sprint 3 Phase 4 å®Œæˆ - ChatInterface æ•´åˆå®Œæˆ
 
 ---
 
@@ -29,7 +29,7 @@
 |--------|------|------|-------------|------|----------|
 | Sprint 1 | 1-2 | âœ… å®Œæˆ | 11/11 SP | â–ˆâ–ˆâ–ˆâ–ˆâ–ˆâ–ˆâ–ˆâ–ˆâ–ˆâ–ˆ 100% | 2025-10-15 ~ 2025-10-16 (2å¤©) |
 | Sprint 2 | 3-4 | âœ… å®Œæˆ | 10/10 SP | â–ˆâ–ˆâ–ˆâ–ˆâ–ˆâ–ˆâ–ˆâ–ˆâ–ˆâ–ˆ 100% | 2025-10-16 (1å¤©ï¼Œè¶…å‰å®Œæˆ!) |
-| Sprint 3 | 5-6 | â³ å¾…é–‹å§‹ | 0/10 SP | â–‘â–‘â–‘â–‘â–‘â–‘â–‘â–‘â–‘â–‘ 0% | - |
+| Sprint 3 | 5-6 | ğŸ”„ é€²è¡Œä¸­ | 8/10 SP | â–ˆâ–ˆâ–ˆâ–ˆâ–ˆâ–ˆâ–ˆâ–ˆâ–‘â–‘ 80% | 2025-10-16 (é€²è¡Œä¸­) |
 | Sprint 4 | 7-8 | â³ å¾…é–‹å§‹ | 0/11 SP | â–‘â–‘â–‘â–‘â–‘â–‘â–‘â–‘â–‘â–‘ 0% | - |
 | Sprint 5 | 9-10 | â³ å¾…é–‹å§‹ | 0/8 SP | â–‘â–‘â–‘â–‘â–‘â–‘â–‘â–‘â–‘â–‘ 0% | - |
 | Sprint 6 | 11-12 | â³ å¾…é–‹å§‹ | 0/5 SP | â–‘â–‘â–‘â–‘â–‘â–‘â–‘â–‘â–‘â–‘ 0% | - |
@@ -1153,3 +1153,90 @@
 - â³ å¾…é–‹å§‹
 - âš ï¸ æœ‰å•é¡Œ
 - ğŸš¨ é˜»å¡ä¸­
+
+### 2025-10-16 (Sprint 3 Phase 3-4) - ChatInterface ¾ã¦X§¹¦¨! ??
+
+**Phase 3: »y­µ¿é¤J UI ²Õ¥ó§¹¦¨**:
+- ? **VoiceInputButton ²Õ¥ó** (components/chat/VoiceInputButton.tsx)
+  - ¤TºØª¬ºA¤ä´© (idle, recording, processing)
+  - ª¬ºAÅX°Ê UI ¤Á´« (³Á§J­·/°±¤î/³B²z¤¤)
+  - ¿ı­µ¤¤¯ß°Ê°Êµe
+  - §¹¾ãªº TypeScript Ãş«¬©w¸q
+  
+- ? **RecordingIndicator ²Õ¥ó** (components/chat/RecordingIndicator.tsx)
+  - ¿ı­µ®ÉªøÅã¥Ü»P¶i«×±ø
+  - 10 ®æ­µ¶q«ü¥Ü¾¹
+  - ¯ß°Ê¬õÂI°Êµe
+  - °±¤î¿ı­µ«ö¶s
+  
+- ? **VoiceWaveform ²Õ¥ó** (components/chat/VoiceWaveform.tsx)
+  - Canvas §Y®Éªi§ÎÃ¸»s
+  - Uint8Array ªi§Î¸ê®Æ³B²z
+  - ¥i¦Û­q¤Ø¤o»PÃC¦â
+  - Àu¶®ªºªÅª¬ºAÅã¥Ü
+  
+- ? **LanguageSelector ²Õ¥ó** (components/chat/LanguageSelector.tsx)
+  - ¨âºØÅã¥Ü¼Ò¦¡ (full/compact)
+  - ¤ä´© zh-TW, en-US, ja-JP
+  - shadcn/ui Select ¾ã¦X
+  - §¹¾ãªº»y¨¥¥»¦a¤Æ¼ĞÅÒ
+
+**Phase 4: ChatInterface ¾ã¦X§¹¦¨**:
+- ? **chatStore ÂX¥R**
+  - selectedLanguage ª¬ºA (¹w³] zh-TW)
+  - isTranscribing ª¬ºA
+  - setLanguage() °Ê§@¤èªk
+  - transcribeAudio() »y­µÂà¤å¦r¤èªk
+  - Zustand persist «ù¤[¤Æ»y¨¥°¾¦n
+  
+- ? **ChatInterface »y­µ¾ã¦X**
+  - useAudioRecorder Hook ¾ã¦X
+  - handleStartRecording() ¶}©l¿ı­µ
+  - handleStopRecording() °±¤î¨ÃÂà´«
+  - »y­µ¿ı»s UI ²Õ¥ó¾ã¦X
+  - Toast ³qª¾ (¦¨¥\/¿ù»~)
+  - §¹¾ãªº¿ù»~³B²z
+  
+- ? **»y­µ¿é¤J¬yµ{**
+  - ÂIÀ»³Á§J­·«ö¶s ¡÷ ¶}©l¿ı­µ
+  - Åã¥Ü¿ı­µ«ü¥Ü¾¹»Pªi§Î
+  - °±¤î¿ı­µ ¡÷ ©I¥s STT API
+  - ¤å¦r¦Û°Ê¶ñ¤J¿é¤J®Ø
+  - ¦¨¥\/¿ù»~°T®§Åã¥Ü
+
+**µ{¦¡½X«~½è«OÃÒ**:
+- ? TypeScript Ãş«¬ÀË¬d³q¹L (0 errors)
+- ? ESLint ÀË¬d³q¹L (ChatInterface µLÄµ§i)
+- ? ²¾°£¥¼¨Ï¥Îªº cancelRecording ÅÜ¼Æ
+- ? §¹¾ãªº JSDoc ¤å¥ó§ó·s
+- ? ÅTÀ³¦¡³]­p¤ä´©
+
+**³Ğ«Ø/­×§ïÀÉ®×**:
+-  (·s«Ø 108 ¦æ ?)
+-  (·s«Ø 97 ¦æ ?)
+-  (·s«Ø 85 ¦æ ?)
+-  (·s«Ø 100 ¦æ ?)
+-  (­«¤j§ó·s 290+ ¦æ ?)
+-  (ÂX¥R transcribeAudio ¥\¯à ?)
+-  (·s¼W voice input «¬§O ?)
+
+**´ú¸Õµ²ªG**:
+- ? TypeScript Ãş«¬ÀË¬d³q¹L
+- ? ESLint µLÄµ§i
+- ? »y­µ¿é¤J UI §¹¦¨
+- ? ChatInterface ¾ã¦X§¹¦¨
+
+**Sprint 3 ¶i«×**:
+- ? Phase 1: STT API ºİÂI (1 SP)
+- ? Phase 2: ­µ°T¿ı»s¥\¯à (2 SP)
+- ? Phase 3: »y­µ¿é¤J UI ²Õ¥ó (2 SP)
+- ? Phase 4: ChatInterface ¾ã¦X (3 SP)
+- ? Phase 5: ´ú¸Õ»P¤å¥ó (2 SP) - «İ§¹¦¨
+- **·í«e§¹¦¨«×**: 80% (8/10 SP)
+
+**¤U¤@¨B (Phase 5)**:
+- [ ] §ó·s PROJECT_INDEX.md
+- [ ] Git ´£¥æ©Ò¦³§ó·s
+- [ ] ³æ¤¸´ú¸ÕÂX¥R
+- [ ] E2E ´ú¸Õ·s¼W
+

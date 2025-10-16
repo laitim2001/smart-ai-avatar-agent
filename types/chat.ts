@@ -72,12 +72,16 @@ export interface ErrorResponse {
  * @property {Message[]} messages - 對話訊息陣列
  * @property {string} input - 使用者輸入的文字
  * @property {boolean} isLoading - 是否正在處理訊息（Loading 狀態）
+ * @property {SupportedLanguage} selectedLanguage - 語音輸入選擇的語言
+ * @property {boolean} isTranscribing - 是否正在進行語音轉文字
  */
 export interface ChatStore {
   // State
   messages: Message[]
   input: string
   isLoading: boolean
+  selectedLanguage: 'zh-TW' | 'en-US' | 'ja-JP' // SupportedLanguage
+  isTranscribing: boolean
 
   // Actions
   /**
@@ -108,4 +112,17 @@ export interface ChatStore {
    * @param {boolean} isLoading - Loading 狀態
    */
   setLoading: (isLoading: boolean) => void
+
+  /**
+   * 設定語音輸入語言
+   * @param {SupportedLanguage} language - 語言代碼
+   */
+  setLanguage: (language: 'zh-TW' | 'en-US' | 'ja-JP') => void
+
+  /**
+   * 語音轉文字
+   * @param {Blob} audioBlob - 音訊資料
+   * @returns {Promise<string>} 轉換後的文字
+   */
+  transcribeAudio: (audioBlob: Blob) => Promise<string>
 }
