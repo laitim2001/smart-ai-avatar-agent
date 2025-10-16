@@ -86,7 +86,6 @@ export async function POST(request: NextRequest) {
     const stream = new ReadableStream({
       async start(controller) {
         try {
-          // @ts-expect-error - OpenAI SDK 型別問題
           for await (const chunk of response) {
             const content = chunk.choices[0]?.delta?.content || ''
 

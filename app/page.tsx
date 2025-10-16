@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from 'react'
 import dynamic from 'next/dynamic'
-import { Button } from '@/components/ui/Button'
+import { Button } from '@/components/ui/button'
 import { checkHealth } from '@/lib/api/client'
 import type { HealthCheckResponse } from '@/types/api'
 import AvatarSelector from '@/components/avatar/AvatarSelector'
