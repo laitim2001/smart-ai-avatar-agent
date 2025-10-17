@@ -47,8 +47,79 @@ export const useChatStore = create<ChatStore>()(
         set({ currentConversationId: id })
       },
 
-      sendMessage: () => {
-    const { input, isLoading, messages } = get()
+      /**
+       * 載入對話訊息
+       * @description 從 API 載入指定對話的所有訊息
+       */
+      loadConversationMessages: async (conversationId: string) => {
+        try {
+          set({ isLoading: true })
+
+          const response = await fetch(`/api/conversations/${conversationId}`)
+
+          if (!response.ok) {
+            throw new Error('載入對話失敗')
+          }
+
+          const data = await response.json()
+          const conversation = data.conversation
+
+          // 轉換 API 訊息格式為 Chat Store 格式
+          const messages: Message[] = conversation.messages.map((msg: any) => ({
+            id: msg.id,
+            role: msg.role === 'assistant' ? 'avatar' : 'user',
+            content: msg.content,
+            timestamp: new Date(msg.timestamp),
+          }))
+
+          set({
+            messages,
+            currentConversationId: conversationId,
+            isLoading: false,
+          })
+        } catch (error) {
+          console.error('[loadConversationMessages] Error:', error)
+          set({ isLoading: false })
+          throw error
+        }
+      },
+
+      /**
+       * 儲存訊息到資料庫
+       * @description 將訊息持久化到當前對話
+       */
+      saveMessageToConversation: async (
+        conversationId: string,
+        role: 'user' | 'assistant',
+        content: string
+      ) => {
+        try {
+          const response = await fetch(
+            `/api/conversations/${conversationId}/messages`,
+            {
+              method: 'POST',
+              headers: {
+                'Content-Type': 'application/json',
+              },
+              body: JSON.stringify({ role, content }),
+            }
+          )
+
+          if (!response.ok) {
+            throw new Error('儲存訊息失敗')
+          }
+
+          const data = await response.json()
+          return data.message
+        } catch (error) {
+          console.error('[saveMessageToConversation] Error:', error)
+          // 不拋出錯誤，避免影響對話流程
+          return null
+        }
+      },
+
+      sendMessage: async () => {
+    const { input, isLoading, messages, currentConversationId, saveMessageToConversation } = get()
 
     // 驗證輸入與狀態
     if (input.trim() === '' || isLoading) return
@@ -67,6 +138,17 @@ export const useChatStore = create<ChatStore>()(
       input: '',
       isLoading: true,
     }))
+
+    // 如果有當前對話，儲存使用者訊息到資料庫（非阻塞）
+    if (currentConversationId) {
+      saveMessageToConversation(
+        currentConversationId,
+        'user',
+        userMessage.content
+      ).catch((err) => {
+        console.warn('[sendMessage] Failed to save user message:', err)
+      })
+    }
 
     // 準備 API 訊息格式（轉換 role）
     const apiMessages = [...messages, userMessage].map((msg) => ({
@@ -115,6 +197,18 @@ export const useChatStore = create<ChatStore>()(
         const fullContent =
           get().messages.find((msg) => msg.id === avatarMessageId)?.content ||
           ''
+
+        // 如果有當前對話，儲存 Avatar 回應到資料庫（非阻塞）
+        const { currentConversationId, saveMessageToConversation } = get()
+        if (currentConversationId && fullContent) {
+          saveMessageToConversation(
+            currentConversationId,
+            'assistant',
+            fullContent
+          ).catch((err) => {
+            console.warn('[sendMessage] Failed to save assistant message:', err)
+          })
+        }
 
         // 更新 Loading 狀態
         set({ isLoading: false })

@@ -92,6 +92,26 @@ export interface ChatStore {
   setConversationId: (id: string | null) => void
 
   /**
+   * 載入對話訊息
+   * @description 從 API 載入指定對話的所有訊息
+   * @param {string} conversationId - 對話 ID
+   */
+  loadConversationMessages: (conversationId: string) => Promise<void>
+
+  /**
+   * 儲存訊息到資料庫
+   * @description 將訊息持久化到當前對話
+   * @param {string} conversationId - 對話 ID
+   * @param {'user' | 'assistant'} role - 訊息角色
+   * @param {string} content - 訊息內容
+   */
+  saveMessageToConversation: (
+    conversationId: string,
+    role: 'user' | 'assistant',
+    content: string
+  ) => Promise<any>
+
+  /**
    * 送出訊息
    * @description 驗證輸入、建立使用者訊息、更新狀態、觸發 API 呼叫
    */
