@@ -122,3 +122,23 @@ model ActivityLog {
   @@index([userId, createdAt])
   @@map("activity_logs")
 }
+
+// Sprint 5: Avatar Gallery
+model Avatar {
+  id          String   @id @default(cuid())
+  name        String
+  description String?
+  url         String   // GLB model URL (Ready Player Me)
+  thumbnail   String   // Thumbnail image URL
+  category    String   // male, female, neutral
+  tags        String[] // casual, professional, fantasy, etc.
+  featured    Boolean  @default(false)
+  popularity  Int      @default(0)
+
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@index([category])
+  @@index([featured])
+  @@map("avatars")
+}

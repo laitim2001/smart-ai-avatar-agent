@@ -1,9 +1,10 @@
 import { create } from 'zustand'
 import { persist } from 'zustand/middleware'
-import { AVATAR_URLS } from '@/lib/avatar/constants'
+import { AVATARS_METADATA, type AvatarMetadata } from '@/lib/avatar/constants'
 
 /**
  * Avatar 資訊介面
+ * @deprecated 使用 AvatarMetadata 替代
  */
 export interface AvatarInfo {
   id: string
@@ -13,10 +14,18 @@ export interface AvatarInfo {
   description?: string
   category?: 'male' | 'female' | 'neutral'
   tags?: string[]
+  featured?: boolean
+  popularity?: number
 }
 
 /**
+ * Re-export AvatarMetadata for convenience
+ */
+export type { AvatarMetadata }
+
+/**
  * Avatar 狀態介面
+ * Sprint 5: 擴充支援完整 Avatar 元數據
  */
 export interface AvatarState {
   /** 當前選中的 Avatar ID */
@@ -24,7 +33,7 @@ export interface AvatarState {
   /** 當前選中的 Avatar URL */
   currentAvatarUrl: string
   /** 可用的 Avatar 列表 */
-  availableAvatars: AvatarInfo[]
+  availableAvatars: AvatarMetadata[]
   /** Selector 是否開啟 */
   isSelectorOpen: boolean
   /** 是否正在載入 */
@@ -41,33 +50,11 @@ export interface AvatarState {
 
 /**
  * Avatar 清單
+ * Sprint 5: 使用 AVATARS_METADATA (11 個 Avatar)
  *
- * POC 階段使用 Emoji placeholder 作為縮圖。
- * 正式版可使用：
- * - Ready Player Me API 取得縮圖
- * - Three.js 渲染縮圖
- * - 手動截圖並上傳
+ * @deprecated 直接使用 AVATARS_METADATA 替代
  */
-export const AVATARS: AvatarInfo[] = [
-  {
-    id: 'avatar1',
-    name: 'Alex',
-    url: AVATAR_URLS.avatar1,
-    thumbnail: '👨', // Emoji placeholder
-  },
-  {
-    id: 'avatar2',
-    name: 'Jordan',
-    url: AVATAR_URLS.avatar2,
-    thumbnail: '👩', // Emoji placeholder
-  },
-  {
-    id: 'avatar3',
-    name: 'Casey',
-    url: AVATAR_URLS.avatar3,
-    thumbnail: '🧑', // Emoji placeholder
-  },
-]
+export const AVATARS: AvatarMetadata[] = AVATARS_METADATA
 
 /**
  * Avatar Zustand Store
@@ -92,9 +79,9 @@ export const useAvatarStore = create<AvatarState>()(
   persist(
     (set, get) => ({
       // 初始狀態
-      currentAvatarId: 'avatar1',
-      currentAvatarUrl: AVATAR_URLS.avatar1,
-      availableAvatars: AVATARS,
+      currentAvatarId: AVATARS_METADATA[0].id,
+      currentAvatarUrl: AVATARS_METADATA[0].url,
+      availableAvatars: AVATARS_METADATA,
       isSelectorOpen: false,
       isLoading: false,
 
