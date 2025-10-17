@@ -178,7 +178,7 @@ export default function ChatInterface() {
   }, [messages])
 
   return (
-    <div className="flex flex-col h-full bg-white dark:bg-gray-900 rounded-lg shadow-lg">
+    <div className="flex flex-col h-full bg-gradient-to-b from-white to-gray-50 dark:bg-gradient-to-b dark:from-gray-900 dark:to-gray-800 rounded-lg shadow-lg">
       {/* 對話歷史區域 */}
       <div className="flex-1 overflow-y-auto p-2 sm:p-4 space-y-2 sm:space-y-4">
         {messages.length === 0 ? (

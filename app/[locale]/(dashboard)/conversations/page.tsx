@@ -15,10 +15,10 @@ import { Loader2 } from 'lucide-react'
 const AvatarCanvas = dynamic(() => import('@/components/avatar/AvatarCanvas'), {
   ssr: false,
   loading: () => (
-    <div className="w-full h-full flex items-center justify-center bg-gradient-to-b from-slate-900 to-slate-800">
+    <div className="w-full h-full flex items-center justify-center bg-gradient-to-b from-blue-50 to-indigo-100">
       <div className="text-center">
-        <div className="inline-block w-12 h-12 border-4 border-cyan-500 border-t-transparent rounded-full animate-spin mb-4" />
-        <p className="text-white text-lg">載入 3D Avatar...</p>
+        <div className="inline-block w-12 h-12 border-4 border-blue-500 border-t-transparent rounded-full animate-spin mb-4" />
+        <p className="text-gray-700 text-lg">載入 3D Avatar...</p>
       </div>
     </div>
   ),
@@ -112,7 +112,7 @@ export default function ConversationsPage() {
       {/* Main Content - Chat Interface + Avatar */}
       <div className="flex flex-1 overflow-hidden">
         {/* Avatar Canvas (Left) - 3D Avatar 顯示區 */}
-        <div className="w-1/2 bg-gradient-to-b from-slate-900 to-slate-800 border-r border-gray-200 relative">
+        <div className="w-1/2 bg-gradient-to-b from-blue-50 to-indigo-100 border-r border-gray-200 relative">
           <AvatarCanvas />
 
           {/* Avatar Change Button - 右上角觸發按鈕 */}

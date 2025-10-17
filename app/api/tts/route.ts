@@ -27,7 +27,7 @@ interface TTSRequest {
 const TTS_CONFIG = {
   defaultVoice: DEFAULT_VOICE,
   audioFormat: sdk.SpeechSynthesisOutputFormat.Audio16Khz32KBitRateMonoMp3,
-  timeout: 5000,
+  timeout: 15000, // 增加到 15 秒以適應較長的文字合成時間
   maxTextLength: 1000,
   speedRange: { min: 0.5, max: 2.0, default: 1.0 },
   pitchRange: { min: 0.5, max: 2.0, default: 1.0 },
@@ -140,7 +140,7 @@ export async function POST(request: NextRequest) {
     const audioBuffer = await new Promise<Buffer>((resolve, reject) => {
       const timeoutId = setTimeout(() => {
         synthesizer.close()
-        reject(new Error('TTS request timeout (5 seconds exceeded)'))
+        reject(new Error('TTS request timeout (15 seconds exceeded)'))
       }, TTS_CONFIG.timeout)
 
       // 使用 SSML 或純文字
@@ -215,7 +215,7 @@ export async function POST(request: NextRequest) {
         statusCode = 401
       } else if (error.message.includes('timeout')) {
         errorCode = 'TIMEOUT'
-        errorMessage = 'TTS request timeout (5 seconds exceeded).'
+        errorMessage = 'TTS request timeout (15 seconds exceeded).'
         statusCode = 408
       } else if (error.message.includes('synthesis failed')) {
         errorCode = 'SYNTHESIS_FAILED'

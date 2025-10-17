@@ -79,7 +79,7 @@ export default function AvatarCanvas() {
   }, [currentAvatarUrl])
 
   return (
-    <div className="w-full h-screen bg-gradient-to-b from-slate-900 to-slate-800 relative">
+    <div className="w-full h-screen bg-gradient-to-b from-blue-50 to-indigo-100 relative">
       <Canvas
         className={`transition-opacity duration-300 ${isTransitioning ? 'opacity-0' : 'opacity-100'}`}
         shadows={performanceConfig.shadows}
