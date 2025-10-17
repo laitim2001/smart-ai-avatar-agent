@@ -22,10 +22,11 @@ model User {
   createdAt     DateTime  @default(now())
   updatedAt     DateTime  @updatedAt
 
-  accounts      Account[]
-  sessions      Session[]
-  settings      UserSettings?
-  activityLogs  ActivityLog[]
+  accounts         Account[]
+  sessions         Session[]
+  settings         UserSettings?
+  activityLogs     ActivityLog[]
+  favoriteAvatars  UserFavoriteAvatar[]
 
   @@map("users")
 }
@@ -138,7 +139,25 @@ model Avatar {
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
 
+  favoritedBy UserFavoriteAvatar[]
+
   @@index([category])
   @@index([featured])
   @@map("avatars")
+}
+
+// Sprint 5 Phase 2.2: User Favorite Avatar (Many-to-Many)
+model UserFavoriteAvatar {
+  id        String   @id @default(cuid())
+  userId    String
+  avatarId  String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  avatar    Avatar   @relation(fields: [avatarId], references: [id], onDelete: Cascade)
+
+  createdAt DateTime @default(now())
+
+  @@unique([userId, avatarId])
+  @@index([userId])
+  @@index([avatarId])
+  @@map("user_favorite_avatars")
 }

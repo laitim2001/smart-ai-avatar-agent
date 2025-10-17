@@ -16,7 +16,8 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Checkbox } from '@/components/ui/checkbox'
 import { Label } from '@/components/ui/label'
 import { Separator } from '@/components/ui/separator'
-import { Search, SlidersHorizontal, Star } from 'lucide-react'
+import { Search, SlidersHorizontal, Star, Heart, Eye } from 'lucide-react'
+import AvatarPreviewModal from './AvatarPreviewModal'
 
 interface AvatarGalleryProps {
   /** 是否顯示為選擇模式 */
@@ -36,8 +37,13 @@ export default function AvatarGallery({
     availableAvatars,
     currentAvatarId,
     isLoading,
+    favoriteAvatarIds,
+    isFavoriteLoading,
     loadAvatars,
+    loadFavorites,
     setAvatar,
+    toggleFavorite,
+    isFavorite,
   } = useAvatarStore()
 
   // Sprint 5: 擴充篩選狀態
@@ -46,12 +52,17 @@ export default function AvatarGallery({
   const [searchQuery, setSearchQuery] = useState<string>('')
   const [sortBy, setSortBy] = useState<string>('popularity')
   const [showFeaturedOnly, setShowFeaturedOnly] = useState<boolean>(false)
+  const [showFavoritesOnly, setShowFavoritesOnly] = useState<boolean>(false) // Phase 2.2
   const [showFilters, setShowFilters] = useState<boolean>(false)
 
-  // 載入 Avatar 列表
+  // Phase 3: 360° 預覽狀態
+  const [previewAvatar, setPreviewAvatar] = useState<AvatarMetadata | null>(null)
+
+  // 載入 Avatar 列表與收藏 (Phase 2.2)
   useEffect(() => {
     loadAvatars()
-  }, [loadAvatars])
+    loadFavorites()
+  }, [loadAvatars, loadFavorites])
 
   // 取得目前選中的 ID
   const activeId = selectedId || currentAvatarId
@@ -105,6 +116,11 @@ export default function AvatarGallery({
       result = result.filter((a) => a.featured)
     }
 
+    // 收藏篩選 (Phase 2.2)
+    if (showFavoritesOnly) {
+      result = result.filter((a) => favoriteAvatarIds.includes(a.id))
+    }
+
     // 排序
     switch (sortBy) {
       case 'popular':
@@ -126,6 +142,8 @@ export default function AvatarGallery({
     selectedTags,
     searchQuery,
     showFeaturedOnly,
+    showFavoritesOnly,
+    favoriteAvatarIds,
     sortBy,
   ])
 
@@ -157,7 +175,7 @@ export default function AvatarGallery({
   }
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-6" data-testid="avatar-gallery">
       {/* 搜尋與排序列 */}
       <div className="flex flex-col sm:flex-row gap-3">
         {/* 搜尋框 */}
@@ -212,6 +230,22 @@ export default function AvatarGallery({
             >
               <Star className="h-4 w-4 text-yellow-500" />
               只顯示推薦 Avatar
+            </Label>
+          </div>
+
+          {/* 收藏篩選 (Phase 2.2) */}
+          <div className="flex items-center space-x-2">
+            <Checkbox
+              id="favorites"
+              checked={showFavoritesOnly}
+              onCheckedChange={(checked) => setShowFavoritesOnly(checked as boolean)}
+            />
+            <Label
+              htmlFor="favorites"
+              className="flex items-center gap-1 cursor-pointer"
+            >
+              <Heart className="h-4 w-4 text-red-500" />
+              只顯示我的收藏 ({favoriteAvatarIds.length})
             </Label>
           </div>
 
@@ -280,11 +314,11 @@ export default function AvatarGallery({
       <div className="flex items-center justify-between text-sm text-muted-foreground">
         <div>
           顯示 {filteredAvatars.length} 個 Avatar
-          {(searchQuery || selectedTags.length > 0 || categoryFilter !== 'all' || showFeaturedOnly) && (
+          {(searchQuery || selectedTags.length > 0 || categoryFilter !== 'all' || showFeaturedOnly || showFavoritesOnly) && (
             <span> (已篩選)</span>
           )}
         </div>
-        {(searchQuery || selectedTags.length > 0 || categoryFilter !== 'all' || showFeaturedOnly) && (
+        {(searchQuery || selectedTags.length > 0 || categoryFilter !== 'all' || showFeaturedOnly || showFavoritesOnly) && (
           <Button
             variant="outline"
             size="sm"
@@ -293,6 +327,7 @@ export default function AvatarGallery({
               setSelectedTags([])
               setSearchQuery('')
               setShowFeaturedOnly(false)
+              setShowFavoritesOnly(false)
             }}
           >
             清除所有篩選
@@ -314,12 +349,32 @@ export default function AvatarGallery({
               onClick={() => handleSelect(avatar)}
             >
               <div className="p-4">
-                {/* Featured 徽章 */}
-                {avatar.featured && (
-                  <div className="absolute top-2 right-2">
+                {/* 右上角圖示區 */}
+                <div className="absolute top-2 right-2 flex items-center gap-1">
+                  {/* 收藏按鈕 (Phase 2.2) */}
+                  <button
+                    onClick={(e) => {
+                      e.stopPropagation()
+                      toggleFavorite(avatar.id)
+                    }}
+                    disabled={isFavoriteLoading}
+                    className="p-1 rounded-full hover:bg-gray-100 transition-colors disabled:opacity-50"
+                    title={isFavorite(avatar.id) ? '取消收藏' : '加入收藏'}
+                  >
+                    <Heart
+                      className={`h-5 w-5 ${
+                        isFavorite(avatar.id)
+                          ? 'text-red-500 fill-red-500'
+                          : 'text-gray-400'
+                      }`}
+                    />
+                  </button>
+
+                  {/* Featured 徽章 */}
+                  {avatar.featured && (
                     <Star className="h-5 w-5 text-yellow-500 fill-yellow-500" />
-                  </div>
-                )}
+                  )}
+                </div>
 
                 {/* Avatar 縮圖 */}
                 <div className="text-6xl mb-3 text-center">
@@ -384,6 +439,20 @@ export default function AvatarGallery({
                       已選擇
                     </div>
                   )}
+
+                  {/* 360° 預覽按鈕 (Phase 3) */}
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={(e) => {
+                      e.stopPropagation()
+                      setPreviewAvatar(avatar)
+                    }}
+                    className="mt-2 w-full flex items-center justify-center gap-2"
+                  >
+                    <Eye className="h-4 w-4" />
+                    360° 預覽
+                  </Button>
                 </div>
               </div>
             </Card>
@@ -404,12 +473,22 @@ export default function AvatarGallery({
               setSelectedTags([])
               setSearchQuery('')
               setShowFeaturedOnly(false)
+              setShowFavoritesOnly(false)
             }}
             className="mt-4"
           >
             清除篩選條件
           </Button>
         </div>
+      )}
+
+      {/* 360° 預覽模式 (Phase 3) */}
+      {previewAvatar && (
+        <AvatarPreviewModal
+          avatar={previewAvatar}
+          isOpen={!!previewAvatar}
+          onClose={() => setPreviewAvatar(null)}
+        />
       )}
     </div>
   )

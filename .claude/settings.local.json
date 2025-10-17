@@ -65,7 +65,8 @@
       "Bash(npm test:*)",
       "Bash(gh pr create:*)",
       "Bash(gh pr merge:*)",
-      "Bash(git show:*)"
+      "Bash(git show:*)",
+      "Bash(npx prisma db seed)"
     ],
     "deny": [],
     "ask": []

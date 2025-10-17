@@ -25,7 +25,7 @@ export type { AvatarMetadata }
 
 /**
  * Avatar 狀態介面
- * Sprint 5: 擴充支援完整 Avatar 元數據
+ * Sprint 5: 擴充支援完整 Avatar 元數據與收藏功能
  */
 export interface AvatarState {
   /** 當前選中的 Avatar ID */
@@ -34,16 +34,26 @@ export interface AvatarState {
   currentAvatarUrl: string
   /** 可用的 Avatar 列表 */
   availableAvatars: AvatarMetadata[]
+  /** 已收藏的 Avatar IDs (Sprint 5 Phase 2.2) */
+  favoriteAvatarIds: string[]
   /** Selector 是否開啟 */
   isSelectorOpen: boolean
   /** 是否正在載入 */
   isLoading: boolean
+  /** 是否正在處理收藏操作 */
+  isFavoriteLoading: boolean
   /** 設定 Avatar */
   setAvatar: (avatarId: string, saveToServer?: boolean) => Promise<void>
   /** 載入 Avatar 列表 */
   loadAvatars: () => Promise<void>
   /** 從伺服器載入使用者偏好 */
   loadUserPreferences: () => Promise<void>
+  /** 載入使用者收藏列表 (Sprint 5 Phase 2.2) */
+  loadFavorites: () => Promise<void>
+  /** 切換收藏狀態 (Sprint 5 Phase 2.2) */
+  toggleFavorite: (avatarId: string) => Promise<void>
+  /** 檢查是否已收藏 (Sprint 5 Phase 2.2) */
+  isFavorite: (avatarId: string) => boolean
   /** 切換 Selector 顯示/隱藏 */
   toggleSelector: () => void
 }
@@ -82,8 +92,10 @@ export const useAvatarStore = create<AvatarState>()(
       currentAvatarId: AVATARS_METADATA[0].id,
       currentAvatarUrl: AVATARS_METADATA[0].url,
       availableAvatars: AVATARS_METADATA,
+      favoriteAvatarIds: [], // Sprint 5 Phase 2.2
       isSelectorOpen: false,
       isLoading: false,
+      isFavoriteLoading: false, // Sprint 5 Phase 2.2
 
       // Actions
       /**
@@ -170,6 +182,67 @@ export const useAvatarStore = create<AvatarState>()(
         } finally {
           set({ isLoading: false })
         }
+      },
+
+      /**
+       * 載入使用者收藏列表 (Sprint 5 Phase 2.2)
+       */
+      loadFavorites: async () => {
+        try {
+          const response = await fetch('/api/user/favorites')
+          const data = await response.json()
+
+          if (response.ok && data.favorites) {
+            const favoriteIds = data.favorites.map(
+              (fav: { avatarId: string }) => fav.avatarId
+            )
+            set({ favoriteAvatarIds: favoriteIds })
+          }
+        } catch (error) {
+          console.error('[AvatarStore] 載入收藏列表失敗:', error)
+        }
+      },
+
+      /**
+       * 切換收藏狀態 (Sprint 5 Phase 2.2)
+       */
+      toggleFavorite: async (avatarId: string) => {
+        const { favoriteAvatarIds } = get()
+        const isFavorited = favoriteAvatarIds.includes(avatarId)
+
+        // 樂觀更新 UI
+        set({
+          isFavoriteLoading: true,
+          favoriteAvatarIds: isFavorited
+            ? favoriteAvatarIds.filter((id) => id !== avatarId)
+            : [...favoriteAvatarIds, avatarId],
+        })
+
+        try {
+          const response = await fetch(`/api/avatars/${avatarId}/favorite`, {
+            method: isFavorited ? 'DELETE' : 'POST',
+          })
+
+          if (!response.ok) {
+            // 如果失敗,還原狀態
+            set({ favoriteAvatarIds })
+            throw new Error('收藏操作失敗')
+          }
+        } catch (error) {
+          console.error('[AvatarStore] 收藏操作失敗:', error)
+          // 還原狀態
+          set({ favoriteAvatarIds })
+        } finally {
+          set({ isFavoriteLoading: false })
+        }
+      },
+
+      /**
+       * 檢查是否已收藏 (Sprint 5 Phase 2.2)
+       */
+      isFavorite: (avatarId: string) => {
+        const { favoriteAvatarIds } = get()
+        return favoriteAvatarIds.includes(avatarId)
       },
 
       toggleSelector: () => {
