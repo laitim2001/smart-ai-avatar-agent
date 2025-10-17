@@ -6,7 +6,7 @@
  */
 
 import { NextRequest, NextResponse } from 'next/server'
-import { auth } from '@/lib/auth/index'
+import { auth } from '@/lib/auth/config'
 import { PrismaClient } from '@/lib/generated/prisma'
 import { z } from 'zod'
 

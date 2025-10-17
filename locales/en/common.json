@@ -39,7 +39,8 @@
     "search": "Search",
     "filter": "Filter",
     "clear": "Clear",
-    "apply": "Apply"
+    "apply": "Apply",
+    "retry": "Retry"
   },
   "form": {
     "required": "This field is required",
@@ -123,5 +124,61 @@
     "zhTW": "繁體中文",
     "en": "English",
     "ja": "日本語"
+  },
+  "prompt": {
+    "title": "Conversation Topics",
+    "gallery": "Topic Gallery",
+    "myPrompts": "My Topics",
+    "systemPrompts": "System Topics",
+    "featured": "Featured Topics",
+    "all": "All",
+    "search": "Search topics...",
+    "noResults": "No topics found",
+    "categories": {
+      "all": "All Categories",
+      "learning": "Learning",
+      "work": "Work",
+      "creative": "Creative",
+      "entertainment": "Entertainment",
+      "professional": "Professional",
+      "daily": "Daily"
+    },
+    "tags": {
+      "professional": "Professional",
+      "creative": "Creative",
+      "technical": "Technical",
+      "casual": "Casual",
+      "educational": "Educational",
+      "business": "Business",
+      "writing": "Writing",
+      "analysis": "Analysis",
+      "brainstorm": "Brainstorm",
+      "fun": "Fun"
+    },
+    "sort": {
+      "label": "Sort",
+      "popular": "Popular",
+      "title": "Title",
+      "newest": "Newest"
+    },
+    "actions": {
+      "use": "Use this topic",
+      "preview": "Preview",
+      "edit": "Edit",
+      "delete": "Delete",
+      "create": "Create new topic"
+    },
+    "card": {
+      "popularity": "Popularity",
+      "system": "System",
+      "user": "User",
+      "tags": "Tags"
+    },
+    "empty": {
+      "title": "No topics yet",
+      "description": "Try creating your first conversation topic",
+      "action": "Create Topic"
+    },
+    "resultsCount": "Found {count} topics"
   }
 }

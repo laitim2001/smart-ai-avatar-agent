@@ -39,7 +39,8 @@
     "search": "搜尋",
     "filter": "篩選",
     "clear": "清除",
-    "apply": "套用"
+    "apply": "套用",
+    "retry": "重試"
   },
   "form": {
     "required": "此欄位為必填",
@@ -123,5 +124,61 @@
     "zhTW": "繁體中文",
     "en": "English",
     "ja": "日本語"
+  },
+  "prompt": {
+    "title": "對話主題",
+    "gallery": "主題庫",
+    "myPrompts": "我的主題",
+    "systemPrompts": "系統主題",
+    "featured": "推薦主題",
+    "all": "全部",
+    "search": "搜尋主題...",
+    "noResults": "找不到相關主題",
+    "categories": {
+      "all": "全部分類",
+      "learning": "學習",
+      "work": "工作",
+      "creative": "創意",
+      "entertainment": "娛樂",
+      "professional": "專業",
+      "daily": "日常"
+    },
+    "tags": {
+      "professional": "專業",
+      "creative": "創意",
+      "technical": "技術",
+      "casual": "輕鬆",
+      "educational": "教育",
+      "business": "商業",
+      "writing": "寫作",
+      "analysis": "分析",
+      "brainstorm": "腦力激盪",
+      "fun": "趣味"
+    },
+    "sort": {
+      "label": "排序",
+      "popular": "熱門度",
+      "title": "標題",
+      "newest": "最新"
+    },
+    "actions": {
+      "use": "使用此主題",
+      "preview": "預覽",
+      "edit": "編輯",
+      "delete": "刪除",
+      "create": "建立新主題"
+    },
+    "card": {
+      "popularity": "熱門度",
+      "system": "系統",
+      "user": "使用者",
+      "tags": "標籤"
+    },
+    "empty": {
+      "title": "尚無主題",
+      "description": "嘗試建立您的第一個對話主題",
+      "action": "建立主題"
+    },
+    "resultsCount": "找到 {count} 個主題"
   }
 }

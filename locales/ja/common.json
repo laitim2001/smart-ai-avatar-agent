@@ -39,7 +39,8 @@
     "search": "検索",
     "filter": "フィルター",
     "clear": "クリア",
-    "apply": "適用"
+    "apply": "適用",
+    "retry": "再試行"
   },
   "form": {
     "required": "この項目は必須です",
@@ -123,5 +124,61 @@
     "zhTW": "繁體中文",
     "en": "English",
     "ja": "日本語"
+  },
+  "prompt": {
+    "title": "会話トピック",
+    "gallery": "トピックギャラリー",
+    "myPrompts": "マイトピック",
+    "systemPrompts": "システムトピック",
+    "featured": "おすすめトピック",
+    "all": "すべて",
+    "search": "トピックを検索...",
+    "noResults": "トピックが見つかりません",
+    "categories": {
+      "all": "すべてのカテゴリ",
+      "learning": "学習",
+      "work": "仕事",
+      "creative": "クリエイティブ",
+      "entertainment": "エンターテイメント",
+      "professional": "プロフェッショナル",
+      "daily": "日常"
+    },
+    "tags": {
+      "professional": "プロフェッショナル",
+      "creative": "クリエイティブ",
+      "technical": "技術",
+      "casual": "カジュアル",
+      "educational": "教育",
+      "business": "ビジネス",
+      "writing": "ライティング",
+      "analysis": "分析",
+      "brainstorm": "ブレインストーミング",
+      "fun": "楽しい"
+    },
+    "sort": {
+      "label": "並べ替え",
+      "popular": "人気順",
+      "title": "タイトル順",
+      "newest": "新着順"
+    },
+    "actions": {
+      "use": "このトピックを使用",
+      "preview": "プレビュー",
+      "edit": "編集",
+      "delete": "削除",
+      "create": "新しいトピックを作成"
+    },
+    "card": {
+      "popularity": "人気度",
+      "system": "システム",
+      "user": "ユーザー",
+      "tags": "タグ"
+    },
+    "empty": {
+      "title": "トピックがありません",
+      "description": "最初の会話トピックを作成してみましょう",
+      "action": "トピックを作成"
+    },
+    "resultsCount": "{count}件のトピックが見つかりました"
   }
 }
