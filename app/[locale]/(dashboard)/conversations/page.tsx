@@ -96,13 +96,16 @@ export default function ConversationsPage() {
 
       {/* Main Content - Chat Interface + Avatar */}
       <div className="flex flex-1 overflow-hidden">
-        {/* Avatar Canvas (Left) */}
-        <div className="w-1/2 bg-gradient-to-br from-blue-50 to-indigo-50 border-r border-gray-200">
-          <AvatarCanvas />
-        </div>
+        {/* Avatar Canvas (Left) - Temporarily Hidden Due to Model Loading Issues */}
+        {/* TODO: Fix Ready Player Me model loading or replace with alternative solution */}
+        {false && (
+          <div className="w-1/2 bg-gradient-to-br from-blue-50 to-indigo-50 border-r border-gray-200">
+            <AvatarCanvas />
+          </div>
+        )}
 
-        {/* Chat Interface (Right) */}
-        <div className="w-1/2 bg-white">
+        {/* Chat Interface (Full Width - Avatar temporarily disabled) */}
+        <div className="w-full bg-white">
           {isCreatingConversation ? (
             <div className="flex h-full items-center justify-center">
               <div className="text-center">
