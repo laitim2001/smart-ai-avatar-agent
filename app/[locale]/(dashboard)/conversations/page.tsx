@@ -2,12 +2,27 @@
 
 import { useEffect, useState } from 'react'
 import { useRouter } from 'next/navigation'
+import dynamic from 'next/dynamic'
 import ConversationList from '@/components/conversations/ConversationList'
 import ChatInterface from '@/components/chat/ChatInterface'
-import AvatarCanvas from '@/components/avatar/AvatarCanvas'
+import AvatarSelector from '@/components/avatar/AvatarSelector'
+import AvatarChangeButton from '@/components/avatar/AvatarChangeButton'
 import { useChatStore } from '@/stores/chatStore'
 import { useAvatarStore } from '@/stores/avatarStore'
 import { Loader2 } from 'lucide-react'
+
+// Dynamic import for AvatarCanvas with SSR disabled (Three.js requirement)
+const AvatarCanvas = dynamic(() => import('@/components/avatar/AvatarCanvas'), {
+  ssr: false,
+  loading: () => (
+    <div className="w-full h-full flex items-center justify-center bg-gradient-to-b from-slate-900 to-slate-800">
+      <div className="text-center">
+        <div className="inline-block w-12 h-12 border-4 border-cyan-500 border-t-transparent rounded-full animate-spin mb-4" />
+        <p className="text-white text-lg">載入 3D Avatar...</p>
+      </div>
+    </div>
+  ),
+})
 
 export default function ConversationsPage() {
   const router = useRouter()
@@ -96,16 +111,19 @@ export default function ConversationsPage() {
 
       {/* Main Content - Chat Interface + Avatar */}
       <div className="flex flex-1 overflow-hidden">
-        {/* Avatar Canvas (Left) - Temporarily Hidden Due to Model Loading Issues */}
-        {/* TODO: Fix Ready Player Me model loading or replace with alternative solution */}
-        {false && (
-          <div className="w-1/2 bg-gradient-to-br from-blue-50 to-indigo-50 border-r border-gray-200">
-            <AvatarCanvas />
-          </div>
-        )}
+        {/* Avatar Canvas (Left) - 3D Avatar 顯示區 */}
+        <div className="w-1/2 bg-gradient-to-b from-slate-900 to-slate-800 border-r border-gray-200 relative">
+          <AvatarCanvas />
 
-        {/* Chat Interface (Full Width - Avatar temporarily disabled) */}
-        <div className="w-full bg-white">
+          {/* Avatar Change Button - 右上角觸發按鈕 */}
+          <AvatarChangeButton />
+
+          {/* Avatar Selector Modal - Avatar 選擇器 */}
+          <AvatarSelector />
+        </div>
+
+        {/* Chat Interface (Right) */}
+        <div className="w-1/2 bg-white">
           {isCreatingConversation ? (
             <div className="flex h-full items-center justify-center">
               <div className="text-center">
