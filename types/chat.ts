@@ -147,6 +147,13 @@ export interface ChatStore {
   setLanguage: (language: 'zh-TW' | 'en-US' | 'ja-JP') => void
 
   /**
+   * 套用 Prompt Template
+   * @description 將 Prompt Template 內容填入輸入框
+   * @param {string} content - Prompt 內容
+   */
+  applyPrompt: (content: string) => void
+
+  /**
    * 語音轉文字
    * @param {Blob} audioBlob - 音訊資料
    * @returns {Promise<string>} 轉換後的文字

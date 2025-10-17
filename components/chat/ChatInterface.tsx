@@ -1,6 +1,7 @@
 'use client'
 
 import { useRef, useEffect, useState, useCallback } from 'react'
+import { Sparkles } from 'lucide-react'
 import Spinner from './Spinner'
 import { useChatStore } from '@/stores/chatStore'
 import { useAudioRecorder } from '@/hooks/useAudioRecorder'
@@ -8,6 +9,8 @@ import { VoiceInputButton } from './VoiceInputButton'
 import { RecordingIndicator } from './RecordingIndicator'
 import { VoiceWaveform } from './VoiceWaveform'
 import { LanguageSelector } from './LanguageSelector'
+import PromptGalleryModal from '@/components/prompt/PromptGalleryModal'
+import type { PromptTemplate } from '@/types/prompt'
 import { toast } from 'sonner'
 
 /**
@@ -46,6 +49,7 @@ export default function ChatInterface() {
     isTranscribing,
     setLanguage,
     transcribeAudio,
+    applyPrompt,
   } = useChatStore()
 
   // 語音錄音 Hook
@@ -62,6 +66,9 @@ export default function ChatInterface() {
 
   // Local state for showing waveform
   const [showWaveform, setShowWaveform] = useState(false)
+
+  // Prompt Gallery Modal 狀態
+  const [showPromptGallery, setShowPromptGallery] = useState(false)
 
   // Refs
   const messagesEndRef = useRef<HTMLDivElement>(null)
@@ -144,6 +151,17 @@ export default function ChatInterface() {
   }, [stopRecording, transcribeAudio, setInput])
 
   /**
+   * 處理選擇 Prompt Template
+   */
+  const handleSelectPrompt = useCallback(
+    (prompt: PromptTemplate) => {
+      applyPrompt(prompt.content)
+      toast.success(`已套用主題: ${prompt.title}`)
+    },
+    [applyPrompt]
+  )
+
+  /**
    * 處理錄音錯誤
    */
   useEffect(() => {
@@ -202,14 +220,26 @@ export default function ChatInterface() {
 
       {/* 輸入區域 */}
       <div className="border-t border-gray-200 dark:border-gray-700 p-2 sm:p-4 bg-gray-50 dark:bg-gray-800">
-        {/* 語言選擇器 */}
-        <div className="mb-2">
+        {/* 頂部控制列 */}
+        <div className="mb-2 flex items-center justify-between gap-2">
+          {/* 語言選擇器 */}
           <LanguageSelector
             value={selectedLanguage}
             onChange={setLanguage}
             disabled={isLoading || recordingState === 'recording'}
             variant="compact"
           />
+
+          {/* Prompt Gallery 按鈕 */}
+          <button
+            onClick={() => setShowPromptGallery(true)}
+            disabled={isLoading || recordingState === 'recording'}
+            className="flex items-center gap-1.5 px-3 py-1.5 text-sm bg-purple-500 hover:bg-purple-600 text-white rounded-md transition-colors disabled:bg-gray-300 dark:disabled:bg-gray-600 disabled:cursor-not-allowed"
+            aria-label="開啟對話主題庫"
+          >
+            <Sparkles className="h-4 w-4" />
+            <span className="hidden sm:inline">主題庫</span>
+          </button>
         </div>
 
         {/* 錄音指示器（錄音中顯示） */}
@@ -285,6 +315,13 @@ export default function ChatInterface() {
           </button>
         </div>
       </div>
+
+      {/* Prompt Gallery Modal */}
+      <PromptGalleryModal
+        open={showPromptGallery}
+        onClose={() => setShowPromptGallery(false)}
+        onSelectPrompt={handleSelectPrompt}
+      />
     </div>
   )
 }

@@ -280,6 +280,15 @@ export const useChatStore = create<ChatStore>()(
     set({ selectedLanguage: language })
   },
 
+  /**
+   * 套用 Prompt Template
+   * @description 將 Prompt Template 內容填入輸入框
+   * @param content - Prompt 內容
+   */
+  applyPrompt: (content: string) => {
+    set({ input: content })
+  },
+
   transcribeAudio: async (audioBlob: Blob) => {
     const { selectedLanguage } = get()
 
