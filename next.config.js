@@ -13,7 +13,8 @@ const ContentSecurityPolicy = `
   connect-src 'self'
     https://*.openai.azure.com
     https://*.cognitiveservices.azure.com
-    https://*.in.applicationinsights.azure.com;
+    https://*.in.applicationinsights.azure.com
+    https://models.readyplayer.me;
   worker-src 'self' blob:;
   child-src 'self' blob:;
   frame-ancestors 'none';
