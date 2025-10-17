@@ -27,6 +27,7 @@ model User {
   settings         UserSettings?
   activityLogs     ActivityLog[]
   favoriteAvatars  UserFavoriteAvatar[]
+  conversations    Conversation[]
 
   @@map("users")
 }
@@ -160,4 +161,36 @@ model UserFavoriteAvatar {
   @@index([userId])
   @@index([avatarId])
   @@map("user_favorite_avatars")
+}
+
+// Sprint 6 Phase 1: Conversation History
+model Conversation {
+  id     String @id @default(cuid())
+  userId String
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  title     String  @default("新對話") // Default conversation title
+  avatarId  String? // Avatar used in this conversation (optional)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  messages Message[]
+
+  @@index([userId, createdAt(sort: Desc)]) // Optimized for listing user's conversations
+  @@map("conversations")
+}
+
+// Sprint 6 Phase 1: Conversation Messages
+model Message {
+  id             String       @id @default(cuid())
+  conversationId String
+  conversation   Conversation @relation(fields: [conversationId], references: [id], onDelete: Cascade)
+
+  role      String // "user" or "assistant"
+  content   String @db.Text // Message content (can be long)
+  timestamp DateTime @default(now())
+
+  @@index([conversationId, timestamp]) // Optimized for fetching messages in chronological order
+  @@map("messages")
 }

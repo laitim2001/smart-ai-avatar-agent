@@ -40,8 +40,13 @@ export const useChatStore = create<ChatStore>()(
       isLoading: false,
       selectedLanguage: 'zh-TW',
       isTranscribing: false,
+      currentConversationId: null, // Sprint 6: Current conversation ID
 
       // Actions
+      setConversationId: (id) => {
+        set({ currentConversationId: id })
+      },
+
       sendMessage: () => {
     const { input, isLoading, messages } = get()
 

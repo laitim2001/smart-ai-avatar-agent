@@ -82,8 +82,15 @@ export interface ChatStore {
   isLoading: boolean
   selectedLanguage: 'zh-TW' | 'en-US' | 'ja-JP' // SupportedLanguage
   isTranscribing: boolean
+  currentConversationId: string | null // Sprint 6: Current conversation ID
 
   // Actions
+  /**
+   * 設定當前對話 ID
+   * @param {string | null} id - 對話 ID (null 代表新對話)
+   */
+  setConversationId: (id: string | null) => void
+
   /**
    * 送出訊息
    * @description 驗證輸入、建立使用者訊息、更新狀態、觸發 API 呼叫
