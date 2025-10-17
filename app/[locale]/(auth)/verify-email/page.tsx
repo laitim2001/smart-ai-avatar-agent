@@ -56,7 +56,7 @@ export default function VerifyEmailPage() {
 
         // 3 秒後導向登入頁面
         setTimeout(() => {
-          router.push('/auth/login')
+          router.push('/login')
         }, 3000)
       } catch (err) {
         setStatus('error')
@@ -106,10 +106,10 @@ export default function VerifyEmailPage() {
             </div>
             <div className="flex gap-2">
               <Button asChild className="w-full">
-                <Link href="/auth/register">重新註冊</Link>
+                <Link href="/register">重新註冊</Link>
               </Button>
               <Button asChild variant="outline" className="w-full">
-                <Link href="/auth/login">返回登入</Link>
+                <Link href="/login">返回登入</Link>
               </Button>
             </div>
           </>

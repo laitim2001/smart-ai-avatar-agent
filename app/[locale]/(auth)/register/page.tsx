@@ -91,7 +91,7 @@ export default function RegisterPage() {
 
       // 3 秒後導向登入頁面
       setTimeout(() => {
-        router.push('/auth/login')
+        router.push('/login')
       }, 3000)
     } catch (err) {
       setError(err instanceof Error ? err.message : '註冊時發生錯誤')
@@ -224,7 +224,7 @@ export default function RegisterPage() {
       <CardFooter className="flex justify-center">
         <p className="text-sm text-gray-600">
           已經有帳號了？{' '}
-          <Link href="/auth/login" className="text-blue-600 hover:underline">
+          <Link href="/login" className="text-blue-600 hover:underline">
             登入
           </Link>
         </p>
