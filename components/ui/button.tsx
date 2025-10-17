@@ -29,7 +29,7 @@ import { cn } from '@/lib/utils'
 
 export interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
   /** 按鈕變體 */
-  variant?: 'primary' | 'secondary' | 'outline'
+  variant?: 'primary' | 'secondary' | 'outline' | 'ghost' | 'destructive'
   /** 按鈕尺寸 */
   size?: 'sm' | 'md' | 'lg'
   /** 是否顯示 Loading 狀態 */
@@ -75,6 +75,10 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps>(
         'bg-secondary text-secondary-foreground hover:bg-secondary/90 active:bg-secondary/80 shadow-sm hover:shadow-md',
       outline:
         'border-2 border-primary text-primary bg-transparent hover:bg-primary hover:text-primary-foreground active:bg-primary/80 hover:shadow-lg',
+      ghost:
+        'bg-transparent hover:bg-gray-100 active:bg-gray-200 text-gray-700',
+      destructive:
+        'bg-red-600 text-white hover:bg-red-700 active:bg-red-800 shadow-md hover:shadow-xl',
     }
 
     // 尺寸樣式
