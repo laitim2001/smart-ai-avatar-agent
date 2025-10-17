@@ -10,7 +10,7 @@ const ContentSecurityPolicy = `
   style-src 'self' 'unsafe-inline';
   img-src 'self' data: https:;
   font-src 'self' data:;
-  connect-src 'self'
+  connect-src 'self' blob:
     https://*.openai.azure.com
     https://*.cognitiveservices.azure.com
     https://*.in.applicationinsights.azure.com

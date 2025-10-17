@@ -25,7 +25,7 @@ const TTS_CONFIG = {
   defaultVoice: 'zh-TW-HsiaoChenNeural',
   timeout: 30000, // 30 秒
   maxTextLength: 1000,
-  speedRange: { min: 0.5, max: 2.0, default: 1.0 },
+  speedRange: { min: 0.5, max: 2.0, default: 0.85 }, // 調整為 85% 語速,更自然
   pitchRange: { min: 0.5, max: 2.0, default: 1.0 },
 }
 
@@ -128,6 +128,7 @@ export async function POST(request: NextRequest) {
     console.log(`[TTS API] Voice: ${voice}, Speed: ${speed}, Pitch: ${pitch}`)
 
     // 6. 取得 Azure Speech Services 配置
+    // 環境變數會在每次請求時重新讀取
     const subscriptionKey = process.env.AZURE_SPEECH_KEY
     const region = process.env.AZURE_SPEECH_REGION
 

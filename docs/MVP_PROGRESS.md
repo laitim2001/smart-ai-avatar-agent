@@ -1696,3 +1696,75 @@ const handleSelectPrompt = useCallback(
 
 **Last Updated**: 2025-10-17 by Claude Code
 **Document Version**: 2.0 (Reflects actual execution, updated Epic structure, added Sprint 6-12 plan)
+
+---
+
+## 🛠️ 問題排查記錄
+
+### 2025-10-17: Sprint 11 後續修復
+
+**問題數量**: 7 個關鍵問題
+**解決時間**: 約 2 小時
+**修改文件數**: 10+ 個
+
+#### 已解決的問題
+
+1. ✅ **UI 背景色太深**
+   - 修改 3 個組件的背景配色
+   - 從深色改為淺藍色漸層 (from-blue-50 to-indigo-100)
+
+2. ✅ **TTS 語音無法播放 (408 超時)**
+   - 根本原因: Azure Speech SDK 的 speakTextAsync 永遠不返回
+   - 解決方案: 完全重寫為 REST API 實作
+   - 效能: Azure 回應時間 ~1.4s, 總延遲 ~3.5s
+
+3. ✅ **Azure Speech Service 401 認證失敗**
+   - 嘗試 3 個不同的 Key 後找到有效的
+   - 最終配置: AZURE_SPEECH_KEY + AZURE_SPEECH_REGION=eastasia
+
+4. ✅ **Jest Worker 崩潰**
+   - 清理 .next/cache 和重啟伺服器解決
+
+5. ✅ **CSP 阻擋 Blob URL**
+   - 在 next.config.js 的 connect-src 中添加 blob:
+   - 允許音訊 Blob URL 載入
+
+6. ✅ **TTS 語速太快**
+   - 調整預設語速從 1.0 到 0.85 (85%)
+   - 語音更加自然流暢
+
+7. ✅ **Avatar 404 錯誤 (關鍵問題)**
+   - 問題: 舊的虛構 Avatar URL 儲存在資料庫和 localStorage
+   - 解決方案:
+     - 創建 scripts/sync-avatars.ts 同步真實 URL 到資料庫
+     - 在 avatarStore 初始化時自動清除舊 URL
+     - 添加手動清除快取按鈕
+   - 結果: 所有 11 個 Avatar 使用真實可用的 Ready Player Me URL
+
+#### 新增功能
+
+1. **Avatar 數據庫同步腳本** (scripts/sync-avatars.ts)
+   - 從 lib/avatar/constants.ts 同步到 PostgreSQL
+   - 自動刪除舊記錄,插入新記錄
+   - 使用方式: npx tsx scripts/sync-avatars.ts
+
+2. **localStorage 快取清除按鈕**
+   - 左下角紅色按鈕 (🔄 清除快取)
+   - 清除所有 Avatar 相關的 localStorage 數據
+   - 自動重新整理頁面
+
+#### 關鍵技術決策
+
+**TTS 實作: REST API vs SDK**
+
+| 對比項目 | REST API | Speech SDK |
+|---------|----------|------------|
+| 穩定性 | ✅ 穩定 | ❌ 連接問題 |
+| 部署 | ✅ 簡單 | ❌ 複雜 |
+| Viseme 支援 | ❌ 不支援 | ✅ 支援 |
+| 適用場景 | 基礎 TTS | 進階功能 |
+
+**結論**: 對於基礎 TTS 需求, REST API 更穩定可靠
+
+詳細記錄請參閱: docs/TROUBLESHOOTING_SESSION_2025-10-17.md
+

@@ -87,15 +87,35 @@ export const AVATARS: AvatarMetadata[] = AVATARS_METADATA
  */
 export const useAvatarStore = create<AvatarState>()(
   persist(
-    (set, get) => ({
-      // 初始狀態
-      currentAvatarId: AVATARS_METADATA[0].id,
-      currentAvatarUrl: AVATARS_METADATA[0].url,
-      availableAvatars: AVATARS_METADATA,
-      favoriteAvatarIds: [], // Sprint 5 Phase 2.2
-      isSelectorOpen: false,
-      isLoading: false,
-      isFavoriteLoading: false, // Sprint 5 Phase 2.2
+    (set, get) => {
+      // 檢查並清除舊的無效 Avatar URL
+      if (typeof window !== 'undefined') {
+        try {
+          const stored = localStorage.getItem('avatar-storage')
+          if (stored) {
+            const parsed = JSON.parse(stored)
+            const state = parsed.state
+
+            // 檢查是否包含舊的無效 URL
+            if (state?.currentAvatarUrl && state.currentAvatarUrl.includes('65c3d4e5f6a7b8c9d0e1f2a3')) {
+              console.log('[AvatarStore] 偵測到無效的舊 Avatar URL,正在清除快取...')
+              localStorage.removeItem('avatar-storage')
+            }
+          }
+        } catch (error) {
+          console.error('[AvatarStore] 清除舊快取失敗:', error)
+        }
+      }
+
+      return {
+        // 初始狀態
+        currentAvatarId: AVATARS_METADATA[0].id,
+        currentAvatarUrl: AVATARS_METADATA[0].url,
+        availableAvatars: AVATARS_METADATA,
+        favoriteAvatarIds: [], // Sprint 5 Phase 2.2
+        isSelectorOpen: false,
+        isLoading: false,
+        isFavoriteLoading: false, // Sprint 5 Phase 2.2
 
       // Actions
       /**
@@ -245,10 +265,11 @@ export const useAvatarStore = create<AvatarState>()(
         return favoriteAvatarIds.includes(avatarId)
       },
 
-      toggleSelector: () => {
-        set((state) => ({ isSelectorOpen: !state.isSelectorOpen }))
-      },
-    }),
+        toggleSelector: () => {
+          set((state) => ({ isSelectorOpen: !state.isSelectorOpen }))
+        },
+      }
+    },
     {
       name: 'avatar-storage', // localStorage key
       // 只持久化必要狀態

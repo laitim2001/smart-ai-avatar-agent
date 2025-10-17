@@ -7,6 +7,7 @@ import ConversationList from '@/components/conversations/ConversationList'
 import ChatInterface from '@/components/chat/ChatInterface'
 import AvatarSelector from '@/components/avatar/AvatarSelector'
 import AvatarChangeButton from '@/components/avatar/AvatarChangeButton'
+import { ClearCacheButton } from './clear-cache'
 import { useChatStore } from '@/stores/chatStore'
 import { useAvatarStore } from '@/stores/avatarStore'
 import { Loader2 } from 'lucide-react'
@@ -100,6 +101,9 @@ export default function ConversationsPage() {
 
   return (
     <div className="flex h-screen bg-gray-50">
+      {/* 臨時的快取清除按鈕 */}
+      <ClearCacheButton />
+
       {/* Left Sidebar - Conversation List */}
       <div className="w-80 flex-shrink-0 border-r border-gray-200 bg-white shadow-sm">
         <ConversationList
