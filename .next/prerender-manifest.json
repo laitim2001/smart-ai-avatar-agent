@@ -1,11 +1,1 @@
-{
-  "version": 4,
-  "routes": {},
-  "dynamicRoutes": {},
-  "notFoundRoutes": [],
-  "preview": {
-    "previewModeId": "83bd4d0541fe22e097722dc89011e01c",
-    "previewModeSigningKey": "2cba93e8502af9bcc3fc7f7eed9cbc744cef1bcc1b1e33d644ddccce0a6bf3dc",
-    "previewModeEncryptionKey": "40a5e97752aecb712fe84569e9c8da6d6e63edf708daf56527494c965d4cf2ae"
-  }
-}
+{"version":4,"routes":{"/zh-TW/login":{},"/en/login":{},"/ja/login":{},"/zh-TW/register":{},"/en/register":{},"/ja/register":{},"/zh-TW":{},"/en":{},"/ja":{},"/zh-TW/conversations":{},"/en/conversations":{},"/ja/conversations":{},"/zh-TW/prompts":{},"/en/prompts":{},"/ja/prompts":{}},"dynamicRoutes":{"/[locale]/login":{"dataRoute":null,"dataRouteRegex":null,"fallback":null,"fallbackRevalidate":false,"fallbackSourceRoute":"/[locale]/login","routeRegex":"^\\/([^/]+?)\\/login(?:\\/)?$","allowHeader":[]},"/[locale]/register":{"dataRoute":null,"dataRouteRegex":null,"fallback":null,"fallbackRevalidate":false,"fallbackSourceRoute":"/[locale]/register","routeRegex":"^\\/([^/]+?)\\/register(?:\\/)?$","allowHeader":[]},"/[locale]":{"dataRoute":null,"dataRouteRegex":null,"fallback":null,"fallbackRevalidate":false,"fallbackSourceRoute":"/[locale]","routeRegex":"^\\/([^/]+?)(?:\\/)?$","allowHeader":[]},"/[locale]/conversations":{"dataRoute":null,"dataRouteRegex":null,"fallback":null,"fallbackRevalidate":false,"fallbackSourceRoute":"/[locale]/conversations","routeRegex":"^\\/([^/]+?)\\/conversations(?:\\/)?$","allowHeader":[]},"/[locale]/prompts":{"dataRoute":null,"dataRouteRegex":null,"fallback":null,"fallbackRevalidate":false,"fallbackSourceRoute":"/[locale]/prompts","routeRegex":"^\\/([^/]+?)\\/prompts(?:\\/)?$","allowHeader":[]}},"notFoundRoutes":[],"preview":{"previewModeId":"84904e9345cf195e9fbdae02675a0bd1","previewModeSigningKey":"3400f07679481579d0b2782afa743cae928e68cda432a0e4f587a2de040b95d2","previewModeEncryptionKey":"caa01de58145198a173ce477f56980f9ecac73f6b4de44959d67dff7ea2f6d5b"}}

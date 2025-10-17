@@ -25,13 +25,13 @@ export default function HomePage() {
           </p>
           <div className="flex flex-col gap-4 max-w-md mx-auto">
             <a
-              href={`/${t('dashboard')}`}
+              href="/dashboard"
               className="px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
             >
               {t('dashboard')}
             </a>
             <a
-              href={`/${t('conversations')}`}
+              href="/conversations"
               className="px-6 py-3 bg-white text-blue-600 border border-blue-600 rounded-lg hover:bg-blue-50 transition-colors"
             >
               {t('conversations')}

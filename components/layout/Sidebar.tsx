@@ -24,17 +24,17 @@ const menuItems = [
     label: '控制台',
   },
   {
-    href: '/dashboard/conversations',
+    href: '/conversations',
     icon: MessageSquare,
     label: '對話記錄',
   },
   {
-    href: '/dashboard/history',
+    href: '/prompts',
     icon: History,
-    label: '歷史紀錄',
+    label: '對話主題',
   },
   {
-    href: '/dashboard/settings',
+    href: '/settings',
     icon: Settings,
     label: '設定',
   },

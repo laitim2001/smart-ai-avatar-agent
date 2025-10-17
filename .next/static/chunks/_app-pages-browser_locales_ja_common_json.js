@@ -1,0 +1,22 @@
+"use strict";
+/*
+ * ATTENTION: An "eval-source-map" devtool has been used.
+ * This devtool is neither made for production nor for readable output files.
+ * It uses "eval()" calls to create a separate source file with attached SourceMaps in the browser devtools.
+ * If you are trying to read the output file, select a different devtool (https://webpack.js.org/configuration/devtool/)
+ * or disable the default devtool with "devtool: false".
+ * If you are looking for production-ready output files, see mode: "production" (https://webpack.js.org/configuration/mode/).
+ */
+(self["webpackChunk_N_E"] = self["webpackChunk_N_E"] || []).push([["_app-pages-browser_locales_ja_common_json"],{
+
+/***/ "(app-pages-browser)/./locales/ja/common.json":
+/*!********************************!*\
+  !*** ./locales/ja/common.json ***!
+  \********************************/
+/***/ ((module, __unused_webpack_exports, __webpack_require__) => {
+
+module.exports = /*#__PURE__*/JSON.parse('{"nav":{"home":"ホーム","dashboard":"ダッシュボード","conversations":"会話履歴","settings":"設定","profile":"プロフィール","logout":"ログアウト"},"auth":{"login":"ログイン","register":"登録","email":"メールアドレス","password":"パスワード","confirmPassword":"パスワード確認","name":"名前","forgotPassword":"パスワードをお忘れですか?","resetPassword":"パスワードリセット","sendResetEmail":"リセットメールを送信","backToLogin":"ログインに戻る","alreadyHaveAccount":"アカウントをお持ちですか?","noAccount":"アカウントをお持ちでないですか?","verifyEmail":"メール認証","verificationSent":"認証メールを送信しました","checkEmail":"メールをご確認ください"},"button":{"submit":"送信","cancel":"キャンセル","save":"保存","delete":"削除","edit":"編集","confirm":"確認","close":"閉じる","back":"戻る","next":"次へ","previous":"前へ","loading":"読み込み中...","search":"検索","filter":"フィルター","clear":"クリア","apply":"適用","retry":"再試行"},"form":{"required":"この項目は必須です","invalidEmail":"無効なメール形式","passwordTooShort":"パスワードは8文字以上必要です","passwordsNotMatch":"パスワードが一致しません","nameTooShort":"名前は2文字以上必要です"},"error":{"generic":"エラーが発生しました。後でもう一度お試しください","unauthorized":"アクセス権限がありません","notFound":"リソースが見つかりません","serverError":"サーバーエラー","networkError":"ネットワーク接続エラー","sessionExpired":"セッションが期限切れです。再度ログインしてください"},"success":{"saved":"保存しました","deleted":"削除しました","updated":"更新しました","created":"作成しました"},"dashboard":{"title":"ダッシュボード","welcome":"おかえりなさい","recentConversations":"最近の会話","statistics":"統計情報","quickActions":"クイックアクション"},"settings":{"title":"設定","general":"一般","account":"アカウント","preferences":"環境設定","language":"言語","theme":"テーマ","notifications":"通知","privacy":"プライバシー","security":"セキュリティ"},"profile":{"title":"プロフィール","editProfile":"プロフィール編集","changePassword":"パスワード変更","currentPassword":"現在のパスワード","newPassword":"新しいパスワード","confirmNewPassword":"新しいパスワード確認"},"chat":{"title":"チャット","newConversation":"新しい会話","inputPlaceholder":"メッセージを入力...","send":"送信","typing":"入力中...","voiceInput":"音声入力","stopRecording":"録音停止","listening":"聞き取り中...","processing":"処理中..."},"avatar":{"title":"アバター","selectAvatar":"アバター選択","changeAvatar":"アバター変更","currentAvatar":"現在のアバター","loading":"アバター読み込み中...","error":"読み込み失敗"},"conversation":{"title":"会話履歴","search":"会話を検索...","noConversations":"まだ会話がありません","startNewConversation":"新しい会話を開始","delete":"会話を削除","confirmDelete":"この会話を削除してもよろしいですか?","messageCount":"{count}件のメッセージ","lastUpdated":"最終更新: {time}"},"language":{"title":"言語","selectLanguage":"言語を選択","zhTW":"繁體中文","en":"English","ja":"日本語"},"prompt":{"title":"会話トピック","gallery":"トピックギャラリー","myPrompts":"マイトピック","systemPrompts":"システムトピック","featured":"おすすめトピック","all":"すべて","search":"トピックを検索...","noResults":"トピックが見つかりません","categories":{"all":"すべてのカテゴリ","learning":"学習","work":"仕事","creative":"クリエイティブ","entertainment":"エンターテイメント","professional":"プロフェッショナル","daily":"日常"},"tags":{"professional":"プロフェッショナル","creative":"クリエイティブ","technical":"技術","casual":"カジュアル","educational":"教育","business":"ビジネス","writing":"ライティング","analysis":"分析","brainstorm":"ブレインストーミング","fun":"楽しい"},"sort":{"label":"並べ替え","popular":"人気順","title":"タイトル順","newest":"新着順"},"actions":{"use":"このトピックを使用","preview":"プレビュー","edit":"編集","delete":"削除","create":"新しいトピックを作成"},"card":{"popularity":"人気度","system":"システム","user":"ユーザー","tags":"タグ"},"empty":{"title":"トピックがありません","description":"最初の会話トピックを作成してみましょう","action":"トピックを作成"},"resultsCount":"{count}件のトピックが見つかりました","form":{"title":"タイトル","titlePlaceholder":"テンプレートのタイトルを入力...","description":"説明","descriptionPlaceholder":"簡単な説明を入力 (オプション)...","content":"内容","contentPlaceholder":"プロンプトの内容を入力...","category":"カテゴリ","tags":"タグ","tagsHint":"1〜5個のタグを選択","characters":"文字"}}}');
+
+/***/ })
+
+}]);
