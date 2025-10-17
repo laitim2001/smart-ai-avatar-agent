@@ -27,7 +27,7 @@ interface TTSRequest {
 const TTS_CONFIG = {
   defaultVoice: DEFAULT_VOICE,
   audioFormat: sdk.SpeechSynthesisOutputFormat.Audio16Khz32KBitRateMonoMp3,
-  timeout: 15000, // 增加到 15 秒以適應較長的文字合成時間
+  timeout: 30000, // 增加到 30 秒以適應 Azure 網路延遲
   maxTextLength: 1000,
   speedRange: { min: 0.5, max: 2.0, default: 1.0 },
   pitchRange: { min: 0.5, max: 2.0, default: 1.0 },
@@ -119,6 +119,7 @@ export async function POST(request: NextRequest) {
     }
 
     // 7. 建立 TTS 合成器
+    console.log(`[TTS API] 開始合成文字 (${body.text.length} 字元)`)
     const synthesizer = new sdk.SpeechSynthesizer(speechConfig, null)
 
     // 8. 收集 Viseme 數據
@@ -137,32 +138,44 @@ export async function POST(request: NextRequest) {
     }
 
     // 9. 執行 TTS 轉換（Promise 包裝）
+    const startTime = Date.now()
     const audioBuffer = await new Promise<Buffer>((resolve, reject) => {
       const timeoutId = setTimeout(() => {
+        const elapsed = Date.now() - startTime
+        console.error(`[TTS API] Timeout after ${elapsed}ms`)
         synthesizer.close()
-        reject(new Error('TTS request timeout (15 seconds exceeded)'))
+        reject(new Error('TTS request timeout (30 seconds exceeded)'))
       }, TTS_CONFIG.timeout)
 
       // 使用 SSML 或純文字
       const speakMethod = body.speed || body.pitch ? 'speakSsmlAsync' : 'speakTextAsync'
 
+      console.log(`[TTS API] 呼叫 Azure Speech SDK ${speakMethod}`)
+
       synthesizer[speakMethod](
         textOrSSML,
         (result) => {
+          const elapsed = Date.now() - startTime
           clearTimeout(timeoutId)
           synthesizer.close()
+
+          console.log(`[TTS API] Azure 回應時間: ${elapsed}ms, Reason: ${result.reason}`)
 
           if (result.reason === sdk.ResultReason.SynthesizingAudioCompleted) {
             // 轉換成功，取得音訊 Buffer
             const audioData = Buffer.from(result.audioData)
+            console.log(`[TTS API] 成功取得音訊 (${audioData.length} bytes)`)
             resolve(audioData)
           } else {
+            console.error(`[TTS API] 合成失敗: ${result.errorDetails}`)
             reject(new Error(`TTS synthesis failed: ${result.errorDetails}`))
           }
         },
         (error) => {
+          const elapsed = Date.now() - startTime
           clearTimeout(timeoutId)
           synthesizer.close()
+          console.error(`[TTS API] SDK 錯誤 (${elapsed}ms):`, error)
           reject(error)
         }
       )
