@@ -2,6 +2,7 @@ import type { Metadata } from 'next'
 import { Inter, Noto_Sans_TC } from 'next/font/google'
 import { ErrorBoundary } from '@/components/ErrorBoundary'
 import { SessionProvider } from '@/components/providers/SessionProvider'
+import { AppInsightsProvider } from '@/components/providers/AppInsightsProvider'
 import { Toaster } from '@/components/ui/sonner'
 import './globals.css'
 
@@ -42,10 +43,12 @@ export default function RootLayout({
   return (
     <html lang="zh-TW" className={`${inter.variable} ${notoSansTC.variable}`}>
       <body className="font-sans antialiased">
-        <SessionProvider>
-          <ErrorBoundary>{children}</ErrorBoundary>
-          <Toaster />
-        </SessionProvider>
+        <AppInsightsProvider>
+          <SessionProvider>
+            <ErrorBoundary>{children}</ErrorBoundary>
+            <Toaster />
+          </SessionProvider>
+        </AppInsightsProvider>
       </body>
     </html>
   )
