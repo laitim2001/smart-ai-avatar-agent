@@ -1,4 +1,4 @@
-const withNextIntl = require('next-intl/plugin')()
+const withNextIntl = require('next-intl/plugin')('./i18n/request.ts')
 
 /**
  * Content Security Policy (CSP) 配置

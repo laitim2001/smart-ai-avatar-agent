@@ -10,7 +10,7 @@ import { NextResponse } from 'next/server'
 import type { NextRequest } from 'next/server'
 import { auth } from '@/lib/auth/config'
 import createIntlMiddleware from 'next-intl/middleware'
-import { locales, defaultLocale } from './i18n'
+import { locales, defaultLocale } from './i18n/request'
 
 // 建立 i18n middleware
 const intlMiddleware = createIntlMiddleware({

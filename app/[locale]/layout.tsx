@@ -1,7 +1,7 @@
 import { NextIntlClientProvider } from 'next-intl'
 import { getMessages } from 'next-intl/server'
 import { notFound } from 'next/navigation'
-import { locales } from '@/i18n'
+import { locales } from '@/i18n/request'
 import { Noto_Sans_TC, Inter } from 'next/font/google'
 import '../globals.css'
 
@@ -24,11 +24,14 @@ export function generateStaticParams() {
 
 export default async function LocaleLayout({
   children,
-  params: { locale },
+  params,
 }: {
   children: React.ReactNode
-  params: { locale: string }
+  params: Promise<{ locale: string }>
 }) {
+  // Await params as required by Next.js 15
+  const { locale } = await params
+
   // 驗證語言參數
   if (!locales.includes(locale as any)) {
     notFound()
