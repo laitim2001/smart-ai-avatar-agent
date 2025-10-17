@@ -210,7 +210,7 @@ export const useAudioStore = create<AudioStore>((set, get) => ({
         state: AudioState.PLAYING,
       })
 
-      audioPlayer.play(audioBuffer, () => {
+      await audioPlayer.play(audioBuffer, () => {
         // 播放結束回調
         set({
           currentAudio: null,
@@ -270,11 +270,11 @@ export const useAudioStore = create<AudioStore>((set, get) => ({
     })
   },
 
-  resumeAudio: () => {
+  resumeAudio: async () => {
     const { state, currentAudio } = get()
     if (state === AudioState.PAUSED && currentAudio) {
       const audioPlayer = getAudioPlayer()
-      audioPlayer.resume()
+      await audioPlayer.resume()
       set({ state: AudioState.PLAYING })
     }
   },

@@ -67,7 +67,8 @@
       "Bash(gh pr merge:*)",
       "Bash(git show:*)",
       "Bash(npx prisma db seed)",
-      "Bash(git log:*)"
+      "Bash(git log:*)",
+      "Bash(npx eslint:*)"
     ],
     "deny": [],
     "ask": []

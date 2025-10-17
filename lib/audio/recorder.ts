@@ -2,11 +2,16 @@
  * Audio Recorder
  *
  * 使用 Web Audio API 和 MediaRecorder 錄製音訊
+ * Sprint 10: Safari 相容性優化
  */
 
 import { DEFAULT_AUDIO_CONFIG, RECORDING_CONSTRAINTS } from '@/types/stt'
 import type { RecordingError } from '@/types/stt'
-import { audioBufferToWav, calculateRMS } from './audio-utils'
+import { audioBufferToWav } from './audio-utils'
+import {
+  getBrowserUnsupportedMessage,
+  getSafariCompatibility,
+} from '@/lib/browser/safari-compat'
 
 /**
  * 音訊錄製器類別
@@ -27,28 +32,69 @@ export class AudioRecorder {
    */
   async initialize(): Promise<void> {
     try {
+      // Safari 相容性檢測
+      const safariCompat = getSafariCompatibility()
+
       // 檢查瀏覽器支援
       if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
         throw this.createError(
           'not_supported',
-          '您的瀏覽器不支援音訊錄製功能'
+          getBrowserUnsupportedMessage('音訊錄製')
+        )
+      }
+
+      // Safari/iOS 特殊檢查：MediaRecorder 支援度
+      if (safariCompat.isSafari && !safariCompat.supportsMediaRecorder) {
+        console.warn(
+          '[AudioRecorder] Safari version does not support MediaRecorder'
+        )
+        throw this.createError(
+          'not_supported',
+          getBrowserUnsupportedMessage('MediaRecorder API')
         )
       }
 
       // 請求麥克風權限
-      this.mediaStream = await navigator.mediaDevices.getUserMedia({
-        audio: {
-          channelCount: DEFAULT_AUDIO_CONFIG.channelCount,
-          sampleRate: DEFAULT_AUDIO_CONFIG.sampleRate,
-          echoCancellation: true,
-          noiseSuppression: true,
-          autoGainControl: true,
-        },
-      })
+      // iOS Safari 需要簡化音訊配置以提高相容性
+      const audioConstraints = safariCompat.isIOS
+        ? {
+            audio: {
+              echoCancellation: true,
+              noiseSuppression: true,
+              autoGainControl: true,
+              // iOS Safari 不支援指定 channelCount 和 sampleRate
+            },
+          }
+        : {
+            audio: {
+              channelCount: DEFAULT_AUDIO_CONFIG.channelCount,
+              sampleRate: DEFAULT_AUDIO_CONFIG.sampleRate,
+              echoCancellation: true,
+              noiseSuppression: true,
+              autoGainControl: true,
+            },
+          }
+
+      this.mediaStream = await navigator.mediaDevices.getUserMedia(
+        audioConstraints
+      )
 
       // 建立 AudioContext 用於音訊分析
+      // iOS Safari 需要使用 webkitAudioContext
       this.audioContext = new (window.AudioContext ||
         (window as any).webkitAudioContext)()
+
+      // iOS Safari: AudioContext 可能預設為 suspended 狀態
+      // 需要在使用者互動後手動 resume
+      if (
+        safariCompat.isIOS &&
+        this.audioContext.state === 'suspended'
+      ) {
+        console.warn(
+          '[AudioRecorder] iOS Safari: AudioContext suspended, will resume on user interaction'
+        )
+      }
+
       const source = this.audioContext.createMediaStreamSource(this.mediaStream)
 
       // 建立分析器（用於波形視覺化）
@@ -58,9 +104,18 @@ export class AudioRecorder {
 
       // 建立 MediaRecorder
       const mimeType = this.getSupportedMimeType()
-      this.mediaRecorder = new MediaRecorder(this.mediaStream, {
-        mimeType,
-      })
+
+      // Safari 特殊處理：如果 mimeType 不支援，使用預設設定
+      if (safariCompat.isSafari && !MediaRecorder.isTypeSupported(mimeType)) {
+        console.warn(
+          `[AudioRecorder] Safari: mimeType "${mimeType}" not supported, using default`
+        )
+        this.mediaRecorder = new MediaRecorder(this.mediaStream)
+      } else {
+        this.mediaRecorder = new MediaRecorder(this.mediaStream, {
+          mimeType,
+        })
+      }
 
       // 處理錄音資料
       this.mediaRecorder.ondataavailable = (event) => {
@@ -68,6 +123,10 @@ export class AudioRecorder {
           this.audioChunks.push(event.data)
         }
       }
+
+      console.log(
+        `[AudioRecorder] Initialized successfully (Browser: ${safariCompat.isSafari ? 'Safari' : 'Other'}, iOS: ${safariCompat.isIOS}, MIME: ${this.mediaRecorder.mimeType})`
+      )
     } catch (error) {
       if (error instanceof Error) {
         if (error.name === 'NotAllowedError' || error.name === 'PermissionDeniedError') {
@@ -296,24 +355,38 @@ export class AudioRecorder {
 
   /**
    * 取得支援的 MIME 類型
+   * Safari 14.1+ 支援 audio/mp4，audio/webm 支援度較差
    *
    * @private
    */
   private getSupportedMimeType(): string {
-    const types = [
-      'audio/webm',
-      'audio/webm;codecs=opus',
-      'audio/ogg;codecs=opus',
-      'audio/mp4',
-    ]
+    const safariCompat = getSafariCompatibility()
+
+    // Safari 優先使用 MP4 格式
+    const types = safariCompat.isSafari
+      ? [
+          'audio/mp4',
+          'audio/mp4;codecs=mp4a.40.2', // AAC
+          'audio/webm',
+          'audio/webm;codecs=opus',
+          'audio/ogg;codecs=opus',
+        ]
+      : [
+          'audio/webm',
+          'audio/webm;codecs=opus',
+          'audio/ogg;codecs=opus',
+          'audio/mp4',
+        ]
 
     for (const type of types) {
       if (MediaRecorder.isTypeSupported(type)) {
+        console.log(`[AudioRecorder] Using MIME type: ${type}`)
         return type
       }
     }
 
     // 如果都不支援，使用預設值
+    console.warn('[AudioRecorder] No supported MIME type found, using default')
     return 'audio/webm'
   }
 
