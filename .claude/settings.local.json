@@ -68,7 +68,8 @@
       "Bash(git show:*)",
       "Bash(npx prisma db seed)",
       "Bash(git log:*)",
-      "Bash(npx eslint:*)"
+      "Bash(npx eslint:*)",
+      "Bash(npm audit:*)"
     ],
     "deny": [],
     "ask": []
