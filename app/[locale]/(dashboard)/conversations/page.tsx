@@ -3,8 +3,8 @@
 import { useEffect, useState } from 'react'
 import { useRouter } from 'next/navigation'
 import ConversationList from '@/components/conversations/ConversationList'
-import { ChatInterface } from '@/components/chat/ChatInterface'
-import { AvatarCanvas } from '@/components/avatar/AvatarCanvas'
+import ChatInterface from '@/components/chat/ChatInterface'
+import AvatarCanvas from '@/components/avatar/AvatarCanvas'
 import { useChatStore } from '@/stores/chatStore'
 import { useAvatarStore } from '@/stores/avatarStore'
 import { Loader2 } from 'lucide-react'
@@ -98,7 +98,7 @@ export default function ConversationsPage() {
       <div className="flex flex-1 overflow-hidden">
         {/* Avatar Canvas (Left) */}
         <div className="w-1/2 bg-gradient-to-br from-blue-50 to-indigo-50 border-r border-gray-200">
-          <AvatarCanvas modelUrl={currentAvatarUrl} />
+          <AvatarCanvas />
         </div>
 
         {/* Chat Interface (Right) */}
