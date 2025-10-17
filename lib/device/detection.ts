@@ -4,7 +4,16 @@
  *
  * 根據裝置的硬體特性自動偵測效能等級，
  * 用於動態調整 3D 渲染品質與優化使用者體驗
+ *
+ * Sprint 10: Safari/iOS 3D 渲染優化
  */
+
+import {
+  isSafari,
+  isIOS,
+  getSafariVersion,
+  getIOSVersion,
+} from '@/lib/browser/safari-compat'
 
 /**
  * 效能分級
@@ -51,6 +60,14 @@ export interface DeviceInfo {
   devicePixelRatio: number
   /** 使用者代理字串 */
   userAgent: string
+  /** 是否為 Safari 瀏覽器 */
+  isSafari: boolean
+  /** 是否為 iOS 裝置 */
+  isIOS: boolean
+  /** Safari 版本號 (如果是 Safari) */
+  safariVersion: number | null
+  /** iOS 版本號 (如果是 iOS) */
+  iosVersion: number | null
 }
 
 /**
@@ -118,6 +135,10 @@ export function detectDeviceInfo(): DeviceInfo {
       isTouch: false,
       devicePixelRatio: 1,
       userAgent: '',
+      isSafari: false,
+      isIOS: false,
+      safariVersion: null,
+      iosVersion: null,
     }
   }
 
@@ -165,6 +186,12 @@ export function detectDeviceInfo(): DeviceInfo {
   // 使用者代理字串
   const userAgent = navigator.userAgent
 
+  // Safari/iOS 檢測
+  const safariDetected = isSafari()
+  const iosDetected = isIOS()
+  const safariVer = getSafariVersion()
+  const iosVer = getIOSVersion()
+
   return {
     memory,
     cores,
@@ -174,6 +201,10 @@ export function detectDeviceInfo(): DeviceInfo {
     isTouch,
     devicePixelRatio,
     userAgent,
+    isSafari: safariDetected,
+    isIOS: iosDetected,
+    safariVersion: safariVer,
+    iosVersion: iosVer,
   }
 }
 
@@ -187,6 +218,7 @@ export function detectDeviceInfo(): DeviceInfo {
  * - **Low**: Memory < 4GB OR Cores < 4 OR 低階 GPU
  * - **Medium**: 4GB ≤ Memory < 8GB AND 4 ≤ Cores < 8
  * - **High**: Memory ≥ 8GB AND Cores ≥ 8 AND 高階 GPU
+ * - **Safari/iOS**: 特殊處理，傾向降低一級效能等級
  *
  * @example
  * ```ts
@@ -213,9 +245,25 @@ export function calculatePerformanceTier(
     info.gpuRenderer.toLowerCase().includes('geforce') ||
     info.gpuRenderer.toLowerCase().includes('apple m1') ||
     info.gpuRenderer.toLowerCase().includes('apple m2') ||
-    info.gpuRenderer.toLowerCase().includes('apple m3')
+    info.gpuRenderer.toLowerCase().includes('apple m3') ||
+    info.gpuRenderer.toLowerCase().includes('apple m4')
 
-  // 分級邏輯
+  // Safari/iOS 特殊處理：WebGL 效能較差，降低一級
+  // iOS < 15 或 Safari < 15 強制使用 low tier
+  const needsSafariDowngrade =
+    info.isSafari &&
+    ((info.safariVersion !== null && info.safariVersion < 15) ||
+      (info.iosVersion !== null && info.iosVersion < 15))
+
+  // 強制降級到 low
+  if (needsSafariDowngrade) {
+    console.warn(
+      `[Performance] Safari/iOS version too old (Safari: ${info.safariVersion}, iOS: ${info.iosVersion}), downgrading to LOW tier`
+    )
+    return 'low'
+  }
+
+  // 基礎分級邏輯
   if (info.memory < 4 || info.cores < 4 || isLowEndGPU) {
     return 'low'
   }
@@ -225,6 +273,14 @@ export function calculatePerformanceTier(
     info.cores >= 8 &&
     (isHighEndGPU || !info.isMobile)
   ) {
+    // Safari/iOS 在 high tier 降級到 medium
+    // WebGL 實作較保守，3D 渲染效能不如 Chrome
+    if (info.isSafari || info.isIOS) {
+      console.log(
+        '[Performance] Safari/iOS detected, downgrading from HIGH to MEDIUM tier'
+      )
+      return 'medium'
+    }
     return 'high'
   }
 
@@ -329,6 +385,13 @@ export function formatDeviceInfo(device?: DeviceInfo): string {
   const info = device || detectDeviceInfo()
   const tier = calculatePerformanceTier(info)
 
+  let safariInfo = ''
+  if (info.isSafari || info.isIOS) {
+    safariInfo = `
+  Safari: ${info.isSafari ? 'Yes' : 'No'}${info.safariVersion ? ` (v${info.safariVersion})` : ''}
+  iOS: ${info.isIOS ? 'Yes' : 'No'}${info.iosVersion ? ` (v${info.iosVersion})` : ''}`
+  }
+
   return `
 Device Info:
   Memory: ${info.memory}GB
@@ -336,7 +399,7 @@ Device Info:
   GPU: ${info.gpuVendor} ${info.gpuRenderer}
   Mobile: ${info.isMobile ? 'Yes' : 'No'}
   Touch: ${info.isTouch ? 'Yes' : 'No'}
-  DPR: ${info.devicePixelRatio}x
+  DPR: ${info.devicePixelRatio}x${safariInfo}
   Performance Tier: ${tier.toUpperCase()}
   `.trim()
 }
