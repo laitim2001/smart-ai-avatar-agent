@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from 'react'
 import { useSession } from 'next-auth/react'
+import { useRouter } from 'next/navigation'
 import { MessageSquare, Clock, TrendingUp, Users } from 'lucide-react'
 
 interface UserData {
@@ -14,6 +15,7 @@ interface UserData {
 }
 
 export default function DashboardPage() {
+  const router = useRouter()
   const { data: session } = useSession()
   const [userData, setUserData] = useState<UserData | null>(null)
   const [isLoading, setIsLoading] = useState(true)
@@ -131,7 +133,10 @@ export default function DashboardPage() {
           <p className="mt-2 text-sm text-gray-600">
             開始與您的 AI Avatar 進行對話
           </p>
-          <button className="mt-4 w-full rounded-lg bg-blue-600 px-4 py-2 text-sm font-medium text-white hover:bg-blue-700 transition-colors">
+          <button
+            onClick={() => router.push('/conversations')}
+            className="mt-4 w-full rounded-lg bg-blue-600 px-4 py-2 text-sm font-medium text-white hover:bg-blue-700 transition-colors"
+          >
             開始對話
           </button>
         </div>
@@ -141,7 +146,10 @@ export default function DashboardPage() {
           <p className="mt-2 text-sm text-gray-600">
             目前沒有最近的對話記錄
           </p>
-          <button className="mt-4 w-full rounded-lg border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50 transition-colors">
+          <button
+            onClick={() => router.push('/conversations')}
+            className="mt-4 w-full rounded-lg border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50 transition-colors"
+          >
             查看全部記錄
           </button>
         </div>
