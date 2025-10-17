@@ -179,6 +179,18 @@
       "description": "Try creating your first conversation topic",
       "action": "Create Topic"
     },
-    "resultsCount": "Found {count} topics"
+    "resultsCount": "Found {count} topics",
+    "form": {
+      "title": "Title",
+      "titlePlaceholder": "Enter template title...",
+      "description": "Description",
+      "descriptionPlaceholder": "Enter brief description (optional)...",
+      "content": "Content",
+      "contentPlaceholder": "Enter prompt content...",
+      "category": "Category",
+      "tags": "Tags",
+      "tagsHint": "Select 1-5 tags",
+      "characters": "characters"
+    }
   }
 }

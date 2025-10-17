@@ -179,6 +179,18 @@
       "description": "嘗試建立您的第一個對話主題",
       "action": "建立主題"
     },
-    "resultsCount": "找到 {count} 個主題"
+    "resultsCount": "找到 {count} 個主題",
+    "form": {
+      "title": "標題",
+      "titlePlaceholder": "輸入模板標題...",
+      "description": "描述",
+      "descriptionPlaceholder": "輸入簡短描述 (選填)...",
+      "content": "內容",
+      "contentPlaceholder": "輸入 Prompt 內容...",
+      "category": "分類",
+      "tags": "標籤",
+      "tagsHint": "請選擇 1-5 個標籤",
+      "characters": "字元"
+    }
   }
 }

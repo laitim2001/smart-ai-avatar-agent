@@ -179,6 +179,18 @@
       "description": "最初の会話トピックを作成してみましょう",
       "action": "トピックを作成"
     },
-    "resultsCount": "{count}件のトピックが見つかりました"
+    "resultsCount": "{count}件のトピックが見つかりました",
+    "form": {
+      "title": "タイトル",
+      "titlePlaceholder": "テンプレートのタイトルを入力...",
+      "description": "説明",
+      "descriptionPlaceholder": "簡単な説明を入力 (オプション)...",
+      "content": "内容",
+      "contentPlaceholder": "プロンプトの内容を入力...",
+      "category": "カテゴリ",
+      "tags": "タグ",
+      "tagsHint": "1〜5個のタグを選択",
+      "characters": "文字"
+    }
   }
 }

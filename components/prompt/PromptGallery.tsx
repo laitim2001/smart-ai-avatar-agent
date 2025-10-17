@@ -2,24 +2,28 @@
 
 /**
  * PromptGallery - Prompt 模板畫廊主組件
- * Sprint 9 Phase 2: PromptGallery 組件
+ * Sprint 9 Phase 2-3: PromptGallery 組件 (含編輯功能)
  *
  * 功能:
  * - 顯示模板列表 (網格佈局)
  * - 整合篩選器
  * - 整合 API 與 Zustand Store
- * - 載入狀態
- * - 空狀態
- * - 錯誤處理
+ * - 預覽模板 (PromptPreviewModal)
+ * - 編輯/刪除模板 (PromptEditor)
+ * - 建立新模板
+ * - 載入/錯誤/空狀態處理
  * - 響應式設計
  */
 
-import { useEffect } from 'react'
+import { useEffect, useState } from 'react'
 import { useTranslations } from 'next-intl'
-import { Loader2, AlertCircle } from 'lucide-react'
+import { Loader2, AlertCircle, Plus } from 'lucide-react'
+import { Button } from '@/components/ui/button'
 import { usePromptStore } from '@/stores/promptStore'
 import PromptFilters from './PromptFilters'
 import PromptCard from './PromptCard'
+import PromptPreviewModal from './PromptPreviewModal'
+import PromptEditor from './PromptEditor'
 import type { PromptTemplate } from '@/types/prompt'
 
 interface PromptGalleryProps {
@@ -33,6 +37,11 @@ export default function PromptGallery({ onSelectPrompt }: PromptGalleryProps) {
   const { prompts, loading, error, filters, fetchPrompts, setSelectedPrompt } =
     usePromptStore()
 
+  // Modal 狀態
+  const [previewPrompt, setPreviewPrompt] = useState<PromptTemplate | null>(null)
+  const [editMode, setEditMode] = useState<'create' | 'edit' | null>(null)
+  const [editingPrompt, setEditingPrompt] = useState<PromptTemplate | null>(null)
+
   // 初始載入與篩選變更時重新取得資料
   useEffect(() => {
     fetchPrompts()
@@ -44,9 +53,33 @@ export default function PromptGallery({ onSelectPrompt }: PromptGalleryProps) {
   }
 
   const handlePreviewPrompt = (prompt: PromptTemplate) => {
-    setSelectedPrompt(prompt)
-    // TODO: Phase 3 - Open PromptPreviewModal
-    console.log('[PromptGallery] Preview:', prompt.title)
+    setPreviewPrompt(prompt)
+  }
+
+  const handleCreateNew = () => {
+    setEditMode('create')
+    setEditingPrompt(null)
+  }
+
+  const handleEdit = (prompt: PromptTemplate) => {
+    setEditMode('edit')
+    setEditingPrompt(prompt)
+  }
+
+  const handleDelete = () => {
+    // 刪除後重新載入列表
+    fetchPrompts()
+  }
+
+  const handleEditorSuccess = () => {
+    setEditMode(null)
+    setEditingPrompt(null)
+    fetchPrompts()
+  }
+
+  const handleEditorCancel = () => {
+    setEditMode(null)
+    setEditingPrompt(null)
   }
 
   // 載入狀態
@@ -90,10 +123,36 @@ export default function PromptGallery({ onSelectPrompt }: PromptGalleryProps) {
     )
   }
 
+  // 顯示編輯器時
+  if (editMode) {
+    return (
+      <div className="space-y-6">
+        <PromptEditor
+          mode={editMode}
+          prompt={editingPrompt || undefined}
+          onSuccess={handleEditorSuccess}
+          onCancel={handleEditorCancel}
+        />
+      </div>
+    )
+  }
+
   return (
     <div className="space-y-6">
-      {/* 篩選器 */}
-      <PromptFilters />
+      {/* 篩選器與建立按鈕 */}
+      <div className="space-y-4">
+        <div className="flex items-center justify-between">
+          <h2 className="text-xl font-semibold text-white">{t('gallery')}</h2>
+          <Button
+            onClick={handleCreateNew}
+            className="bg-blue-500 hover:bg-blue-600 text-white"
+          >
+            <Plus className="h-4 w-4 mr-2" />
+            {t('actions.create')}
+          </Button>
+        </div>
+        <PromptFilters />
+      </div>
 
       {/* 統計資訊 */}
       <div className="flex items-center justify-between px-2">
@@ -116,6 +175,16 @@ export default function PromptGallery({ onSelectPrompt }: PromptGalleryProps) {
           />
         ))}
       </div>
+
+      {/* 預覽 Modal */}
+      <PromptPreviewModal
+        prompt={previewPrompt}
+        open={!!previewPrompt}
+        onClose={() => setPreviewPrompt(null)}
+        onUse={handleUsePrompt}
+        onEdit={handleEdit}
+        onDelete={handleDelete}
+      />
     </div>
   )
 }
