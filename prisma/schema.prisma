@@ -28,6 +28,7 @@ model User {
   activityLogs     ActivityLog[]
   favoriteAvatars  UserFavoriteAvatar[]
   conversations    Conversation[]
+  promptTemplates  PromptTemplate[]
 
   @@map("users")
 }
@@ -193,4 +194,30 @@ model Message {
 
   @@index([conversationId, timestamp]) // Optimized for fetching messages in chronological order
   @@map("messages")
+}
+
+// Sprint 9 Phase 1: Prompt Template System
+model PromptTemplate {
+  id          String   @id @default(cuid())
+  userId      String?  // null for system templates
+  user        User?    @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  title       String   // Template title (e.g., "專業商務顧問", "創意寫作助手")
+  description String?  // Optional description
+  content     String   @db.Text // Prompt template content (can be long)
+
+  category    String   // learning, work, creative, entertainment, professional, daily
+  tags        String[] // professional, creative, technical, casual, educational
+
+  isSystem    Boolean  @default(false) // true for system templates, false for user templates
+  featured    Boolean  @default(false) // featured templates
+  popularity  Int      @default(0)     // usage count or popularity score
+
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@index([category])
+  @@index([userId])
+  @@index([isSystem, featured]) // Optimized for fetching system/featured templates
+  @@map("prompt_templates")
 }
