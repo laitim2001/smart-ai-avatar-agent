@@ -48,11 +48,12 @@
  *                   example: 1.0.0
  */
 
-import { NextRequest } from 'next/server'
+import { NextRequest, NextResponse } from 'next/server'
 import {
   createSuccessResponse,
   handleError,
 } from '@/lib/utils/error-handler'
+import { handleCORS, CORS_HEADERS } from '@/lib/api/cors'
 import type { HealthCheckResponse } from '@/types/api'
 
 /**
@@ -60,6 +61,8 @@ import type { HealthCheckResponse } from '@/types/api'
  * GET /api/health
  *
  * 檢查 API 服務健康狀態
+ *
+ * 支援 CORS：允許跨域請求以便前端監控工具使用
  */
 export async function GET(_request: NextRequest) {
   try {
@@ -69,10 +72,29 @@ export async function GET(_request: NextRequest) {
       version: '1.0.0',
     }
 
-    return createSuccessResponse(response)
+    const successResponse = createSuccessResponse(response)
+
+    // 加入 CORS headers
+    return new NextResponse(successResponse.body, {
+      status: successResponse.status,
+      headers: {
+        ...Object.fromEntries(successResponse.headers),
+        ...CORS_HEADERS,
+      },
+    })
   } catch (error) {
     return handleError(error)
   }
+}
+
+/**
+ * 處理 CORS Preflight 請求 (OPTIONS)
+ */
+export async function OPTIONS(request: NextRequest) {
+  const corsResponse = handleCORS(request)
+  if (corsResponse) return corsResponse
+
+  return new NextResponse(null, { status: 204 })
 }
 
 /**
