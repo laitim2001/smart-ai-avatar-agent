@@ -17,7 +17,7 @@ import { toast } from 'sonner'
  * 對話介面組件
  *
  * 提供與 Avatar 對話的使用者介面，包含：
- * - 對話歷史顯示區域（最近 5 則訊息）
+ * - 對話歷史顯示區域（顯示所有訊息）
  * - 文字輸入框（支援 Enter 送出、Shift+Enter 換行）
  * - 語音輸入功能（麥克風錄音 + 語音轉文字）
  * - 語言選擇器（zh-TW、en-US、ja-JP）
@@ -178,15 +178,15 @@ export default function ChatInterface() {
   }, [messages])
 
   return (
-    <div className="flex flex-col h-full bg-gradient-to-b from-white to-gray-50 dark:bg-gradient-to-b dark:from-gray-900 dark:to-gray-800 rounded-lg shadow-lg">
+    <div className="flex flex-col h-full bg-gradient-to-b from-white to-gray-50 rounded-lg shadow-lg">
       {/* 對話歷史區域 */}
       <div className="flex-1 overflow-y-auto p-2 sm:p-4 space-y-2 sm:space-y-4">
         {messages.length === 0 ? (
-          <div className="flex items-center justify-center h-full text-gray-400">
+          <div className="flex items-center justify-center h-full text-gray-500">
             <p>開始與 Avatar 對話...</p>
           </div>
         ) : (
-          messages.slice(-5).map((message) => (
+          messages.map((message) => (
             <div
               key={message.id}
               className={`flex ${
@@ -199,7 +199,7 @@ export default function ChatInterface() {
                 className={`max-w-[70%] rounded-lg px-4 py-2 shadow-sm transition-shadow hover:shadow-md ${
                   message.role === 'user'
                     ? 'bg-blue-600 text-white'
-                    : 'bg-gray-200 dark:bg-gray-700 text-gray-900 dark:text-gray-100'
+                    : 'bg-white border border-gray-200 text-gray-900'
                 }`}
               >
                 <p className="text-sm whitespace-pre-wrap break-words">
@@ -219,7 +219,7 @@ export default function ChatInterface() {
       </div>
 
       {/* 輸入區域 */}
-      <div className="border-t border-gray-200 dark:border-gray-700 p-2 sm:p-4 bg-gray-50 dark:bg-gray-800">
+      <div className="border-t border-gray-200 p-2 sm:p-4 bg-white">
         {/* 頂部控制列 */}
         <div className="mb-2 flex items-center justify-between gap-2">
           {/* 語言選擇器 */}
@@ -234,7 +234,7 @@ export default function ChatInterface() {
           <button
             onClick={() => setShowPromptGallery(true)}
             disabled={isLoading || recordingState === 'recording'}
-            className="flex items-center gap-1.5 px-3 py-1.5 text-sm bg-purple-500 hover:bg-purple-600 text-white rounded-md transition-colors disabled:bg-gray-300 dark:disabled:bg-gray-600 disabled:cursor-not-allowed"
+            className="flex items-center gap-1.5 px-3 py-1.5 text-sm bg-purple-500 hover:bg-purple-600 text-white rounded-md transition-colors disabled:bg-gray-300 disabled:cursor-not-allowed"
             aria-label="開啟對話主題庫"
           >
             <Sparkles className="h-4 w-4" />
@@ -260,7 +260,7 @@ export default function ChatInterface() {
               waveformData={waveformData}
               width={300}
               height={60}
-              className="bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-700"
+              className="bg-white border border-gray-200"
             />
           </div>
         )}
@@ -276,7 +276,7 @@ export default function ChatInterface() {
             rows={1}
             aria-label="對話輸入框"
             aria-describedby="chat-input-hint"
-            className="flex-1 resize-none rounded-lg border border-gray-300 dark:border-gray-600 px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500 disabled:bg-gray-100 dark:disabled:bg-gray-700 disabled:cursor-not-allowed dark:bg-gray-900 dark:text-gray-100"
+            className="flex-1 resize-none rounded-lg border border-gray-300 px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500 disabled:bg-gray-100 disabled:cursor-not-allowed bg-white text-gray-900"
           />
           <span id="chat-input-hint" className="sr-only">
             按 Enter 送出訊息，Shift+Enter 換行
@@ -309,7 +309,7 @@ export default function ChatInterface() {
             onClick={handleClear}
             disabled={isLoading || messages.length === 0 || isTranscribing || recordingState === 'recording'}
             aria-label="清除所有對話"
-            className="bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-200 px-4 py-2 rounded-lg hover:bg-gray-300 dark:hover:bg-gray-600 hover:scale-105 active:scale-95 disabled:bg-gray-100 dark:disabled:bg-gray-800 disabled:cursor-not-allowed transition-all duration-200 shadow-sm hover:shadow-md"
+            className="bg-gray-200 text-gray-700 px-4 py-2 rounded-lg hover:bg-gray-300 hover:scale-105 active:scale-95 disabled:bg-gray-100 disabled:cursor-not-allowed transition-all duration-200 shadow-sm hover:shadow-md"
           >
             清除
           </button>

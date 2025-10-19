@@ -79,13 +79,13 @@ export default function AvatarCanvas() {
   }, [currentAvatarUrl])
 
   return (
-    <div className="w-full h-screen bg-gradient-to-b from-blue-50 to-indigo-100 relative">
+    <div className="w-full h-full bg-gradient-to-b from-blue-50 to-indigo-100 relative">
       <Canvas
         className={`transition-opacity duration-300 ${isTransitioning ? 'opacity-0' : 'opacity-100'}`}
         shadows={performanceConfig.shadows}
         camera={{
-          position: [0, 1.5, 2],
-          fov: 50
+          position: [0, 0.8, 2.2],  // 降低相機高度，減少上方空白
+          fov: 50  // 增加視野，讓 Avatar 更聚焦
         }}
         dpr={performanceConfig.pixelRatio}
         gl={{
@@ -121,7 +121,7 @@ export default function AvatarCanvas() {
           zoomSpeed={0.5}                 // 縮放速度
           minDistance={1}
           maxDistance={5}
-          target={[0, 1, 0]}
+          target={[0, 0.5, 0]}  // 降低注視點，聚焦在 Avatar 上半身
           touches={{
             ONE: 2,    // TOUCH.ROTATE - 單指旋轉
             TWO: 3,    // TOUCH.DOLLY - 雙指捏合縮放
@@ -140,8 +140,8 @@ export default function AvatarCanvas() {
               key={currentAvatarUrl}  // URL 變更時強制重新掛載組件
               ref={avatarModelRef}
               modelUrl={currentAvatarUrl}
-              position={[0, -1, 0]}  // Y軸下移1單位，使頭部在視野中心
-              scale={1}              // 預設縮放，可依實際需求調整
+              position={[0, -1.2, 0]}  // Y軸下移，使頭部在視野中心，減少上方空白
+              scale={1}                // 預設縮放，可依實際需求調整
               onLoad={(model) => {
                 console.log('[AvatarCanvas] Avatar loaded successfully:', {
                   children: model.children.length,
