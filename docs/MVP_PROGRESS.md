@@ -7,8 +7,8 @@
 
 **Last Updated**: 2025-10-19
 **Current Sprint**: Sprint 12 (最終整合、部署準備、文件完整化)
-**Overall Progress**: ✅ Sprint 1-12 完成 (103/103 SP, 100%) | 🎉 **MVP 開發完成**
-**當前狀態**: ✅ Sprint 12 完成 - 安全性整合、CI/CD、跨瀏覽器測試、完整文件 (10/10 SP, 100%)
+**Overall Progress**: ⚠️ Sprint 1-12 核心功能完成 (98/103 SP, 95.1%) | 部分監控功能待補完
+**當前狀態**: ⚠️ Sprint 12 完成,Sprint 10 Application Insights 部分功能待補完 (8/13 SP, 62%)
 
 ---
 
@@ -1821,3 +1821,40 @@ const handleSelectPrompt = useCallback(
 #### ?賊???
 - ??靽桀儔閰單?: docs/FIXES_2025-10-19.md
 - ?銵獢??? docs/CUSTOM_AVATAR_SOLUTION.md
+
+---
+
+## ⚠️ Sprint 10 待補完項目
+
+### Application Insights 監控系統 (5 SP 待完成)
+
+**已完成** (8/13 SP, 62%):
+- ✅ Part A: Safari 專用優化 (5 SP) - 100% 完成
+- ✅ Part B Phase 1: Application Insights 基礎整合 (3 SP) - 100% 完成
+
+**待補完** (5/13 SP, 38%):
+- ⏳ **Phase 2: 前端效能監控** (2 SP)
+  - 頁面載入時間追蹤
+  - 用戶互動效能監控
+  - Core Web Vitals 整合
+  - 自動化效能報告
+
+- ⏳ **Phase 3: API 效能追蹤** (2 SP)
+  - API 請求時間記錄
+  - 慢查詢識別
+  - 依賴性能分析
+  - 效能瓶頸警報
+
+- ⏳ **Phase 4: 錯誤追蹤與告警** (1 SP)
+  - 前端錯誤自動捕獲
+  - 後端異常追蹤
+  - 錯誤聚合與分類
+  - 即時告警機制
+
+**建議補完時間**: 1-2 天
+**優先級**: P2 (生產環境監控增強)
+**影響**: 無法即時監控生產環境效能與錯誤,建議在正式上線前補完
+
+**參考文檔**:
+- docs/PROGRESS_VERIFICATION_2025-10-19.md - 進度驗證報告
+
