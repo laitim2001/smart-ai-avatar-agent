@@ -31,6 +31,7 @@ export default function ConversationsPage() {
     string | null
   >(null)
   const [isCreatingConversation, setIsCreatingConversation] = useState(false)
+  const [refreshTrigger, setRefreshTrigger] = useState(0)
 
   const {
     currentConversationId,
@@ -89,8 +90,8 @@ export default function ConversationsPage() {
       // 清空訊息
       clearMessages()
 
-      // 重新整理對話列表（透過重新掛載 ConversationList）
-      window.location.reload()
+      // 觸發 ConversationList 重新載入（透過 key 變更強制重新掛載）
+      setRefreshTrigger((prev) => prev + 1)
     } catch (error) {
       console.error('[ConversationsPage] Create conversation error:', error)
       alert('建立對話失敗，請重試')
@@ -100,13 +101,14 @@ export default function ConversationsPage() {
   }
 
   return (
-    <div className="flex h-screen bg-gray-50">
+    <div className="flex h-full bg-gray-50 overflow-hidden -m-6">
       {/* 臨時的快取清除按鈕 */}
       <ClearCacheButton />
 
       {/* Left Sidebar - Conversation List */}
-      <div className="w-80 flex-shrink-0 border-r border-gray-200 bg-white shadow-sm">
+      <div className="w-80 flex-shrink-0 border-r border-gray-200 bg-white shadow-sm overflow-y-auto">
         <ConversationList
+          key={refreshTrigger}
           selectedId={selectedConversationId || undefined}
           onSelect={handleSelectConversation}
           onNewConversation={handleNewConversation}
@@ -115,8 +117,8 @@ export default function ConversationsPage() {
 
       {/* Main Content - Chat Interface + Avatar */}
       <div className="flex flex-1 overflow-hidden">
-        {/* Avatar Canvas (Left) - 3D Avatar 顯示區 */}
-        <div className="w-1/2 bg-gradient-to-b from-blue-50 to-indigo-100 border-r border-gray-200 relative">
+        {/* Avatar Canvas (Left) - 3D Avatar 顯示區 - 調整為 40% 寬度，限制最大高度 */}
+        <div className="w-[40%] h-full bg-gradient-to-b from-blue-50 to-indigo-100 border-r border-gray-200 relative overflow-hidden">
           <AvatarCanvas />
 
           {/* Avatar Change Button - 右上角觸發按鈕 */}
@@ -126,8 +128,8 @@ export default function ConversationsPage() {
           <AvatarSelector />
         </div>
 
-        {/* Chat Interface (Right) */}
-        <div className="w-1/2 bg-white">
+        {/* Chat Interface (Right) - 調整為 60% 寬度，限制高度防止溢出 */}
+        <div className="w-[60%] h-full flex flex-col bg-white overflow-hidden">
           {isCreatingConversation ? (
             <div className="flex h-full items-center justify-center">
               <div className="text-center">
@@ -136,7 +138,9 @@ export default function ConversationsPage() {
               </div>
             </div>
           ) : selectedConversationId ? (
-            <ChatInterface />
+            <div className="h-full overflow-hidden">
+              <ChatInterface />
+            </div>
           ) : (
             <div className="flex h-full items-center justify-center">
               <div className="text-center px-4">

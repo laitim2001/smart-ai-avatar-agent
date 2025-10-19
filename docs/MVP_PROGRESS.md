@@ -650,7 +650,16 @@
 
 ## 📝 變更歷史
 
-### 2025-10-19
+### 2025-10-19 (下午)
+- 修復 Conversations 頁面高度溢出問題
+  - 問題: 打開對話記錄後整頁產生滾動條,Avatar Controls 被隱藏
+  - 根本原因: DashboardLayout 的 `p-6` padding 與子頁面 `h-screen` 衝突
+  - 解決方案: 將頁面改為 `h-full` + `-m-6` 抵消 padding
+  - 修改文件: `app/[locale]/(dashboard)/conversations/page.tsx` (Line 104)
+  - 狀態: ✅ 已修復並驗證
+  - 詳細記錄: `docs/FIXES_2025-10-19.md` (新增問題 4)
+
+### 2025-10-19 (上午)
 - 完全重寫 MVP_PROGRESS.md
 - 修正所有狀態標記錯誤
 - 重新組織文檔結構
