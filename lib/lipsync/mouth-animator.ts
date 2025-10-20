@@ -92,6 +92,7 @@ export class MouthAnimator {
   private transitions: Map<string, BlendshapeTransition> = new Map()
   private visemeIndexCache: Map<string, number> = new Map()
   private previousTarget: BlendshapeTarget | null = null
+  private lastLogTime: number = 0
 
   constructor(config: MouthAnimatorConfig = {}) {
     this.config = {
@@ -145,14 +146,40 @@ export class MouthAnimator {
     currentTime: number,
     nextTarget?: BlendshapeTarget
   ): void {
+    // 自適應強度：根據原始權重自動調整
+    let adaptiveIntensity = this.config.intensity
+    if (target.weight < 0.1) {
+      adaptiveIntensity = Math.min(10.0, this.config.intensity * 5) // 小值放大 5 倍
+      console.log(`[MouthAnimator] 🔧 Low weight detected: ${target.name}=${target.weight.toFixed(3)}, using intensity=${adaptiveIntensity}`)
+    } else if (target.weight > 0.5) {
+      adaptiveIntensity = Math.max(1.0, this.config.intensity * 0.8) // 大值縮小 20%
+    }
+
     // 應用強度倍數
-    let targetWeight = applyIntensity(target.weight, this.config.intensity)
+    let targetWeight = applyIntensity(target.weight, adaptiveIntensity)
+
+    // 調試：顯示轉換結果
+    if (target.weight > 0.001 && targetWeight < 0.05) {
+      console.log(`[MouthAnimator] ⚠️ Result too small: ${target.name} ${target.weight.toFixed(3)} × ${adaptiveIntensity.toFixed(1)} = ${targetWeight.toFixed(3)}`)
+    }
 
     // Co-articulation: 如果有下一個目標，進行混合
     if (this.config.coArticulation && nextTarget) {
       const blendFactor = 0.3 // 30% 混合下一個 Viseme
-      const nextWeight = applyIntensity(nextTarget.weight, this.config.intensity)
+
+      // 為 nextTarget 也計算自適應強度
+      let nextAdaptiveIntensity = this.config.intensity
+      if (nextTarget.weight < 0.1) {
+        nextAdaptiveIntensity = Math.min(10.0, this.config.intensity * 5)
+      } else if (nextTarget.weight > 0.5) {
+        nextAdaptiveIntensity = Math.max(1.0, this.config.intensity * 0.8)
+      }
+
+      const nextWeight = applyIntensity(nextTarget.weight, nextAdaptiveIntensity)
+      const beforeBlend = targetWeight
       targetWeight = targetWeight * (1 - blendFactor) + nextWeight * blendFactor
+
+      console.log(`[MouthAnimator] 🔀 Co-articulation: ${target.name}(${beforeBlend.toFixed(3)}) + ${nextTarget.name}(${nextWeight.toFixed(3)}) = ${targetWeight.toFixed(3)}`)
     }
 
     // 取得或建立過渡狀態
@@ -176,12 +203,13 @@ export class MouthAnimator {
       transition.duration = this.config.smoothing
     }
 
-    // 將其他非目標 Blendshape 的權重設為 0（平滑過渡）
+    // 將其他非目標 Blendshape 的權重設為 0（快速淡出）
+    // 使用相同的過渡時間，確保快速切換到新 viseme
     this.transitions.forEach((trans, name) => {
       if (name !== target.name) {
         trans.targetWeight = 0
         trans.startTime = currentTime
-        trans.duration = this.config.smoothing
+        trans.duration = this.config.smoothing // 快速淡出
       }
     })
 
@@ -196,6 +224,17 @@ export class MouthAnimator {
    */
   update(headMesh: SkinnedMesh, currentTime: number): void {
     if (!headMesh.morphTargetInfluences) return
+
+    // 調試: 記錄每秒更新狀態
+    if (!this.lastLogTime || currentTime - this.lastLogTime > 1.0) {
+      this.lastLogTime = currentTime
+      const activeTransitions = Array.from(this.transitions.entries())
+        .filter(([_, t]) => t.currentWeight > 0.01 || t.targetWeight > 0.01)
+        .map(([name, t]) => `${name}: current=${t.currentWeight.toFixed(3)} target=${t.targetWeight.toFixed(3)}`)
+      if (activeTransitions.length > 0) {
+        console.log('[MouthAnimator] 📊 Active visemes:', activeTransitions.join(' | '))
+      }
+    }
 
     // 更新所有過渡中的 Blendshape
     this.transitions.forEach((transition, name) => {

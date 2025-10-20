@@ -4,11 +4,13 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Project Overview
 
-A 3D Avatar real-time conversation system built with Next.js 15, Three.js, and Azure AI services. The system enables users to have natural conversations with an AI assistant that has 3D visual representation, voice synthesis, and planned lip-sync animation.
+A 3D Avatar real-time conversation system built with Next.js 15, Three.js, and Azure AI services. The system enables users to have natural conversations with an AI assistant that has 3D visual representation, voice synthesis, and **real-time lip-sync animation**.
 
 **Primary Language**: Traditional Chinese (繁體中文) for UI and conversation content, but code documentation uses English.
 
-**Current Status**: Epic 1-3 complete (59% - 17/29 Stories). Epic 4 (Lip Sync) pending.
+**Current Status**: MVP 核心功能 100% 完成 (Epic 1-3), Epic 4 Lip Sync 系統已實作並運作中。
+
+**Recent Update (2025-10-20)**: Lip Sync 系統完整實作，包含自適應強度系統、Co-articulation 協同發音、音訊同步等核心功能。詳見 `docs/LIPSYNC_FIXES_2025-10-20.md`。
 
 ## Development Commands
 
@@ -84,9 +86,13 @@ lib/
 ├── avatar/                  # Avatar-specific logic
 │   ├── animations.ts       # Animation controllers (blink, breath, expression, nod)
 │   ├── loaders.ts          # GLB model loading utilities
-│   └── constants.ts        # Avatar URLs and config
+│   └── constants.ts        # Avatar URLs and config (with morphTargets)
+├── lipsync/                 # Lip Sync system ⭐ NEW
+│   ├── controller.ts       # Main Lip Sync controller (singleton)
+│   ├── mouth-animator.ts   # Blendshape animation with adaptive intensity
+│   └── viseme-mapper.ts    # Azure Viseme ID to Oculus Blendshape mapping
 ├── audio/
-│   └── player.ts           # Web Audio API player singleton
+│   └── player.ts           # Web Audio API player singleton (with GainNode)
 ├── api/
 │   ├── client.ts           # API client utilities
 │   └── chat.ts             # SSE streaming client
@@ -102,7 +108,8 @@ stores/                      # Zustand state management
 types/                       # TypeScript type definitions
 ├── api.ts                  # API response types
 ├── chat.ts                 # Chat-related types
-└── audio.ts                # Audio-related types
+├── audio.ts                # Audio-related types
+└── lipsync.ts              # Lip Sync types ⭐ NEW
 ```
 
 ### State Management Architecture
@@ -519,6 +526,110 @@ Expected output:
 
 5. **SSE Streaming**: Must use Edge Runtime. Server Functions don't support streaming responses properly.
 
+## Lip Sync System (Epic 4) ⭐ NEW
+
+**Status**: ✅ 核心功能完成 (2025-10-20)
+
+### 系統架構
+
+**核心元件**:
+1. **LipSyncController** (`lib/lipsync/controller.ts`)
+   - 單例模式控制器
+   - 協調音訊播放與 Viseme 動畫
+   - 60 FPS 更新頻率
+
+2. **MouthAnimator** (`lib/lipsync/mouth-animator.ts`)
+   - Blendshape 平滑過渡 (30ms)
+   - 自適應強度系統
+   - Co-articulation 協同發音
+
+3. **VisemeMapper** (`lib/lipsync/viseme-mapper.ts`)
+   - Azure Viseme ID (0-21) → Oculus Blendshapes (15 個)
+   - 權重映射與歸一化
+
+### 資料流程
+
+```
+用戶輸入 → LLM 回應 → TTS API (Azure Speech SDK)
+  ↓
+{ audio: base64, visemes: VisemeData[], duration: number }
+  ↓
+audioStore.speakText()
+  ├─→ AudioPlayer.play(buffer) → 音訊播放
+  └─→ LipSyncController.start(visemes, startTime)
+        ↓
+      useFrame (60 FPS) → LipSyncController.update(time)
+        ↓
+      MouthAnimator.setTarget(blendshape) → 自適應強度
+        ↓
+      morphTargetInfluences[index] = weight
+        ↓
+      Three.js 渲染嘴型動畫
+```
+
+### 核心功能
+
+**1. 自適應強度系統**
+- 自動處理 Azure TTS 回傳的不同權重範圍 (0.01-1.0)
+- 小值 (< 0.1): 放大 5 倍 (最高 10 倍)
+- 中值 (0.1-0.5): 使用預設 1.5 倍
+- 大值 (> 0.5): 縮小至 0.8 倍避免飽和
+
+**2. Co-articulation (協同發音)**
+- 30% 混合當前與下一個 Viseme
+- 自然的音節過渡效果
+- 自適應強度也應用於混合計算
+
+**3. 語速控制**
+- 預設 20% 極慢速度
+- SSML prosody rate 控制
+- 確保每個嘴型清楚可見
+
+### Ready Player Me morphTargets 配置
+
+**重要**: 所有 Avatar URL 必須包含 `?morphTargets=Oculus%20Visemes` 參數
+
+```typescript
+// lib/avatar/constants.ts
+url: 'https://models.readyplayer.me/64bfa15f0e72c63d7c3934a6.glb?morphTargets=Oculus%20Visemes'
+```
+
+**15 個 Oculus Visemes**:
+- viseme_sil (靜音)
+- viseme_PP, viseme_FF, viseme_aa, viseme_E, viseme_I
+- viseme_O, viseme_U, viseme_RR, viseme_DD, viseme_kk
+- viseme_CH, viseme_SS, viseme_TH, viseme_nn
+
+### 配置參數
+
+```typescript
+// LipSyncController
+{
+  smoothing: 0.03,      // 30ms 快速過渡
+  intensity: 1.5,       // 基礎強度倍數
+  lookAhead: 0.1,       // 100ms 預視 (Co-articulation)
+}
+
+// TTS API
+{
+  speedRange: { default: 0.2 },  // 20% 語速
+}
+```
+
+### 除錯與測試
+
+**Console 日誌**:
+```
+[LipSyncController] 開始播放，Viseme 數量: 164
+[MouthAnimator] 🔧 Low weight detected: viseme_aa=0.015, using intensity=7.5
+[MouthAnimator] 🔀 Co-articulation: viseme_aa(0.113) + viseme_E(0.098) = 0.108
+[MouthAnimator] 📊 Active visemes: viseme_aa: current=0.108 target=0.113
+```
+
+**測試指南**: 詳見 `TEST_ADAPTIVE_INTENSITY.md` 和 `docs/LIPSYNC_FIXES_2025-10-20.md`
+
+---
+
 ## Project Documentation
 
 - **DEVELOPMENT_STATUS.md**: Current development progress (working document, updated frequently)
@@ -526,6 +637,8 @@ Expected output:
 - **PROJECT_INDEX.md**: Complete file catalog (auto-generated via npm scripts)
 - **SPRINT_PLAN.md**: Original 12-week development plan (read-only reference)
 - **README.md**: User-facing quick start guide
+- **docs/MVP_PROGRESS.md**: MVP 開發進度追蹤 ⭐ 重要
+- **docs/LIPSYNC_FIXES_2025-10-20.md**: Lip Sync 系統完整診斷與修復記錄 ⭐ NEW
 - **docs/**: Story documentation, guides, deployment instructions
 
 ## Git Workflow

@@ -1,12 +1,16 @@
 /**
  * TTS API Route - 文字轉語音（支援 Viseme 數據）
  * @module app/api/tts/route
- * @description 接收文字,使用 Azure Speech Services REST API 轉換為語音（MP3 格式）
+ * @description 接收文字,使用 Azure Speech SDK 轉換為語音（MP3 格式）並返回 Viseme 資料
  */
 
 import { NextRequest, NextResponse } from 'next/server'
+import * as sdk from 'microsoft-cognitiveservices-speech-sdk'
+import { getSpeechConfig } from '@/lib/azure/speech'
+import { VisemeData } from '@/types/lipsync'
 
 export const runtime = 'nodejs' // 需要 Node.js runtime 來處理 Audio
+export const maxDuration = 60 // 最長執行時間 60 秒
 
 /**
  * TTS 請求介面
@@ -25,7 +29,7 @@ const TTS_CONFIG = {
   defaultVoice: 'zh-TW-HsiaoChenNeural',
   timeout: 30000, // 30 秒
   maxTextLength: 1000,
-  speedRange: { min: 0.5, max: 2.0, default: 0.85 }, // 調整為 85% 語速,更自然
+  speedRange: { min: 0.2, max: 2.0, default: 0.2 }, // 降低到 20% 語速，極慢速度讓每個嘴型清楚可見
   pitchRange: { min: 0.5, max: 2.0, default: 1.0 },
 }
 
@@ -127,13 +131,14 @@ export async function POST(request: NextRequest) {
     console.log(`[TTS API] 開始合成文字 (${body.text.length} 字元)`)
     console.log(`[TTS API] Voice: ${voice}, Speed: ${speed}, Pitch: ${pitch}`)
 
-    // 6. 取得 Azure Speech Services 配置
-    // 環境變數會在每次請求時重新讀取
-    const subscriptionKey = process.env.AZURE_SPEECH_KEY
-    const region = process.env.AZURE_SPEECH_REGION
-
-    if (!subscriptionKey || !region) {
-      console.error('[TTS API] Missing Azure Speech credentials')
+    // 6. 取得 Azure Speech SDK 配置
+    let speechConfig: sdk.SpeechConfig
+    try {
+      speechConfig = getSpeechConfig()
+      speechConfig.speechSynthesisVoiceName = voice
+      speechConfig.speechSynthesisOutputFormat = sdk.SpeechSynthesisOutputFormat.Audio16Khz32KBitRateMonoMp3
+    } catch (error) {
+      console.error('[TTS API] Missing Azure Speech credentials:', error)
       return NextResponse.json(
         {
           error: 'Azure Speech configuration incomplete',
@@ -144,81 +149,88 @@ export async function POST(request: NextRequest) {
       )
     }
 
-    // 7. 呼叫 Azure Speech Services REST API
-    const ttsUrl = `https://${region}.tts.speech.microsoft.com/cognitiveservices/v1`
-
+    // 7. 建立 Speech Synthesizer（使用 Pull Audio Stream）
     const startTime = Date.now()
-    const controller = new AbortController()
-    const timeoutId = setTimeout(() => controller.abort(), TTS_CONFIG.timeout)
+    const audioConfig = sdk.AudioConfig.fromDefaultSpeakerOutput() // 我們會從 result 取得音訊，所以這裡用預設即可
+    const synthesizer = new sdk.SpeechSynthesizer(speechConfig, audioConfig)
 
-    try {
-      const response = await fetch(ttsUrl, {
-        method: 'POST',
-        headers: {
-          'Ocp-Apim-Subscription-Key': subscriptionKey,
-          'Content-Type': 'application/ssml+xml',
-          'X-Microsoft-OutputFormat': 'audio-16khz-32kbitrate-mono-mp3',
-          'User-Agent': 'smart-ai-avatar-agent',
-        },
-        body: ssml,
-        signal: controller.signal,
+    // 8. 收集 Viseme 資料
+    const visemes: VisemeData[] = []
+
+    synthesizer.visemeReceived = (s, e) => {
+      visemes.push({
+        time: e.audioOffset / 10000000, // 轉換為秒
+        visemeId: e.visemeId,
       })
-
-      clearTimeout(timeoutId)
-
-      const elapsed = Date.now() - startTime
-      console.log(`[TTS API] Azure 回應時間: ${elapsed}ms, Status: ${response.status}`)
-
-      if (!response.ok) {
-        const errorText = await response.text()
-        console.error(`[TTS API] Azure API Error: ${response.status} - ${errorText}`)
-
-        return NextResponse.json(
-          {
-            error: `TTS synthesis failed: ${response.statusText}`,
-            code: 'AZURE_API_ERROR',
-            timestamp: new Date().toISOString(),
-          },
-          { status: response.status }
-        )
-      }
-
-      // 8. 取得音訊數據
-      const audioBuffer = Buffer.from(await response.arrayBuffer())
-      console.log(`[TTS API] 成功取得音訊 (${audioBuffer.length} bytes)`)
-
-      // 9. 計算音訊長度（估算）
-      // MP3 32kbps: ~4KB/秒
-      const estimatedDuration = audioBuffer.length / (32 * 1024 / 8)
-
-      console.log(`[TTS API] 音訊長度 ${estimatedDuration.toFixed(2)}s`)
-
-      // 10. 返回 JSON 格式（音訊 + Viseme 數據）
-      // 注意: REST API 不支援 Viseme，所以我們返回空陣列
-      // 如果需要 Viseme，需要使用 WebSocket API 或者 Speech SDK
-      return NextResponse.json({
-        audio: audioBuffer.toString('base64'),
-        visemes: [], // REST API 不提供 Viseme 數據
-        duration: estimatedDuration,
-        format: 'audio/mpeg',
-      })
-    } catch (fetchError) {
-      clearTimeout(timeoutId)
-
-      if (fetchError instanceof Error && fetchError.name === 'AbortError') {
-        console.error(`[TTS API] Request timeout after ${TTS_CONFIG.timeout}ms`)
-        return NextResponse.json(
-          {
-            error: 'TTS request timeout (30 seconds exceeded)',
-            code: 'TIMEOUT',
-            timestamp: new Date().toISOString(),
-          },
-          { status: 408 }
-        )
-      }
-
-      throw fetchError
     }
+
+    // 9. 使用 Promise 包裝 Speech SDK 的非同步操作
+    const synthesisResult = await new Promise<sdk.SpeechSynthesisResult>(
+      (resolve, reject) => {
+        const timeoutId = setTimeout(() => {
+          synthesizer.close()
+          reject(new Error('TTS request timeout (30 seconds exceeded)'))
+        }, TTS_CONFIG.timeout)
+
+        synthesizer.speakSsmlAsync(
+          ssml,
+          (result) => {
+            clearTimeout(timeoutId)
+            resolve(result)
+          },
+          (error) => {
+            clearTimeout(timeoutId)
+            synthesizer.close()
+            reject(error)
+          }
+        )
+      }
+    )
+
+    const elapsed = Date.now() - startTime
+    console.log(`[TTS API] Azure 回應時間: ${elapsed}ms`)
+
+    // 10. 檢查合成結果
+    if (synthesisResult.reason === sdk.ResultReason.Canceled) {
+      const cancellation = sdk.SpeechSynthesisCancellationDetails.fromResult(
+        synthesisResult
+      )
+      synthesizer.close()
+
+      console.error(
+        `[TTS API] Speech synthesis canceled: ${cancellation.reason}, ${cancellation.errorDetails}`
+      )
+
+      return NextResponse.json(
+        {
+          error: `TTS synthesis failed: ${cancellation.errorDetails}`,
+          code: 'AZURE_API_ERROR',
+          timestamp: new Date().toISOString(),
+        },
+        { status: 500 }
+      )
+    }
+
+    // 11. 取得音訊數據
+    const audioData = synthesisResult.audioData
+    const audioBuffer = Buffer.from(audioData)
+    synthesizer.close()
+
+    console.log(`[TTS API] 成功取得音訊 (${audioBuffer.length} bytes)`)
+    console.log(`[TTS API] Viseme 數量: ${visemes.length}`)
+
+    // 12. 計算音訊長度
+    const audioDuration = synthesisResult.audioDuration / 10000000 // 轉換為秒
+
+    console.log(`[TTS API] 音訊長度 ${audioDuration.toFixed(2)}s`)
+
+    // 13. 返回 JSON 格式（音訊 + Viseme 數據）
+    return NextResponse.json({
+      audio: audioBuffer.toString('base64'),
+      visemes: visemes, // ✅ 真正的 Viseme 資料
+      duration: audioDuration,
+      format: 'audio/mpeg',
+    })
   } catch (error) {
     console.error('[TTS API Error]', error)
 

@@ -84,8 +84,8 @@ export default function AvatarCanvas() {
         className={`transition-opacity duration-300 ${isTransitioning ? 'opacity-0' : 'opacity-100'}`}
         shadows={performanceConfig.shadows}
         camera={{
-          position: [0, 0.8, 2.2],  // 降低相機高度，減少上方空白
-          fov: 50  // 增加視野，讓 Avatar 更聚焦
+          position: [0, 1.0, 2.5],  // 相機位置:中等高度,保持適當距離觀看全身
+          fov: 50  // 標準視野角度,自然透視
         }}
         dpr={performanceConfig.pixelRatio}
         gl={{
@@ -121,7 +121,7 @@ export default function AvatarCanvas() {
           zoomSpeed={0.5}                 // 縮放速度
           minDistance={1}
           maxDistance={5}
-          target={[0, 0.5, 0]}  // 降低注視點，聚焦在 Avatar 上半身
+          target={[0, 0.6, 0]}  // 注視點:Avatar 上半身中心,包含頭部到胸部
           touches={{
             ONE: 2,    // TOUCH.ROTATE - 單指旋轉
             TWO: 3,    // TOUCH.DOLLY - 雙指捏合縮放
@@ -140,7 +140,7 @@ export default function AvatarCanvas() {
               key={currentAvatarUrl}  // URL 變更時強制重新掛載組件
               ref={avatarModelRef}
               modelUrl={currentAvatarUrl}
-              position={[0, -1.2, 0]}  // Y軸下移，使頭部在視野中心，減少上方空白
+              position={[0, -0.9, 0]}  // Y軸位置:適度下移,讓頭部到上半身在畫面中央,減少上方空白
               scale={1}                // 預設縮放，可依實際需求調整
               onLoad={(model) => {
                 console.log('[AvatarCanvas] Avatar loaded successfully:', {

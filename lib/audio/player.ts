@@ -89,23 +89,39 @@ export class AudioPlayer {
    * @param {() => void} [onEnded] - 播放結束回調
    */
   async play(audioBuffer?: AudioBuffer, onEnded?: () => void): Promise<void> {
+    console.log('[AudioPlayer] play() called')
+
     const context = await this.initAudioContext()
+    console.log('[AudioPlayer] AudioContext initialized, state:', context.state)
+
     const buffer = audioBuffer || this.currentBuffer
 
     if (!buffer) {
+      console.error('[AudioPlayer] No audio buffer available')
       throw new Error('No audio buffer available')
     }
+
+    console.log('[AudioPlayer] Buffer duration:', buffer.duration.toFixed(2), 's')
 
     // 停止當前播放
     this.stop()
 
-    // 建立音訊源節點
+    // 建立音訊源節點和音量控制節點
     const source = context.createBufferSource()
+    const gainNode = context.createGain()
+
     source.buffer = buffer
-    source.connect(context.destination)
+    gainNode.gain.value = 1.0 // 100% 音量
+
+    // 連接音訊圖：source → gainNode → destination
+    source.connect(gainNode)
+    gainNode.connect(context.destination)
+
+    console.log('[AudioPlayer] Audio graph created with GainNode, volume:', gainNode.gain.value)
 
     // 設定播放結束回調
     source.onended = () => {
+      console.log('[AudioPlayer] Playback ended')
       this.currentSource = null
       this.isPaused = false
       if (onEnded) onEnded()
@@ -117,7 +133,7 @@ export class AudioPlayer {
     this.startTime = context.currentTime - (this.isPaused ? this.pauseTime : 0)
     this.isPaused = false
 
-    console.log('[AudioPlayer] Playback started successfully')
+    console.log('[AudioPlayer] Playback started successfully, AudioContext.currentTime:', context.currentTime.toFixed(3), 's')
   }
 
   /**

@@ -214,10 +214,19 @@ export const useChatStore = create<ChatStore>()(
         set({ isLoading: false })
 
         // 自動播放語音（非阻塞）
+        console.log('[chatStore] 🔊 準備呼叫 TTS，內容長度:', fullContent.length)
         try {
           const ttsStartTime = Date.now()
           const { speakText } = useAudioStore.getState()
+          console.log('[chatStore] speakText 函數類型:', typeof speakText)
+
+          if (typeof speakText !== 'function') {
+            throw new Error('speakText is not a function')
+          }
+
+          console.log('[chatStore] ✅ 開始呼叫 speakText')
           await speakText(fullContent)
+          console.log('[chatStore] ✅ speakText 完成')
           const ttsEndTime = Date.now()
 
           const totalTime = ttsEndTime - startTime

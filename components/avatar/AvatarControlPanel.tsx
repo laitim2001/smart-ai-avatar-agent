@@ -23,8 +23,8 @@ export default function AvatarControlPanel({ avatarRef }: AvatarControlPanelProp
   }
 
   return (
-    <div className="absolute bottom-8 left-1/2 -translate-x-1/2 z-10">
-      <div className="bg-slate-800/80 backdrop-blur-sm border border-slate-600 rounded-lg p-4 shadow-xl">
+    <div className="absolute bottom-4 left-1/2 -translate-x-1/2 z-10">
+      <div className="bg-slate-800/90 backdrop-blur-sm border border-slate-600 rounded-lg p-3 shadow-xl">
         <h3 className="text-white text-sm font-semibold mb-3">Avatar Controls</h3>
         <div className="flex gap-3">
           <button

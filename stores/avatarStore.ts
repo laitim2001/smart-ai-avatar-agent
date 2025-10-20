@@ -96,8 +96,13 @@ export const useAvatarStore = create<AvatarState>()(
             const parsed = JSON.parse(stored)
             const state = parsed.state
 
-            // 檢查是否包含舊的無效 URL
-            if (state?.currentAvatarUrl && state.currentAvatarUrl.includes('65c3d4e5f6a7b8c9d0e1f2a3')) {
+            // 檢查是否包含舊的無效 URL (多個可能的失效 URL)
+            const invalidUrls = [
+              '65c3d4e5f6a7b8c9d0e1f2a3',
+              '6419b4d5c2efa2a5b0f4c3d1', // 新增：2025-10-18 失效的 URL
+            ]
+
+            if (state?.currentAvatarUrl && invalidUrls.some(url => state.currentAvatarUrl.includes(url))) {
               console.log('[AvatarStore] 偵測到無效的舊 Avatar URL,正在清除快取...')
               localStorage.removeItem('avatar-storage')
             }
