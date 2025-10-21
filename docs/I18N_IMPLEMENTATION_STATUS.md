@@ -32,10 +32,12 @@ locales/
 
 **導航元件**:
 - ✅ `components/layout/LanguageSwitcher.tsx` - 語言切換器
-- ✅ `components/layout/DashboardNav.tsx` - 導航列
+- ✅ `components/layout/Navigation.tsx` - 頂部導航列（Top bar）
+- ✅ `components/layout/Sidebar.tsx` - 側邊欄導航（9 個主項目 + 6 個子項目）
+- ✅ `components/layout/UserMenu.tsx` - 用戶選單（4 個項目）
 
 **完成的頁面**:
-- ✅ `app/[locale]/(dashboard)/dashboard/page.tsx` - Dashboard 頁面
+- ✅ `app/[locale]/(dashboard)/dashboard/page.tsx` - Dashboard 頁面（完整多語言化）
 
 ---
 
@@ -244,10 +246,10 @@ const formattedDate = date.toLocaleDateString(locale, {
 
 ```
 基礎設施: ████████████████████ 100% (5/5)
-UI 元件:  ████████████████████ 100% (2/2)
+UI 元件:  ████████████████████ 100% (4/4)
 頁面內容: █░░░░░░░░░░░░░░░░░░░   6% (1/17)
-────────────────────────────────────
-總計:     ███░░░░░░░░░░░░░░░░░  33% (8/24)
+────────────────────────────────────────
+總計:     ████████░░░░░░░░░░░░  38% (10/26)
 ```
 
 ### 各語言翻譯完整度
