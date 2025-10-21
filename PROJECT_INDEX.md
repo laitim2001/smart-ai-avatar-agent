@@ -2,8 +2,8 @@
 
 > **目標**: 提供專案所有檔案的完整索引與說明，讓 AI 助手和開發者快速定位所需資源
 > **維護頻率**: 每個 Story 完成後更新
-> **最後更新**: 2025-10-20 (Story 1.1 完成)
-> **版本**: v1.1.27
+> **最後更新**: 2025-10-21 (Story 1.1 完成)
+> **版本**: v1.1.28
 
 ---
 
@@ -212,7 +212,7 @@ agent-brain/
 **AI 相關** (`lib/ai/`):
 | 檔案路徑 | 狀態 | 說明 | Story | 關鍵功能 |
 |---------|------|------|-------|---------|
-| `lib/ai/knowledge-loader.ts` | ⏳ | 知識庫載入器 | 3.3 | 載入 persona.md、搜尋知識 |
+| `lib/ai/knowledge-loader.ts` | ✅ | 知識庫載入器 | 3.3 | 載入 persona.md、搜尋知識 |
 | `lib/ai/context-builder.ts` | ⏳ | 上下文建構器 | 3.3 | 組合系統提示詞 |
 | `lib/ai/prompt-templates.ts` | ⏳ | 提示詞模板 | 3.3 | 預定義的提示詞格式 |
 
@@ -279,7 +279,7 @@ export const useChatStore = create<ChatState>((set, get) => ({
 | `types/audio.ts` | ✅ | 音訊相關型別 | 3.2 | AudioConfig, TTSOptions |
 | `types/avatar.ts` | ✅ | Avatar 相關型別 | 2.1 | AvatarConfig, Animation |
 | `types/api.ts` | ✅ | API 回應型別 | 3.3 | ChatResponse, HealthCheckResponse |
-| `types/knowledge.ts` | ⏳ | 知識庫型別 | 3.3 | KnowledgeDocument, SearchResult |
+| `types/knowledge.ts` | ✅ | 知識庫型別 | 3.3 | KnowledgeDocument, SearchResult |
 
 ---
 
