@@ -18,7 +18,7 @@ interface ReadyPlayerMeFrameProps {
  * @see https://docs.readyplayer.me/ready-player-me/integration-guides/web-and-native-integration/avatar-creator-integration
  */
 export default function ReadyPlayerMeFrame({
-  subdomain = 'smart-ai-avatar-agent',
+  subdomain = 'test-3sebz1', // 使用您的專屬 subdomain
   onAvatarExported,
   onError,
 }: ReadyPlayerMeFrameProps) {
@@ -26,7 +26,9 @@ export default function ReadyPlayerMeFrame({
   const [isLoading, setIsLoading] = useState(true)
 
   // 直接構建 iframe URL，不使用 state
-  const iframeUrl = `https://${subdomain}.readyplayer.me?frameApi`
+  // bodyType=fullbody: 啟用照片上傳功能（"From Photo" 選項）
+  // frameApi: 啟用 postMessage API
+  const iframeUrl = `https://${subdomain}.readyplayer.me/avatar?frameApi&bodyType=fullbody`
 
   useEffect(() => {
     console.log('[ReadyPlayerMe] Initializing iframe:', iframeUrl)

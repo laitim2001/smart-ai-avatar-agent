@@ -24,7 +24,9 @@ npm install
 npm run dev
 ```
 
-開啟瀏覽器訪問 `http://localhost:3000` ✅
+開啟瀏覽器訪問 `http://localhost:3001` ✅
+
+**注意**: 本專案使用 **Port 3001**（因 port 3000 被其他專案佔用）
 
 ---
 
@@ -97,7 +99,8 @@ AZURE_SPEECH_KEY=your_speech_api_key_here
 AZURE_SPEECH_REGION=eastasia
 
 # Next.js 配置
-NEXT_PUBLIC_APP_URL=http://localhost:3000
+NEXT_PUBLIC_APP_URL=http://localhost:3001
+PORT=3001
 ```
 
 #### 🔑 如何取得 API Keys?
@@ -121,7 +124,7 @@ NEXT_PUBLIC_APP_URL=http://localhost:3000
 npm run dev
 ```
 
-✅ 成功！開啟瀏覽器訪問 `http://localhost:3000`
+✅ 成功！開啟瀏覽器訪問 `http://localhost:3001`
 
 ---
 

@@ -7,16 +7,23 @@ const withNextIntl = require('next-intl/plugin')('./i18n/request.ts')
 const ContentSecurityPolicy = `
   default-src 'self';
   script-src 'self' 'unsafe-eval' 'unsafe-inline' https://cdn.jsdelivr.net;
-  style-src 'self' 'unsafe-inline';
-  img-src 'self' data: https:;
-  font-src 'self' data:;
+  style-src 'self' 'unsafe-inline' https://cdn.jsdelivr.net;
+  img-src 'self' data: blob: https: https://replicate.delivery;
+  font-src 'self' data: https://cdn.jsdelivr.net;
+  media-src 'self' data: blob: https://replicate.delivery;
   connect-src 'self' blob:
     https://*.openai.azure.com
     https://*.cognitiveservices.azure.com
     https://*.in.applicationinsights.azure.com
-    https://models.readyplayer.me;
+    https://models.readyplayer.me
+    https://api.readyplayer.me
+    https://*.readyplayer.me
+    https://api.replicate.com
+    https://replicate.delivery
+    https://cdn.jsdelivr.net;
   worker-src 'self' blob:;
-  child-src 'self' blob:;
+  child-src 'self' blob: https://*.readyplayer.me;
+  frame-src 'self' blob: https://*.readyplayer.me;
   frame-ancestors 'none';
   base-uri 'self';
   form-action 'self';
@@ -58,13 +65,18 @@ const securityHeaders = [
   },
   {
     key: 'Permissions-Policy',
-    value: 'camera=(), microphone=(self), geolocation=(), interest-cohort=()',
+    value: 'camera=(self "https://*.readyplayer.me"), microphone=(self "https://*.readyplayer.me"), geolocation=(), interest-cohort=()',
   },
 ]
 
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   reactStrictMode: true,
+  // 隱藏 Next.js 開發工具圖示（修復：使用 Next.js 15 正確配置）
+  devIndicators: {
+    appIsrStatus: false, // 隱藏 ISR 狀態指示器
+    position: 'bottom-right', // 開發指示器位置
+  },
   images: {
     remotePatterns: [
       {

@@ -1,5 +1,10 @@
 {
   "pages": {
+    "/api/knowledge/persona/route": [
+      "static/chunks/webpack.js",
+      "static/chunks/main-app.js",
+      "static/chunks/app/api/knowledge/persona/route.js"
+    ],
     "/layout": [
       "static/chunks/webpack.js",
       "static/chunks/main-app.js",
@@ -12,50 +17,50 @@
       "static/css/app/[locale]/layout.css",
       "static/chunks/app/[locale]/layout.js"
     ],
-    "/[locale]/(auth)/layout": [
+    "/[locale]/(dashboard)/layout": [
       "static/chunks/webpack.js",
       "static/chunks/main-app.js",
-      "static/chunks/app/[locale]/(auth)/layout.js"
+      "static/chunks/app/[locale]/(dashboard)/layout.js"
     ],
-    "/[locale]/(auth)/login/page": [
+    "/[locale]/(dashboard)/knowledge/persona/page": [
       "static/chunks/webpack.js",
       "static/chunks/main-app.js",
-      "static/chunks/app/[locale]/(auth)/login/page.js"
-    ],
-    "/[locale]/(auth)/register/page": [
-      "static/chunks/webpack.js",
-      "static/chunks/main-app.js",
-      "static/chunks/app/[locale]/(auth)/register/page.js"
-    ],
-    "/[locale]/page": [
-      "static/chunks/webpack.js",
-      "static/chunks/main-app.js",
-      "static/chunks/app/[locale]/page.js"
+      "static/chunks/app/[locale]/(dashboard)/knowledge/persona/page.js"
     ],
     "/api/auth/[...nextauth]/route": [
       "static/chunks/webpack.js",
       "static/chunks/main-app.js",
       "static/chunks/app/api/auth/[...nextauth]/route.js"
     ],
-    "/[locale]/(dashboard)/layout": [
+    "/[locale]/page": [
       "static/chunks/webpack.js",
       "static/chunks/main-app.js",
-      "static/chunks/app/[locale]/(dashboard)/layout.js"
+      "static/chunks/app/[locale]/page.js"
     ],
-    "/[locale]/(dashboard)/conversations/page": [
+    "/api/avatars/route": [
       "static/chunks/webpack.js",
       "static/chunks/main-app.js",
-      "static/chunks/app/[locale]/(dashboard)/conversations/page.js"
+      "static/chunks/app/api/avatars/route.js"
     ],
-    "/[locale]/(dashboard)/prompts/page": [
+    "/api/user/preferences/route": [
       "static/chunks/webpack.js",
       "static/chunks/main-app.js",
-      "static/chunks/app/[locale]/(dashboard)/prompts/page.js"
+      "static/chunks/app/api/user/preferences/route.js"
     ],
-    "/_not-found/page": [
+    "/[locale]/(dashboard)/knowledge/page": [
       "static/chunks/webpack.js",
       "static/chunks/main-app.js",
-      "static/chunks/app/_not-found/page.js"
+      "static/chunks/app/[locale]/(dashboard)/knowledge/page.js"
+    ],
+    "/api/knowledge/kpi/route": [
+      "static/chunks/webpack.js",
+      "static/chunks/main-app.js",
+      "static/chunks/app/api/knowledge/kpi/route.js"
+    ],
+    "/api/knowledge/faq/route": [
+      "static/chunks/webpack.js",
+      "static/chunks/main-app.js",
+      "static/chunks/app/api/knowledge/faq/route.js"
     ]
   }
 }

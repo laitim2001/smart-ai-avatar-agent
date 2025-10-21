@@ -181,7 +181,7 @@ export default function CustomAvatarPage() {
             </button>
           </div>
           <ReadyPlayerMeFrame
-            subdomain={process.env.NEXT_PUBLIC_READYPLAYERME_SUBDOMAIN || 'smart-ai-avatar-agent'}
+            subdomain={process.env.NEXT_PUBLIC_READYPLAYERME_SUBDOMAIN || 'test-3sebz1'}
             onAvatarExported={handleAvatarExported}
             onError={handleError}
           />

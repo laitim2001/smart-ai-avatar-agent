@@ -14,6 +14,13 @@ import {
   Menu,
   X,
   Sparkles,
+  Brain,
+  BookOpen,
+  HelpCircle,
+  BarChart3,
+  FileText,
+  Users,
+  Calendar,
 } from 'lucide-react'
 
 interface SidebarProps {
@@ -32,17 +39,55 @@ const menuItems = [
     label: '對話記錄',
   },
   {
-    href: '/custom-avatar',
-    icon: Sparkles,
-    label: '自定義 Avatar',
+    href: '/knowledge',
+    icon: Brain,
+    label: '知識庫管理',
     badge: 'NEW',
+    children: [
+      {
+        href: '/knowledge',
+        icon: BookOpen,
+        label: '知識庫總覽',
+      },
+      {
+        href: '/knowledge/persona',
+        icon: Users,
+        label: 'Persona 定義',
+      },
+      {
+        href: '/knowledge/faq',
+        icon: HelpCircle,
+        label: 'FAQ 管理',
+      },
+      {
+        href: '/knowledge/kpi',
+        icon: BarChart3,
+        label: 'KPI 字典',
+      },
+      {
+        href: '/knowledge/decisions',
+        icon: FileText,
+        label: '決策日誌',
+      },
+      {
+        href: '/knowledge/meetings',
+        icon: Calendar,
+        label: '會議摘要',
+      },
+    ],
   },
-  {
-    href: '/avatar-lip-sync-test',
-    icon: Sparkles,
-    label: 'Avatar Lip Sync 測試',
-    badge: 'TEST',
-  },
+  // {
+  //   href: '/custom-avatar',
+  //   icon: Sparkles,
+  //   label: '自定義 Avatar',
+  //   badge: 'NEW',
+  // },
+  // {
+  //   href: '/avatar-lip-sync-test',
+  //   icon: Sparkles,
+  //   label: 'Avatar Lip Sync 測試',
+  //   badge: 'TEST',
+  // },
   {
     href: '/prompts',
     icon: History,
@@ -58,7 +103,17 @@ const menuItems = [
 export default function Sidebar({ className }: SidebarProps) {
   const [isCollapsed, setIsCollapsed] = useState(false)
   const [isMobileOpen, setIsMobileOpen] = useState(false)
+  const [expandedMenus, setExpandedMenus] = useState<string[]>(['/knowledge']) // 預設展開知識庫
   const pathname = usePathname()
+
+  // 切換子選單展開/收合
+  const toggleSubmenu = (href: string) => {
+    setExpandedMenus(prev =>
+      prev.includes(href)
+        ? prev.filter(item => item !== href)
+        : [...prev, href]
+    )
+  }
 
   // 自動響應視窗大小
   useEffect(() => {
@@ -146,31 +201,94 @@ export default function Sidebar({ className }: SidebarProps) {
         {menuItems.map((item) => {
           const Icon = item.icon
           const isActive = pathname === item.href
+          const hasChildren = 'children' in item && item.children && item.children.length > 0
+          const isExpanded = expandedMenus.includes(item.href)
 
           return (
-            <Link
-              key={item.href}
-              href={item.href}
-              onClick={() => setIsMobileOpen(false)} // 移動版點擊後關閉選單
-              className={cn(
-                'flex items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium transition-colors relative',
-                isActive
-                  ? 'bg-blue-50 text-blue-600'
-                  : 'text-gray-700 hover:bg-gray-100 hover:text-gray-900',
-                isCollapsed && 'md:justify-center'
+            <div key={item.href}>
+              {/* 主選單項目 */}
+              {hasChildren ? (
+                <button
+                  onClick={() => toggleSubmenu(item.href)}
+                  className={cn(
+                    'flex items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium transition-colors relative w-full',
+                    isActive
+                      ? 'bg-blue-50 text-blue-600'
+                      : 'text-gray-700 hover:bg-gray-100 hover:text-gray-900',
+                    isCollapsed && 'md:justify-center'
+                  )}
+                  title={isCollapsed ? item.label : undefined}
+                >
+                  <Icon className="h-5 w-5 flex-shrink-0" />
+                  {!isCollapsed && (
+                    <>
+                      <span className="flex-1 text-left">{item.label}</span>
+                      {'badge' in item && item.badge && (
+                        <span className="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-gradient-to-r from-blue-500 to-purple-500 text-white">
+                          {item.badge}
+                        </span>
+                      )}
+                      <ChevronRight
+                        className={cn(
+                          'h-4 w-4 transition-transform',
+                          isExpanded && 'rotate-90'
+                        )}
+                      />
+                    </>
+                  )}
+                </button>
+              ) : (
+                <Link
+                  href={item.href}
+                  onClick={() => setIsMobileOpen(false)}
+                  className={cn(
+                    'flex items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium transition-colors relative',
+                    isActive
+                      ? 'bg-blue-50 text-blue-600'
+                      : 'text-gray-700 hover:bg-gray-100 hover:text-gray-900',
+                    isCollapsed && 'md:justify-center'
+                  )}
+                  title={isCollapsed ? item.label : undefined}
+                >
+                  <Icon className="h-5 w-5 flex-shrink-0" />
+                  {!isCollapsed && (
+                    <span className="flex-1">{item.label}</span>
+                  )}
+                  {'badge' in item && item.badge && !isCollapsed && (
+                    <span className="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-gradient-to-r from-blue-500 to-purple-500 text-white">
+                      {item.badge}
+                    </span>
+                  )}
+                </Link>
               )}
-              title={isCollapsed ? item.label : undefined}
-            >
-              <Icon className="h-5 w-5 flex-shrink-0" />
-              {!isCollapsed && (
-                <span className="flex-1">{item.label}</span>
+
+              {/* 子選單 */}
+              {hasChildren && isExpanded && !isCollapsed && (
+                <div className="ml-4 mt-1 space-y-1 border-l-2 border-gray-200 pl-3">
+                  {item.children!.map((child) => {
+                    const ChildIcon = child.icon
+                    const isChildActive = pathname === child.href
+
+                    return (
+                      <Link
+                        key={child.href}
+                        href={child.href}
+                        onClick={() => setIsMobileOpen(false)}
+                        className={cn(
+                          'flex items-center gap-2 rounded-lg px-3 py-2 text-sm transition-colors',
+                          isChildActive
+                            ? 'bg-blue-50 text-blue-600 font-medium'
+                            : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900'
+                        )}
+                      >
+                        <ChildIcon className="h-4 w-4 flex-shrink-0" />
+                        <span>{child.label}</span>
+                      </Link>
+                    )
+                  })}
+                </div>
               )}
-              {'badge' in item && item.badge && !isCollapsed && (
-                <span className="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-gradient-to-r from-blue-500 to-purple-500 text-white">
-                  {item.badge}
-                </span>
-              )}
-            </Link>
+            </div>
           )
         })}
       </nav>

@@ -1,26 +1,20 @@
 /**
- * Chat API Route - Azure OpenAI + SSE 串流
+ * Chat API Route - Azure OpenAI + SSE 串流 + AI Agent 知識庫
  * @module app/api/chat
- * @description 處理 LLM 對話並使用 Server-Sent Events 串流回應
+ * @description 處理 LLM 對話，整合 AI Agent 知識庫（persona、FAQ、KPI 等），
+ *              並使用 Server-Sent Events 串流回應
  */
 
 import { NextRequest, NextResponse } from 'next/server'
 import { getOpenAIClient, DEPLOYMENT_NAME } from '@/lib/azure/openai'
 import { ChatRequest, ErrorResponse } from '@/types/chat'
+import {
+  getKnowledgeLoader,
+  buildSystemPrompt,
+} from '@/lib/ai/knowledge-loader'
 
-// 使用 Edge Runtime 提升效能與 SSE 支援
-export const runtime = 'edge'
-
-// Avatar System Prompt
-const AVATAR_SYSTEM_PROMPT = `你是一個友善、專業的 AI 虛擬助手。
-你的回答應該：
-1. 簡潔明瞭（每次回答 2-3 句話，約 50-100 字）
-2. 使用繁體中文
-3. 語氣友善、自然，像真人對話
-4. 避免過於正式或機械化的回答
-5. 必要時可以使用表情符號增加親切感
-
-請記住：你正在透過 3D Avatar 與使用者對話，保持對話的自然流暢性。`
+// 使用 Node.js Runtime（需要 fs API 讀取知識庫檔案）
+export const runtime = 'nodejs'
 
 // 超時設定：10 秒
 const TIMEOUT_MS = 10000
@@ -38,6 +32,8 @@ const TIMEOUT_MS = 10000
  * ```
  */
 export async function POST(request: NextRequest) {
+  const startTime = Date.now()
+
   try {
     // 解析請求 body
     const body: ChatRequest = await request.json()
@@ -54,12 +50,53 @@ export async function POST(request: NextRequest) {
       )
     }
 
+    // 取得使用者最後一條訊息（用於知識庫搜尋）
+    const lastUserMessage =
+      body.messages.filter((m) => m.role === 'user').pop()?.content || ''
+
+    console.log('📩 User message:', lastUserMessage)
+
+    // ═══════════════════════════════════════════════
+    // 🧠 步驟 1: 載入 AI Agent 知識庫
+    // ═══════════════════════════════════════════════
+    const knowledgeLoader = await getKnowledgeLoader()
+    const loadTime = Date.now()
+    console.log(`✅ Knowledge loader ready (${loadTime - startTime}ms)`)
+
+    // ═══════════════════════════════════════════════
+    // 🎭 步驟 2: 載入 Persona (CDO 人格定義)
+    // ═══════════════════════════════════════════════
+    const persona = knowledgeLoader.getPersona()
+    console.log(
+      `✅ Persona loaded (${persona.length} characters, ${Date.now() - loadTime}ms)`
+    )
+
+    // ═══════════════════════════════════════════════
+    // 🔍 步驟 3: 搜尋相關知識文件
+    // ═══════════════════════════════════════════════
+    const relevantKnowledge = knowledgeLoader.searchKnowledge(
+      lastUserMessage,
+      3 // 最多返回 3 個相關文件
+    )
+    const searchTime = Date.now()
+    console.log(
+      `✅ Found ${relevantKnowledge.length} relevant documents (${searchTime - loadTime}ms)`
+    )
+
+    // ═══════════════════════════════════════════════
+    // 📝 步驟 4: 組合完整 System Prompt
+    // ═══════════════════════════════════════════════
+    const systemPrompt = buildSystemPrompt(persona, relevantKnowledge)
+    console.log(
+      `✅ System prompt built (${systemPrompt.length} characters, ${Date.now() - searchTime}ms)`
+    )
+
     // 建立 OpenAI 客戶端
     const client = getOpenAIClient()
 
     // 加入 System Prompt
     const messagesWithSystem = [
-      { role: 'system' as const, content: AVATAR_SYSTEM_PROMPT },
+      { role: 'system' as const, content: systemPrompt },
       ...body.messages,
     ]
 

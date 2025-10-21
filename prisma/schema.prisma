@@ -29,6 +29,7 @@ model User {
   favoriteAvatars  UserFavoriteAvatar[]
   conversations    Conversation[]
   promptTemplates  PromptTemplate[]
+  customAvatars    CustomAvatar[]
 
   @@map("users")
 }
@@ -220,4 +221,32 @@ model PromptTemplate {
   @@index([userId])
   @@index([isSystem, featured]) // Optimized for fetching system/featured templates
   @@map("prompt_templates")
+}
+
+// Custom Avatar System (Ready Player Me integration)
+model CustomAvatar {
+  id           String   @id @default(cuid())
+  userId       String
+  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  name         String   // User-defined name for the avatar
+  description  String?  // Optional description
+  url          String   // Ready Player Me GLB model URL
+  thumbnailUrl String?  // Optional thumbnail image URL
+  sourcePhoto  String?  // Optional: original photo URL (for reference)
+
+  // Ready Player Me specific data
+  rpmId        String?  // Ready Player Me avatar ID
+  rpmData      Json?    // Additional RPM metadata
+
+  // Usage tracking
+  isActive     Boolean  @default(false) // Currently active avatar
+  usageCount   Int      @default(0)     // How many times used
+
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  @@index([userId, createdAt(sort: Desc)])
+  @@index([userId, isActive])
+  @@map("custom_avatars")
 }
