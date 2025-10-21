@@ -3,6 +3,7 @@
 import { useState, useEffect } from 'react'
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
+import { useTranslations } from 'next-intl'
 import { cn } from '@/lib/utils'
 import {
   LayoutDashboard,
@@ -27,84 +28,86 @@ interface SidebarProps {
   className?: string
 }
 
-const menuItems = [
-  {
-    href: '/dashboard',
-    icon: LayoutDashboard,
-    label: '控制台',
-  },
-  {
-    href: '/conversations',
-    icon: MessageSquare,
-    label: '對話記錄',
-  },
-  {
-    href: '/knowledge',
-    icon: Brain,
-    label: '知識庫管理',
-    badge: 'NEW',
-    children: [
-      {
-        href: '/knowledge',
-        icon: BookOpen,
-        label: '知識庫總覽',
-      },
-      {
-        href: '/knowledge/persona',
-        icon: Users,
-        label: 'Persona 定義',
-      },
-      {
-        href: '/knowledge/faq',
-        icon: HelpCircle,
-        label: 'FAQ 管理',
-      },
-      {
-        href: '/knowledge/kpi',
-        icon: BarChart3,
-        label: 'KPI 字典',
-      },
-      {
-        href: '/knowledge/decisions',
-        icon: FileText,
-        label: '決策日誌',
-      },
-      {
-        href: '/knowledge/meetings',
-        icon: Calendar,
-        label: '會議摘要',
-      },
-    ],
-  },
-  // {
-  //   href: '/custom-avatar',
-  //   icon: Sparkles,
-  //   label: '自定義 Avatar',
-  //   badge: 'NEW',
-  // },
-  // {
-  //   href: '/avatar-lip-sync-test',
-  //   icon: Sparkles,
-  //   label: 'Avatar Lip Sync 測試',
-  //   badge: 'TEST',
-  // },
-  {
-    href: '/prompts',
-    icon: History,
-    label: '對話主題',
-  },
-  {
-    href: '/settings',
-    icon: Settings,
-    label: '設定',
-  },
-]
-
 export default function Sidebar({ className }: SidebarProps) {
+  const t = useTranslations('nav')
   const [isCollapsed, setIsCollapsed] = useState(false)
   const [isMobileOpen, setIsMobileOpen] = useState(false)
   const [expandedMenus, setExpandedMenus] = useState<string[]>(['/knowledge']) // 預設展開知識庫
   const pathname = usePathname()
+
+  // 選單項目（使用翻譯）
+  const menuItems = [
+    {
+      href: '/dashboard',
+      icon: LayoutDashboard,
+      label: t('dashboard'),
+    },
+    {
+      href: '/conversations',
+      icon: MessageSquare,
+      label: t('conversations'),
+    },
+    {
+      href: '/knowledge',
+      icon: Brain,
+      label: t('knowledge'),
+      badge: 'NEW',
+      children: [
+        {
+          href: '/knowledge',
+          icon: BookOpen,
+          label: t('knowledgeOverview'),
+        },
+        {
+          href: '/knowledge/persona',
+          icon: Users,
+          label: t('personaDefinition'),
+        },
+        {
+          href: '/knowledge/faq',
+          icon: HelpCircle,
+          label: t('faqManagement'),
+        },
+        {
+          href: '/knowledge/kpi',
+          icon: BarChart3,
+          label: t('kpiDictionary'),
+        },
+        {
+          href: '/knowledge/decisions',
+          icon: FileText,
+          label: t('decisionLogs'),
+        },
+        {
+          href: '/knowledge/meetings',
+          icon: Calendar,
+          label: t('meetingSummaries'),
+        },
+      ],
+    },
+    // {
+    //   href: '/custom-avatar',
+    //   icon: Sparkles,
+    //   label: '自定義 Avatar',
+    //   badge: 'NEW',
+    // },
+    // {
+    //   href: '/avatar-lip-sync-test',
+    //   icon: Sparkles,
+    //   label: 'Avatar Lip Sync 測試',
+    //   badge: 'TEST',
+    // },
+    {
+      href: '/prompts',
+      icon: History,
+      label: t('prompts'),
+    },
+    {
+      href: '/settings',
+      icon: Settings,
+      label: t('settings'),
+    },
+  ]
 
   // 切換子選單展開/收合
   const toggleSubmenu = (href: string) => {
@@ -134,7 +137,7 @@ export default function Sidebar({ className }: SidebarProps) {
     <button
       onClick={() => setIsMobileOpen(!isMobileOpen)}
       className="md:hidden fixed top-4 left-4 z-50 p-2 bg-white rounded-lg shadow-lg border border-gray-200 hover:bg-gray-50 transition-colors"
-      aria-label="開啟選單"
+      aria-label={isMobileOpen ? t('closeMenu') : t('openMenu')}
     >
       {isMobileOpen ? (
         <X className="h-5 w-5 text-gray-600" />
@@ -173,7 +176,7 @@ export default function Sidebar({ className }: SidebarProps) {
       <button
         onClick={() => setIsCollapsed(!isCollapsed)}
         className="hidden md:flex absolute -right-3 top-6 z-10 h-6 w-6 items-center justify-center rounded-full border border-gray-200 bg-white shadow-sm hover:bg-gray-50 transition-colors"
-        aria-label={isCollapsed ? '展開側邊欄' : '收合側邊欄'}
+        aria-label={isCollapsed ? t('expandSidebar') : t('collapseSidebar')}
       >
         {isCollapsed ? (
           <ChevronRight className="h-4 w-4 text-gray-600" />

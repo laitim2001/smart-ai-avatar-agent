@@ -14,6 +14,8 @@
     "settings": "Settings",
     "profile": "Profile",
     "logout": "Logout",
+    "loggingOut": "Logging out...",
+    "user": "User",
     "search": "Search...",
     "loading": "Loading...",
     "openMenu": "Open menu",
