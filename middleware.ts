@@ -42,6 +42,7 @@ export async function middleware(request: NextRequest) {
 
   // 2. 從路徑中提取語言前綴並獲取實際路徑
   const pathnameWithoutLocale = pathname.replace(/^\/(zh-TW|en|ja)/, '') || '/'
+  const locale = pathname.match(/^\/(zh-TW|en|ja)/)?.[1] || defaultLocale
 
   // 獲取當前 session
   const session = await auth()
@@ -59,7 +60,6 @@ export async function middleware(request: NextRequest) {
 
   // 3. 受保護路由：未登入則重導向至登入頁
   if (isProtectedRoute && !isAuthenticated) {
-    const locale = pathname.match(/^\/(zh-TW|en|ja)/)?.[1] || defaultLocale
     const loginUrl = new URL(`/${locale}/login`, request.url)
     loginUrl.searchParams.set('callbackUrl', pathname)
     return NextResponse.redirect(loginUrl)
@@ -67,12 +67,26 @@ export async function middleware(request: NextRequest) {
 
   // 4. 認證路由：已登入則重導向至 Dashboard
   if (isAuthRoute && isAuthenticated) {
-    const locale = pathname.match(/^\/(zh-TW|en|ja)/)?.[1] || defaultLocale
     return NextResponse.redirect(new URL(`/${locale}/dashboard`, request.url))
   }
 
-  // 5. 返回 i18n middleware 的結果
-  return intlResponse
+  // 5. Add locale header for root layout
+  const response = NextResponse.next({
+    request: {
+      headers: request.headers,
+    },
+  })
+
+  // Set custom header with current locale
+  response.headers.set('x-locale', locale)
+
+  // 6. 返回 i18n middleware 的結果或修改後的回應
+  if (intlResponse instanceof NextResponse) {
+    intlResponse.headers.set('x-locale', locale)
+    return intlResponse
+  }
+
+  return response
 }
 
 /**

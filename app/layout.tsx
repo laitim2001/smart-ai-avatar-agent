@@ -4,6 +4,7 @@ import { ErrorBoundary } from '@/components/ErrorBoundary'
 import { SessionProvider } from '@/components/providers/SessionProvider'
 import { AppInsightsProvider } from '@/components/providers/AppInsightsProvider'
 import { Toaster } from '@/components/ui/sonner'
+import { headers } from 'next/headers'
 import './globals.css'
 
 // 英數字體：Inter（現代感、可讀性高）
@@ -35,13 +36,17 @@ export const metadata: Metadata = {
   ],
 }
 
-export default function RootLayout({
+export default async function RootLayout({
   children,
 }: {
   children: React.ReactNode
 }) {
+  // Extract locale from request headers (set by middleware)
+  const headersList = await headers()
+  const locale = headersList.get('x-locale') || 'zh-TW'
+
   return (
-    <html lang="zh-TW" className={`${inter.variable} ${notoSansTC.variable}`}>
+    <html lang={locale} className={`${inter.variable} ${notoSansTC.variable}`}>
       <body className="font-sans antialiased">
         <AppInsightsProvider>
           <SessionProvider>

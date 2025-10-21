@@ -2,21 +2,6 @@ import { NextIntlClientProvider } from 'next-intl'
 import { getMessages } from 'next-intl/server'
 import { notFound } from 'next/navigation'
 import { locales } from '@/i18n/request'
-import { Noto_Sans_TC, Inter } from 'next/font/google'
-import '../globals.css'
-
-const notoSansTC = Noto_Sans_TC({
-  subsets: ['latin'],
-  weight: ['300', '400', '500', '700'],
-  variable: '--font-noto-sans-tc',
-  display: 'swap',
-})
-
-const inter = Inter({
-  subsets: ['latin'],
-  variable: '--font-inter',
-  display: 'swap',
-})
 
 export function generateStaticParams() {
   return locales.map((locale) => ({ locale }))
@@ -41,12 +26,8 @@ export default async function LocaleLayout({
   const messages = await getMessages()
 
   return (
-    <html lang={locale} suppressHydrationWarning>
-      <body className={`${notoSansTC.variable} ${inter.variable} antialiased`} suppressHydrationWarning>
-        <NextIntlClientProvider messages={messages}>
-          {children}
-        </NextIntlClientProvider>
-      </body>
-    </html>
+    <NextIntlClientProvider messages={messages}>
+      {children}
+    </NextIntlClientProvider>
   )
 }
