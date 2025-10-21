@@ -80,6 +80,7 @@
   "dashboard": {
     "title": "Dashboard",
     "welcome": "Welcome back",
+    "user": "User",
     "welcomeMessage": "Ready to chat with your AI Avatar?",
     "loadingUser": "Loading user info...",
     "emailVerified": "Email verified",
@@ -101,14 +102,15 @@
     },
     "recentActivity": {
       "title": "Recent Activity",
-      "noActivity": "No recent conversations",
+      "noRecords": "No recent conversations",
       "viewAll": "View All"
     },
     "recentConversationsSection": {
       "title": "Recent Conversations",
-      "noConversations": "No conversations yet",
-      "firstConversation": "Start your first AI Avatar conversation!",
-      "messageCount": "messages",
+      "noRecords": "No conversations yet",
+      "startFirst": "Start your first AI Avatar conversation!",
+      "newConversation": "New Conversation",
+      "messages": "messages",
       "loading": "Loading...",
       "viewAll": "View All"
     }

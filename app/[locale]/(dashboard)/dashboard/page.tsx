@@ -3,6 +3,7 @@
 import { useEffect, useState } from 'react'
 import { useSession } from 'next-auth/react'
 import { useRouter } from 'next/navigation'
+import { useTranslations } from 'next-intl'
 import { MessageSquare, Clock, TrendingUp, Users } from 'lucide-react'
 
 interface UserData {
@@ -15,6 +16,7 @@ interface UserData {
 }
 
 export default function DashboardPage() {
+  const t = useTranslations('dashboard')
   const router = useRouter()
   const { data: session } = useSession()
   const [userData, setUserData] = useState<UserData | null>(null)
@@ -65,28 +67,28 @@ export default function DashboardPage() {
 
   const stats = [
     {
-      label: '對話次數',
+      label: t('stats.conversations'),
       value: '0',
       icon: MessageSquare,
       color: 'text-blue-600',
       bgColor: 'bg-blue-50',
     },
     {
-      label: '總對話時長',
-      value: '0 分鐘',
+      label: t('stats.totalTime'),
+      value: `0 ${t('stats.minutes')}`,
       icon: Clock,
       color: 'text-green-600',
       bgColor: 'bg-green-50',
     },
     {
-      label: '本月使用次數',
+      label: t('stats.monthlyUsage'),
       value: '0',
       icon: TrendingUp,
       color: 'text-purple-600',
       bgColor: 'bg-purple-50',
     },
     {
-      label: '活躍 Avatar',
+      label: t('stats.activeAvatars'),
       value: '3',
       icon: Users,
       color: 'text-orange-600',
@@ -99,21 +101,21 @@ export default function DashboardPage() {
       {/* Welcome Section */}
       <div className="rounded-lg bg-gradient-to-r from-blue-600 to-blue-700 p-8 text-white shadow-lg">
         <h1 className="text-3xl font-bold">
-          歡迎回來，{userData?.name || session?.user?.name || '使用者'}！
+          {t('welcome')}，{userData?.name || session?.user?.name || t('user')}！
         </h1>
         <p className="mt-2 text-blue-100">
-          準備好與您的 AI Avatar 開始對話了嗎？
+          {t('welcomeMessage')}
         </p>
         {isLoading ? (
-          <p className="mt-4 text-sm text-blue-200">載入使用者資訊中...</p>
+          <p className="mt-4 text-sm text-blue-200">{t('loadingUser')}</p>
         ) : (
           <div className="mt-4 space-y-1">
             <p className="text-sm text-blue-200">
-              帳號：{userData?.email || session?.user?.email}
+              {t('account')}：{userData?.email || session?.user?.email}
             </p>
             {userData?.emailVerified && (
               <p className="text-sm text-blue-200">
-                ✓ Email 已驗證
+                ✓ {t('emailVerified')}
               </p>
             )}
           </div>
@@ -152,28 +154,28 @@ export default function DashboardPage() {
       {/* Quick Actions */}
       <div className="grid gap-6 md:grid-cols-2">
         <div className="rounded-lg border border-gray-200 bg-white p-6 shadow-sm">
-          <h2 className="text-lg font-semibold text-gray-900">快速開始</h2>
+          <h2 className="text-lg font-semibold text-gray-900">{t('quickStart.title')}</h2>
           <p className="mt-2 text-sm text-gray-600">
-            開始與您的 AI Avatar 進行對話
+            {t('quickStart.description')}
           </p>
           <button
             onClick={() => router.push('/conversations')}
             className="mt-4 w-full rounded-lg bg-blue-600 px-4 py-2 text-sm font-medium text-white hover:bg-blue-700 transition-colors cursor-pointer"
           >
-            開始對話
+            {t('quickStart.startButton')}
           </button>
         </div>
 
         <div className="rounded-lg border border-gray-200 bg-white p-6 shadow-sm">
-          <h2 className="text-lg font-semibold text-gray-900">最近活動</h2>
+          <h2 className="text-lg font-semibold text-gray-900">{t('recentActivity.title')}</h2>
           <p className="mt-2 text-sm text-gray-600">
-            目前沒有最近的對話記錄
+            {t('recentActivity.noRecords')}
           </p>
           <button
             onClick={() => router.push('/conversations')}
             className="mt-4 w-full rounded-lg border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50 transition-colors cursor-pointer"
           >
-            查看全部記錄
+            {t('recentActivity.viewAll')}
           </button>
         </div>
       </div>
@@ -181,13 +183,13 @@ export default function DashboardPage() {
       {/* Recent Conversations */}
       <div className="rounded-lg border border-gray-200 bg-white p-6 shadow-sm">
         <div className="flex items-center justify-between mb-4">
-          <h2 className="text-lg font-semibold text-gray-900">最近對話</h2>
+          <h2 className="text-lg font-semibold text-gray-900">{t('recentConversationsSection.title')}</h2>
           {recentConversations.length > 0 && (
             <button
               onClick={() => router.push('/conversations')}
               className="text-sm text-blue-600 hover:text-blue-700 transition-colors cursor-pointer"
             >
-              查看全部
+              {t('recentConversationsSection.viewAll')}
             </button>
           )}
         </div>
@@ -196,17 +198,17 @@ export default function DashboardPage() {
           <div className="flex items-center justify-center py-12">
             <div className="text-center">
               <div className="inline-block h-8 w-8 animate-spin rounded-full border-4 border-blue-600 border-t-transparent"></div>
-              <p className="mt-2 text-sm text-gray-600">載入中...</p>
+              <p className="mt-2 text-sm text-gray-600">{t('recentConversationsSection.loading')}</p>
             </div>
           </div>
         ) : recentConversations.length === 0 ? (
           <div className="flex flex-col items-center justify-center py-12">
             <MessageSquare className="h-12 w-12 text-gray-400" />
             <p className="mt-4 text-sm font-medium text-gray-600">
-              還沒有對話記錄
+              {t('recentConversationsSection.noRecords')}
             </p>
             <p className="mt-1 text-sm text-gray-500">
-              開始您的第一次 AI Avatar 對話吧！
+              {t('recentConversationsSection.startFirst')}
             </p>
           </div>
         ) : (
@@ -233,14 +235,14 @@ export default function DashboardPage() {
                   <div className="flex-1 min-w-0">
                     <div className="flex items-center justify-between mb-1">
                       <h3 className="text-sm font-medium text-gray-900 truncate">
-                        {conversation.title || '新對話'}
+                        {conversation.title || t('recentConversationsSection.newConversation')}
                       </h3>
                       <span className="text-xs text-gray-500 flex-shrink-0 ml-2">
                         {createdDate}
                       </span>
                     </div>
                     <p className="text-sm text-gray-600">
-                      {messageCount} 則訊息
+                      {messageCount} {t('recentConversationsSection.messages')}
                     </p>
                   </div>
                 </div>

@@ -80,6 +80,7 @@
   "dashboard": {
     "title": "控制台",
     "welcome": "歡迎回來",
+    "user": "使用者",
     "welcomeMessage": "準備好與您的 AI Avatar 開始對話了嗎？",
     "loadingUser": "載入使用者資訊中...",
     "emailVerified": "Email 已驗證",
@@ -101,14 +102,15 @@
     },
     "recentActivity": {
       "title": "最近活動",
-      "noActivity": "目前沒有最近的對話記錄",
+      "noRecords": "目前沒有最近的對話記錄",
       "viewAll": "查看全部記錄"
     },
     "recentConversationsSection": {
       "title": "最近對話",
-      "noConversations": "還沒有對話記錄",
-      "firstConversation": "開始您的第一次 AI Avatar 對話吧！",
-      "messageCount": "則訊息",
+      "noRecords": "還沒有對話記錄",
+      "startFirst": "開始您的第一次 AI Avatar 對話吧！",
+      "newConversation": "新對話",
+      "messages": "則訊息",
       "loading": "載入中...",
       "viewAll": "查看全部"
     }

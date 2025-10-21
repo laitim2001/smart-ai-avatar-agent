@@ -80,6 +80,7 @@
   "dashboard": {
     "title": "ダッシュボード",
     "welcome": "おかえりなさい",
+    "user": "ユーザー",
     "welcomeMessage": "AI Avatarとチャットを始めましょう",
     "loadingUser": "ユーザー情報を読み込み中...",
     "emailVerified": "メール認証済み",
@@ -101,14 +102,15 @@
     },
     "recentActivity": {
       "title": "最近のアクティビティ",
-      "noActivity": "最近の会話記録はありません",
+      "noRecords": "最近の会話記録はありません",
       "viewAll": "すべて表示"
     },
     "recentConversationsSection": {
       "title": "最近の会話",
-      "noConversations": "まだ会話記録がありません",
-      "firstConversation": "最初のAI Avatar会話を始めましょう！",
-      "messageCount": "件のメッセージ",
+      "noRecords": "まだ会話記録がありません",
+      "startFirst": "最初のAI Avatar会話を始めましょう！",
+      "newConversation": "新しい会話",
+      "messages": "件のメッセージ",
       "loading": "読み込み中...",
       "viewAll": "すべて表示"
     }
