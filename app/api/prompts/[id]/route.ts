@@ -20,10 +20,10 @@ export const runtime = 'nodejs'
  */
 export async function GET(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
-    const { id } = params
+    const { id } = await params
 
     const prompt = await prisma.promptTemplate.findUnique({
       where: { id },
@@ -44,7 +44,7 @@ export async function GET(
 
     return NextResponse.json(prompt)
   } catch (error) {
-    console.error(`[GET /api/prompts/${params.id}] Error:`, error)
+    console.error('[GET /api/prompts/[id]] Error:', error)
     return NextResponse.json({ error: 'Internal server error' }, { status: 500 })
   }
 }
@@ -81,7 +81,7 @@ const updatePromptSchema = z.object({
 
 export async function PATCH(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
     // 認證檢查
@@ -90,7 +90,7 @@ export async function PATCH(
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
     }
 
-    const { id } = params
+    const { id } = await params
     const body = await request.json()
 
     // 驗證輸入
@@ -142,7 +142,7 @@ export async function PATCH(
 
     return NextResponse.json(updatedPrompt)
   } catch (error) {
-    console.error(`[PATCH /api/prompts/${params.id}] Error:`, error)
+    console.error('[PATCH /api/prompts/[id]] Error:', error)
     return NextResponse.json({ error: 'Internal server error' }, { status: 500 })
   }
 }
@@ -153,7 +153,7 @@ export async function PATCH(
  */
 export async function DELETE(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
     // 認證檢查
@@ -162,7 +162,7 @@ export async function DELETE(
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
     }
 
-    const { id } = params
+    const { id } = await params
 
     // 檢查模板是否存在
     const existingPrompt = await prisma.promptTemplate.findUnique({
@@ -196,7 +196,7 @@ export async function DELETE(
 
     return NextResponse.json({ success: true, message: 'Template deleted successfully' })
   } catch (error) {
-    console.error(`[DELETE /api/prompts/${params.id}] Error:`, error)
+    console.error('[DELETE /api/prompts/[id]] Error:', error)
     return NextResponse.json({ error: 'Internal server error' }, { status: 500 })
   }
 }

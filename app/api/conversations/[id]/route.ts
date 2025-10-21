@@ -19,7 +19,7 @@ const updateConversationSchema = z.object({
  */
 export async function GET(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
     // 1. Authentication check
@@ -43,10 +43,11 @@ export async function GET(
       )
     }
 
-    // 3. Get conversation with messages
+    // 3. Await params and get conversation with messages
+    const { id } = await params
     const conversation = await prisma.conversation.findUnique({
       where: {
-        id: params.id,
+        id,
         userId: user.id, // Ensure user owns this conversation
       },
       include: {
@@ -85,7 +86,7 @@ export async function GET(
  */
 export async function PATCH(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
     // 1. Authentication check
@@ -109,10 +110,11 @@ export async function PATCH(
       )
     }
 
-    // 3. Verify conversation ownership
+    // 3. Await params and verify conversation ownership
+    const { id } = await params
     const existingConversation = await prisma.conversation.findUnique({
       where: {
-        id: params.id,
+        id,
         userId: user.id,
       },
     })
@@ -130,7 +132,7 @@ export async function PATCH(
 
     // 5. Update conversation
     const updatedConversation = await prisma.conversation.update({
-      where: { id: params.id },
+      where: { id },
       data: {
         title: validatedData.title,
       },
@@ -171,7 +173,7 @@ export async function PATCH(
  */
 export async function DELETE(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
     // 1. Authentication check
@@ -195,10 +197,11 @@ export async function DELETE(
       )
     }
 
-    // 3. Verify conversation ownership
+    // 3. Await params and verify conversation ownership
+    const { id } = await params
     const existingConversation = await prisma.conversation.findUnique({
       where: {
-        id: params.id,
+        id,
         userId: user.id,
       },
     })
@@ -212,7 +215,7 @@ export async function DELETE(
 
     // 4. Delete conversation (messages will be cascaded deleted)
     await prisma.conversation.delete({
-      where: { id: params.id },
+      where: { id },
     })
 
     // 5. Return success

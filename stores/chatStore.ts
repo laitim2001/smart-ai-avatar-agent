@@ -173,6 +173,24 @@ export const useChatStore = create<ChatStore>()(
     // 記錄效能監控時間點
     const startTime = Date.now()
 
+    // 取得當前 UI 語言（從 URL 路徑中提取）
+    const getCurrentLanguage = (): string => {
+      if (typeof window === 'undefined') return 'zh-TW'
+
+      const pathSegments = window.location.pathname.split('/')
+      const locale = pathSegments[1] // /zh-TW/... or /en/... or /ja/...
+
+      // 映射 next-intl 的 locale 到 AI 語言參數
+      if (locale === 'zh-TW') return 'zh-TW'
+      if (locale === 'en') return 'en'
+      if (locale === 'ja') return 'ja'
+
+      return 'zh-TW' // 預設繁體中文
+    }
+
+    const language = getCurrentLanguage()
+    console.log(`[chatStore] 🌍 Sending message with language: ${language}`)
+
     // 呼叫 Chat API（SSE 串流）
     sendChatMessage(
       apiMessages,
@@ -263,7 +281,8 @@ export const useChatStore = create<ChatStore>()(
           ],
           isLoading: false,
         }))
-      }
+      },
+      language // 傳遞語言參數
     )
   },
 

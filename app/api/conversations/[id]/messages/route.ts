@@ -22,7 +22,7 @@ const addMessageSchema = z.object({
  */
 export async function POST(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
     // 1. Authentication check
@@ -46,10 +46,11 @@ export async function POST(
       )
     }
 
-    // 3. Verify conversation ownership
+    // 3. Await params and verify conversation ownership
+    const { id } = await params
     const conversation = await prisma.conversation.findUnique({
       where: {
-        id: params.id,
+        id,
         userId: user.id,
       },
     })
@@ -68,7 +69,7 @@ export async function POST(
     // 5. Create message
     const message = await prisma.message.create({
       data: {
-        conversationId: params.id,
+        conversationId: id,
         role: validatedData.role,
         content: validatedData.content,
       },
@@ -76,7 +77,7 @@ export async function POST(
 
     // 6. Update conversation's updatedAt
     await prisma.conversation.update({
-      where: { id: params.id },
+      where: { id },
       data: { updatedAt: new Date() },
     })
 

@@ -57,26 +57,33 @@ export async function POST(request: NextRequest) {
     console.log('📩 User message:', lastUserMessage)
 
     // ═══════════════════════════════════════════════
-    // 🧠 步驟 1: 載入 AI Agent 知識庫
+    // 🌍 步驟 1: 取得使用者語言偏好
+    // ═══════════════════════════════════════════════
+    const userLanguage = body.language || 'zh-TW'
+    console.log(`🌍 User language: ${userLanguage}`)
+
+    // ═══════════════════════════════════════════════
+    // 🧠 步驟 2: 載入 AI Agent 知識庫
     // ═══════════════════════════════════════════════
     const knowledgeLoader = await getKnowledgeLoader()
     const loadTime = Date.now()
     console.log(`✅ Knowledge loader ready (${loadTime - startTime}ms)`)
 
     // ═══════════════════════════════════════════════
-    // 🎭 步驟 2: 載入 Persona (CDO 人格定義)
+    // 🎭 步驟 3: 載入多語言 Persona（CDO 人格定義）
     // ═══════════════════════════════════════════════
-    const persona = knowledgeLoader.getPersona()
+    const persona = await knowledgeLoader.getPersonaByLanguage(userLanguage)
     console.log(
-      `✅ Persona loaded (${persona.length} characters, ${Date.now() - loadTime}ms)`
+      `✅ Persona loaded for ${userLanguage} (${persona.length} characters, ${Date.now() - loadTime}ms)`
     )
 
     // ═══════════════════════════════════════════════
-    // 🔍 步驟 3: 搜尋相關知識文件
+    // 🔍 步驟 4: 搜尋相關知識文件（多語言）
     // ═══════════════════════════════════════════════
     const relevantKnowledge = knowledgeLoader.searchKnowledge(
       lastUserMessage,
-      3 // 最多返回 3 個相關文件
+      3, // 最多返回 3 個相關文件
+      userLanguage // 根據語言搜尋對應的知識庫檔案
     )
     const searchTime = Date.now()
     console.log(
@@ -84,9 +91,9 @@ export async function POST(request: NextRequest) {
     )
 
     // ═══════════════════════════════════════════════
-    // 📝 步驟 4: 組合完整 System Prompt
+    // 📝 步驟 5: 組合完整 System Prompt（多語言）
     // ═══════════════════════════════════════════════
-    const systemPrompt = buildSystemPrompt(persona, relevantKnowledge)
+    const systemPrompt = buildSystemPrompt(persona, relevantKnowledge, userLanguage)
     console.log(
       `✅ System prompt built (${systemPrompt.length} characters, ${Date.now() - searchTime}ms)`
     )

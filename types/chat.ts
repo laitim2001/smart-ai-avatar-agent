@@ -35,11 +35,13 @@ export interface ChatMessage {
  * @property {ChatMessage[]} messages - 對話訊息陣列
  * @property {number} [temperature] - 溫度參數（可選，預設 0.7）
  * @property {number} [max_tokens] - 最大 tokens 數量（可選，預設 800）
+ * @property {string} [language] - AI 回應語言（可選，預設 'zh-TW'）
  */
 export interface ChatRequest {
   messages: ChatMessage[]
   temperature?: number
   max_tokens?: number
+  language?: string // 'zh-TW' | 'en' | 'ja'
 }
 
 /**

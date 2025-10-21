@@ -78,10 +78,12 @@ export class KnowledgeLoader {
 
   /**
    * 快取 persona.md 內容（最常用的檔案）
+   * 預設載入繁體中文版本
    * @private
    */
   private async cachePersona() {
-    const personaPath = path.join(this.knowledgeBasePath, 'persona.md')
+    // 新路徑：agent-brain/agents/cdo-advisor/persona.md
+    const personaPath = path.join(this.knowledgeBasePath, 'agents', 'cdo-advisor', 'persona.md')
 
     try {
       this.personaCache = await fs.readFile(personaPath, 'utf-8')
@@ -89,6 +91,40 @@ export class KnowledgeLoader {
     } catch (error) {
       console.warn('⚠️ persona.md not found, using default persona')
       this.personaCache = this.getDefaultPersona()
+    }
+  }
+
+  /**
+   * 根據語言載入對應的 Persona（支援多語言）
+   * @param {string} language - 語言代碼（zh-TW, en, ja）
+   * @returns {Promise<string>} Persona 內容
+   */
+  async getPersonaByLanguage(language: string = 'zh-TW'): Promise<string> {
+    // 語言到檔案名稱的映射
+    const languageFileMap: Record<string, string> = {
+      'zh-TW': 'persona.md',
+      'en': 'persona_en.md',
+      'ja': 'persona_ja.md',
+    }
+
+    const filename = languageFileMap[language] || 'persona.md'
+    // 新路徑：agent-brain/agents/cdo-advisor/persona.md
+    const personaPath = path.join(this.knowledgeBasePath, 'agents', 'cdo-advisor', filename)
+
+    try {
+      const content = await fs.readFile(personaPath, 'utf-8')
+      console.log(`✅ Loaded persona for language ${language} (${content.length} characters)`)
+      return content
+    } catch (error) {
+      console.warn(`⚠️ ${filename} not found, falling back to default persona`)
+
+      // 如果找不到特定語言的 persona，使用快取的預設版本（繁體中文）
+      if (this.personaCache) {
+        return this.personaCache
+      }
+
+      // 最後降級：使用內建預設 persona
+      return this.getDefaultPersona()
     }
   }
 
@@ -122,8 +158,11 @@ export class KnowledgeLoader {
           if (entry.isDirectory()) {
             // 遞迴掃描子目錄
             await scanDirectory(fullPath)
-          } else if (entry.name.endsWith('.md') && entry.name !== 'persona.md') {
-            // 讀取 .md 檔案內容並建立索引（persona.md 已經快取，跳過）
+          } else if (entry.name.endsWith('.md') &&
+                     !entry.name.startsWith('persona') &&
+                     !['README.md', 'KNOWLEDGE_BASE_GUIDE.md', 'MAINTENANCE_GUIDE.md', 'TECHNICAL_FLOW.md'].includes(entry.name)) {
+            // 讀取 .md 檔案內容並建立索引
+            // 排除 persona 檔案（已經快取）和系統文件
             try {
               const content = await fs.readFile(fullPath, 'utf-8')
               const relativePath = path.relative(this.knowledgeBasePath, fullPath)
@@ -156,21 +195,22 @@ export class KnowledgeLoader {
   }
 
   /**
-   * 搜尋相關知識（簡單關鍵字匹配版本）
+   * 搜尋相關知識（簡單關鍵字匹配版本，支援多語言）
    * @param {string} query - 使用者查詢字串
    * @param {number} maxResults - 最多返回幾個結果（預設 3）
+   * @param {string} language - 搜尋語言（zh-TW, en, ja）
    * @returns {KnowledgeDocument[]} 相關知識文件陣列
    *
    * @example
    * ```typescript
-   * const results = loader.searchKnowledge("MAU 怎麼算", 3)
+   * const results = loader.searchKnowledge("MAU 怎麼算", 3, "zh-TW")
    * // 返回: [
    * //   { file: "cdo_faq.md", content: "...", relevance: 5 },
    * //   { file: "kpi_dictionary.md", content: "...", relevance: 3 }
    * // ]
    * ```
    */
-  searchKnowledge(query: string, maxResults: number = 3): KnowledgeDocument[] {
+  searchKnowledge(query: string, maxResults: number = 3, language: string = 'zh-TW'): KnowledgeDocument[] {
     if (this.fileIndex.size === 0) {
       console.warn('⚠️ Knowledge base is empty, no search results')
       return []
@@ -179,8 +219,21 @@ export class KnowledgeLoader {
     const results: KnowledgeDocument[] = []
     const queryLower = query.toLowerCase()
 
-    // 遍歷所有檔案，計算相關性
+    // 遍歷所有檔案，只搜尋對應語言的檔案
     for (const [file, content] of this.fileIndex.entries()) {
+      // 語言過濾邏輯：
+      // 1. 繁體中文 (zh-TW): 搜尋沒有 _en 或 _ja 後綴的檔案
+      // 2. 英文 (en): 搜尋包含 _en 後綴的檔案
+      // 3. 日文 (ja): 搜尋包含 _ja 後綴的檔案
+      const isTargetLanguage =
+        (language === 'zh-TW' && !file.includes('_en.md') && !file.includes('_ja.md')) ||
+        (language === 'en' && file.includes('_en.md')) ||
+        (language === 'ja' && file.includes('_ja.md'))
+
+      if (!isTargetLanguage) {
+        continue
+      }
+
       const contentLower = content.toLowerCase()
 
       // 簡單的關鍵字匹配計分
@@ -202,7 +255,7 @@ export class KnowledgeLoader {
       .slice(0, maxResults)
 
     console.log(
-      `🔍 Search for "${query}": found ${topResults.length} relevant documents`
+      `🔍 Search for "${query}" (language: ${language}): found ${topResults.length} relevant documents`
     )
 
     return topResults
@@ -251,38 +304,90 @@ export async function getKnowledgeLoader(): Promise<KnowledgeLoader> {
 }
 
 /**
- * 建立完整的 System Prompt
+ * 語言對應的對話指令
+ */
+const LANGUAGE_INSTRUCTIONS = {
+  'zh-TW': {
+    knowledge: '📚 相關知識庫內容',
+    source: '來源',
+    instructions: '🎯 對話指令',
+    mainInstruction: '請根據以上人格定義 (persona) 和知識庫內容，以專業的身份回答使用者問題。',
+    notes: '注意事項：',
+    note1: '嚴格遵循 persona 定義的語氣和溝通風格',
+    note2: '優先引用知識庫中的具體內容（如果相關）',
+    note3: '如果知識庫沒有相關資訊，基於你的專業知識回答，但要明確說明',
+    note4: '保持簡潔、直接、數據驅動的風格',
+    note5: '回答長度控制在 2-3 句話，約 50-100 字',
+    note6: '**重要：請使用繁體中文回答**',
+  },
+  'en': {
+    knowledge: '📚 Relevant Knowledge Base',
+    source: 'Source',
+    instructions: '🎯 Conversation Instructions',
+    mainInstruction: 'Based on the persona definition and knowledge base above, answer user questions professionally.',
+    notes: 'Guidelines:',
+    note1: 'Strictly follow the tone and communication style defined in the persona',
+    note2: 'Prioritize referencing specific content from the knowledge base (if relevant)',
+    note3: 'If the knowledge base lacks relevant information, answer based on your expertise but clarify this',
+    note4: 'Maintain a concise, direct, data-driven style',
+    note5: 'Keep responses to 2-3 sentences, approximately 50-100 words',
+    note6: '**Important: Please respond in English**',
+  },
+  'ja': {
+    knowledge: '📚 関連知識ベース',
+    source: '出典',
+    instructions: '🎯 会話指示',
+    mainInstruction: '上記のペルソナ定義とナレッジベースに基づいて、専門的にユーザーの質問に答えてください。',
+    notes: 'ガイドライン：',
+    note1: 'ペルソナで定義されたトーンとコミュニケーションスタイルを厳守する',
+    note2: 'ナレッジベースの具体的な内容を優先的に参照する（関連する場合）',
+    note3: 'ナレッジベースに関連情報がない場合は、専門知識に基づいて回答するが、その旨を明記する',
+    note4: '簡潔で直接的、データドリブンなスタイルを維持する',
+    note5: '回答は2〜3文、約50〜100文字に抑える',
+    note6: '**重要：日本語で回答してください**',
+  },
+} as const
+
+/**
+ * 建立完整的 System Prompt（支援多語言）
  * 組合 persona + 相關知識文件
  *
  * @param {string} persona - CDO 人格定義
  * @param {KnowledgeDocument[]} knowledge - 相關知識文件
+ * @param {string} language - 回應語言（zh-TW, en, ja）
  * @returns {string} 完整的 System Prompt
  */
 export function buildSystemPrompt(
   persona: string,
-  knowledge: KnowledgeDocument[]
+  knowledge: KnowledgeDocument[],
+  language: string = 'zh-TW'
 ): string {
+  // 取得語言對應的指令（預設使用繁體中文）
+  const lang = (language in LANGUAGE_INSTRUCTIONS ? language : 'zh-TW') as keyof typeof LANGUAGE_INSTRUCTIONS
+  const instructions = LANGUAGE_INSTRUCTIONS[lang]
+
   let prompt = `${persona}\n\n`
 
   if (knowledge.length > 0) {
-    prompt += `# 📚 相關知識庫內容\n\n`
+    prompt += `# ${instructions.knowledge}\n\n`
 
     for (const doc of knowledge) {
-      prompt += `## 來源: ${doc.file}\n`
+      prompt += `## ${instructions.source}: ${doc.file}\n`
       prompt += `${doc.content}\n\n`
       prompt += `---\n\n`
     }
   }
 
-  prompt += `# 🎯 對話指令\n`
-  prompt += `請根據以上人格定義 (persona) 和知識庫內容，以專業的身份回答使用者問題。\n`
+  prompt += `# ${instructions.instructions}\n`
+  prompt += `${instructions.mainInstruction}\n`
   prompt += `\n`
-  prompt += `注意事項：\n`
-  prompt += `1. 嚴格遵循 persona 定義的語氣和溝通風格\n`
-  prompt += `2. 優先引用知識庫中的具體內容（如果相關）\n`
-  prompt += `3. 如果知識庫沒有相關資訊，基於你的專業知識回答，但要明確說明\n`
-  prompt += `4. 保持簡潔、直接、數據驅動的風格\n`
-  prompt += `5. 回答長度控制在 2-3 句話，約 50-100 字\n`
+  prompt += `${instructions.notes}\n`
+  prompt += `1. ${instructions.note1}\n`
+  prompt += `2. ${instructions.note2}\n`
+  prompt += `3. ${instructions.note3}\n`
+  prompt += `4. ${instructions.note4}\n`
+  prompt += `5. ${instructions.note5}\n`
+  prompt += `6. ${instructions.note6}\n`
 
   return prompt
 }

@@ -3,9 +3,23 @@
     "home": "ホーム",
     "dashboard": "ダッシュボード",
     "conversations": "会話履歴",
+    "knowledge": "ナレッジ管理",
+    "knowledgeOverview": "ナレッジ概要",
+    "personaDefinition": "ペルソナ定義",
+    "faqManagement": "FAQ管理",
+    "kpiDictionary": "KPI辞書",
+    "decisionLogs": "決定ログ",
+    "meetingSummaries": "会議要約",
+    "prompts": "会話トピック",
     "settings": "設定",
     "profile": "プロフィール",
-    "logout": "ログアウト"
+    "logout": "ログアウト",
+    "search": "検索...",
+    "loading": "読み込み中...",
+    "openMenu": "メニューを開く",
+    "closeMenu": "メニューを閉じる",
+    "collapseSidebar": "サイドバーを折りたたむ",
+    "expandSidebar": "サイドバーを展開"
   },
   "auth": {
     "login": "ログイン",
@@ -66,9 +80,38 @@
   "dashboard": {
     "title": "ダッシュボード",
     "welcome": "おかえりなさい",
+    "welcomeMessage": "AI Avatarとチャットを始めましょう",
+    "loadingUser": "ユーザー情報を読み込み中...",
+    "emailVerified": "メール認証済み",
+    "account": "アカウント",
     "recentConversations": "最近の会話",
     "statistics": "統計情報",
-    "quickActions": "クイックアクション"
+    "quickActions": "クイックアクション",
+    "stats": {
+      "conversations": "会話回数",
+      "totalTime": "総会話時間",
+      "monthlyUsage": "今月の使用回数",
+      "activeAvatars": "アクティブAvatar",
+      "minutes": "分"
+    },
+    "quickStart": {
+      "title": "クイックスタート",
+      "description": "AI Avatarとの会話を開始",
+      "startButton": "会話を始める"
+    },
+    "recentActivity": {
+      "title": "最近のアクティビティ",
+      "noActivity": "最近の会話記録はありません",
+      "viewAll": "すべて表示"
+    },
+    "recentConversationsSection": {
+      "title": "最近の会話",
+      "noConversations": "まだ会話記録がありません",
+      "firstConversation": "最初のAI Avatar会話を始めましょう！",
+      "messageCount": "件のメッセージ",
+      "loading": "読み込み中...",
+      "viewAll": "すべて表示"
+    }
   },
   "settings": {
     "title": "設定",

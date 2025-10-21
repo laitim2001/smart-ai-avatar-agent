@@ -3,9 +3,23 @@
     "home": "Home",
     "dashboard": "Dashboard",
     "conversations": "Conversations",
+    "knowledge": "Knowledge Management",
+    "knowledgeOverview": "Knowledge Overview",
+    "personaDefinition": "Persona Definition",
+    "faqManagement": "FAQ Management",
+    "kpiDictionary": "KPI Dictionary",
+    "decisionLogs": "Decision Logs",
+    "meetingSummaries": "Meeting Summaries",
+    "prompts": "Conversation Topics",
     "settings": "Settings",
     "profile": "Profile",
-    "logout": "Logout"
+    "logout": "Logout",
+    "search": "Search...",
+    "loading": "Loading...",
+    "openMenu": "Open menu",
+    "closeMenu": "Close menu",
+    "collapseSidebar": "Collapse sidebar",
+    "expandSidebar": "Expand sidebar"
   },
   "auth": {
     "login": "Login",
@@ -66,9 +80,38 @@
   "dashboard": {
     "title": "Dashboard",
     "welcome": "Welcome back",
+    "welcomeMessage": "Ready to chat with your AI Avatar?",
+    "loadingUser": "Loading user info...",
+    "emailVerified": "Email verified",
+    "account": "Account",
     "recentConversations": "Recent Conversations",
     "statistics": "Statistics",
-    "quickActions": "Quick Actions"
+    "quickActions": "Quick Actions",
+    "stats": {
+      "conversations": "Conversations",
+      "totalTime": "Total Time",
+      "monthlyUsage": "Monthly Usage",
+      "activeAvatars": "Active Avatars",
+      "minutes": "minutes"
+    },
+    "quickStart": {
+      "title": "Quick Start",
+      "description": "Start chatting with your AI Avatar",
+      "startButton": "Start Conversation"
+    },
+    "recentActivity": {
+      "title": "Recent Activity",
+      "noActivity": "No recent conversations",
+      "viewAll": "View All"
+    },
+    "recentConversationsSection": {
+      "title": "Recent Conversations",
+      "noConversations": "No conversations yet",
+      "firstConversation": "Start your first AI Avatar conversation!",
+      "messageCount": "messages",
+      "loading": "Loading...",
+      "viewAll": "View All"
+    }
   },
   "settings": {
     "title": "Settings",

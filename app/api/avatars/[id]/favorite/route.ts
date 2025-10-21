@@ -10,7 +10,7 @@ export const runtime = 'edge'
  */
 export async function POST(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
     const session = await auth()
@@ -22,7 +22,7 @@ export async function POST(
       )
     }
 
-    const avatarId = params.id
+    const avatarId = (await params).id
 
     // 驗證 Avatar 是否存在
     const avatar = await prisma.avatar.findUnique({
@@ -104,7 +104,7 @@ export async function POST(
  */
 export async function DELETE(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
     const session = await auth()
@@ -116,7 +116,7 @@ export async function DELETE(
       )
     }
 
-    const avatarId = params.id
+    const avatarId = (await params).id
 
     // 取得使用者
     const user = await prisma.user.findUnique({
