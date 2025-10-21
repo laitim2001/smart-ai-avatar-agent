@@ -1,9 +1,10 @@
 'use client'
 
 import { useLocale, useTranslations } from 'next-intl'
-import { useRouter, usePathname } from 'next/navigation'
+import { usePathname as useNextPathname } from 'next/navigation'
+import { useRouter } from 'next/navigation'
 import { Globe, Check } from 'lucide-react'
-import { useState, useRef, useEffect } from 'react'
+import { useState, useRef, useEffect, useTransition } from 'react'
 
 const languages = [
   { code: 'zh-TW', label: '繁體中文', flag: '🇹🇼' },
@@ -14,9 +15,10 @@ const languages = [
 export default function LanguageSwitcher() {
   const locale = useLocale()
   const router = useRouter()
-  const pathname = usePathname()
+  const pathname = useNextPathname()
   const t = useTranslations('language')
   const [isOpen, setIsOpen] = useState(false)
+  const [isPending, startTransition] = useTransition()
   const dropdownRef = useRef<HTMLDivElement>(null)
 
   // 關閉下拉選單當點擊外部
@@ -36,17 +38,26 @@ export default function LanguageSwitcher() {
   }, [isOpen])
 
   const switchLanguage = (newLocale: string) => {
-    // 替換路徑中的語言代碼
-    const segments = pathname.split('/')
-    if (segments[1] && ['zh-TW', 'en', 'ja'].includes(segments[1])) {
-      segments[1] = newLocale
-    } else {
-      segments.splice(1, 0, newLocale)
-    }
-    const newPathname = segments.join('/')
-
-    router.push(newPathname)
     setIsOpen(false)
+
+    // 從當前路徑中移除現有的語言前綴
+    const pathnameWithoutLocale = pathname.replace(/^\/(zh-TW|en|ja)/, '') || '/'
+
+    // 建立新路徑: 新語言 + 無語言的路徑
+    const newPathname = `/${newLocale}${pathnameWithoutLocale}`
+
+    console.log('[LanguageSwitcher] Switching language:', {
+      from: locale,
+      to: newLocale,
+      currentPath: pathname,
+      pathnameWithoutLocale,
+      newPath: newPathname,
+    })
+
+    // 使用 startTransition 以獲得更好的 UX
+    startTransition(() => {
+      router.replace(newPathname)
+    })
   }
 
   const currentLanguage = languages.find(lang => lang.code === locale) || languages[0]
@@ -56,10 +67,11 @@ export default function LanguageSwitcher() {
       {/* 觸發按鈕 */}
       <button
         onClick={() => setIsOpen(!isOpen)}
-        className="flex items-center gap-2 rounded-lg px-3 py-2 text-sm font-medium text-gray-700 hover:bg-gray-100 transition-colors"
+        disabled={isPending}
+        className="flex items-center gap-2 rounded-lg px-3 py-2 text-sm font-medium text-gray-700 hover:bg-gray-100 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
         aria-label={t('selectLanguage')}
       >
-        <Globe className="h-4 w-4" />
+        <Globe className={`h-4 w-4 ${isPending ? 'animate-spin' : ''}`} />
         <span className="hidden sm:inline">{currentLanguage.flag}</span>
         <span className="hidden md:inline">{currentLanguage.label}</span>
       </button>
@@ -76,7 +88,8 @@ export default function LanguageSwitcher() {
               <button
                 key={lang.code}
                 onClick={() => switchLanguage(lang.code)}
-                className={`flex w-full items-center gap-3 px-3 py-2 text-sm transition-colors ${
+                disabled={isPending}
+                className={`flex w-full items-center gap-3 px-3 py-2 text-sm transition-colors disabled:opacity-50 disabled:cursor-not-allowed ${
                   isActive
                     ? 'bg-blue-50 text-blue-600 font-medium'
                     : 'text-gray-700 hover:bg-gray-50'
