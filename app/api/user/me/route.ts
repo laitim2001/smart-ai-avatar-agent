@@ -8,7 +8,7 @@ export const runtime = 'nodejs'
  * GET /api/user/me
  * 獲取當前登入使用者的資訊
  */
-export async function GET(request: NextRequest) {
+export async function GET(_request: NextRequest) {
   try {
     // 檢查使用者是否已登入
     const session = await auth()

@@ -2,7 +2,13 @@
  * Web Audio API 播放器
  * @module lib/audio/player
  * @description 提供音訊播放、暫停、停止等功能
+ * Sprint 10: Safari/iOS 音訊播放優化
  */
+
+import {
+  supportsWebAudio,
+  getSafariCompatibility,
+} from '@/lib/browser/safari-compat'
 
 /**
  * Web Audio API 播放管理器
@@ -17,14 +23,44 @@ export class AudioPlayer {
 
   /**
    * 初始化 AudioContext
+   * Safari/iOS 特殊處理：AudioContext 可能為 suspended 狀態
    * @private
    */
-  private initAudioContext(): AudioContext {
+  private async initAudioContext(): Promise<AudioContext> {
     if (!this.audioContext) {
+      // 檢查瀏覽器支援
+      if (!supportsWebAudio()) {
+        throw new Error('您的瀏覽器不支援 Web Audio API')
+      }
+
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
       this.audioContext = new (window.AudioContext ||
         (window as any).webkitAudioContext)()
+
+      const safariCompat = getSafariCompatibility()
+      if (safariCompat.isSafari || safariCompat.isIOS) {
+        console.log(
+          `[AudioPlayer] Safari/iOS detected, AudioContext state: ${this.audioContext.state}`
+        )
+      }
     }
+
+    // iOS Safari: AudioContext 預設為 suspended，需要使用者互動後 resume
+    if (this.audioContext.state === 'suspended') {
+      console.warn(
+        '[AudioPlayer] AudioContext is suspended, attempting to resume...'
+      )
+      try {
+        await this.audioContext.resume()
+        console.log('[AudioPlayer] AudioContext resumed successfully')
+      } catch (error) {
+        console.error('[AudioPlayer] Failed to resume AudioContext:', error)
+        throw new Error(
+          '無法啟動音訊播放。請確保已允許瀏覽器播放音訊，或重新點擊播放按鈕。'
+        )
+      }
+    }
+
     return this.audioContext
   }
 
@@ -34,7 +70,7 @@ export class AudioPlayer {
    * @returns {Promise<AudioBuffer>} 解碼後的 AudioBuffer
    */
   async loadAudio(audioUrl: string): Promise<AudioBuffer> {
-    const context = this.initAudioContext()
+    const context = await this.initAudioContext()
 
     // 下載音訊檔案
     const response = await fetch(audioUrl)
@@ -52,24 +88,40 @@ export class AudioPlayer {
    * @param {AudioBuffer} [audioBuffer] - 可選，如未提供則使用當前 buffer
    * @param {() => void} [onEnded] - 播放結束回調
    */
-  play(audioBuffer?: AudioBuffer, onEnded?: () => void): void {
-    const context = this.initAudioContext()
+  async play(audioBuffer?: AudioBuffer, onEnded?: () => void): Promise<void> {
+    console.log('[AudioPlayer] play() called')
+
+    const context = await this.initAudioContext()
+    console.log('[AudioPlayer] AudioContext initialized, state:', context.state)
+
     const buffer = audioBuffer || this.currentBuffer
 
     if (!buffer) {
+      console.error('[AudioPlayer] No audio buffer available')
       throw new Error('No audio buffer available')
     }
+
+    console.log('[AudioPlayer] Buffer duration:', buffer.duration.toFixed(2), 's')
 
     // 停止當前播放
     this.stop()
 
-    // 建立音訊源節點
+    // 建立音訊源節點和音量控制節點
     const source = context.createBufferSource()
+    const gainNode = context.createGain()
+
     source.buffer = buffer
-    source.connect(context.destination)
+    gainNode.gain.value = 1.0 // 100% 音量
+
+    // 連接音訊圖：source → gainNode → destination
+    source.connect(gainNode)
+    gainNode.connect(context.destination)
+
+    console.log('[AudioPlayer] Audio graph created with GainNode, volume:', gainNode.gain.value)
 
     // 設定播放結束回調
     source.onended = () => {
+      console.log('[AudioPlayer] Playback ended')
       this.currentSource = null
       this.isPaused = false
       if (onEnded) onEnded()
@@ -80,6 +132,8 @@ export class AudioPlayer {
     this.currentSource = source
     this.startTime = context.currentTime - (this.isPaused ? this.pauseTime : 0)
     this.isPaused = false
+
+    console.log('[AudioPlayer] Playback started successfully, AudioContext.currentTime:', context.currentTime.toFixed(3), 's')
   }
 
   /**
@@ -96,9 +150,9 @@ export class AudioPlayer {
   /**
    * 恢復播放
    */
-  resume(): void {
+  async resume(): Promise<void> {
     if (this.isPaused && this.currentBuffer) {
-      this.play(this.currentBuffer)
+      await this.play(this.currentBuffer)
     }
   }
 

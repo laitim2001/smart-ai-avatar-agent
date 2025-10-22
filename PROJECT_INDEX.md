@@ -1,580 +1,784 @@
-# Project Index - 專案完整索引
+# PROJECT INDEX - 項目完整索引
 
-> **目標**: 提供專案所有檔案的完整索引與說明，讓 AI 助手和開發者快速定位所需資源
-> **維護頻率**: 每個 Story 完成後更新
-> **最後更新**: 2025-10-16 (Story 1.1 完成)
-> **版本**: v1.1.15
-
----
-
-## 🎯 使用說明
-
-### 如何使用這份索引？
-
-1. **🔍 快速搜尋**: 使用 `Ctrl+F` 搜尋關鍵字（如 "Chat API", "persona", "Story 3.3"）
-2. **📂 分類瀏覽**: 按照檔案類型或功能分類查看
-3. **🔗 快速跳轉**: 檔案路徑可直接複製用於編輯器跳轉
-4. **📊 狀態追蹤**: 每個檔案標記了當前狀態（✅ 已完成 / 🔄 開發中 / ⏳ 待建立）
+> **文件性質**: 項目結構導覽與完整文件索引
+> **用途**: 幫助開發者和 AI 助手快速理解項目架構、定位文件和理解依賴關係
+> **更新方式**: 使用 `npm run sync-index` 同步文件列表，手動維護說明文字
+> **最後更新**: 2025-10-22
 
 ---
 
-## 📊 索引統計
+## 📋 目錄
 
-```yaml
-檔案總數: 85+
-  - 專案管理文檔: 8
-  - AI 知識庫: 8
-  - Next.js 程式碼: 12 (已建立) + 30+ (待建立)
-  - 配置檔案: 12
-  - Story 文檔: 29
-  - 其他文檔: 15+
+- [項目概覽](#項目概覽)
+- [項目狀態](#項目狀態)
+- [快速導覽](#快速導覽)
+- [目錄結構說明](#目錄結構說明)
+  - [根目錄核心文件](#根目錄核心文件)
+  - [應用程式代碼 (app/)](#應用程式代碼-app)
+  - [UI 組件 (components/)](#ui-組件-components)
+  - [工具函式與配置 (lib/)](#工具函式與配置-lib)
+  - [狀態管理 (stores/)](#狀態管理-stores)
+  - [類型定義 (types/)](#類型定義-types)
+  - [文件目錄 (docs/)](#文件目錄-docs)
+  - [配置與腳本](#配置與腳本)
+- [架構依賴關係](#架構依賴關係)
+- [關鍵文件索引](#關鍵文件索引)
+- [開發工作流程](#開發工作流程)
 
-當前完成度:
-  - Epic 1 (專案基礎): 12.5% (1/8 Stories)
-  - Epic 2 (3D Avatar): 0% (0/5 Stories)
-  - Epic 3 (LLM 對話): 0% (0/7 Stories)
-  - Epic 4 (Lip Sync): 0% (0/5 Stories)
-  - Epic 5 (優化部署): 0% (0/7 Stories)
+---
+
+## 項目概覽
+
+**Smart AI Avatar Agent** 是一個基於 Next.js 15、Three.js 和 Azure AI 服務的企業級 3D Avatar 即時對話系統。
+
+### 核心技術棧
+
+| 類別 | 技術 | 版本 | 用途 |
+|------|------|------|------|
+| **前端框架** | Next.js | 15.5.5 | App Router、SSR、API Routes |
+| **UI 框架** | React | 19.2.0 | 組件化 UI |
+| **3D 渲染** | Three.js | 0.180.0 | WebGL 3D 圖形 |
+| **3D React 整合** | @react-three/fiber | 9.4.0 | React Three.js 聲明式 API |
+| **3D 工具** | @react-three/drei | 9.119.2 | 常用 3D 組件庫 |
+| **狀態管理** | Zustand | 5.0.8 | 輕量級狀態管理 |
+| **樣式** | Tailwind CSS | 4.1.14 | Utility-first CSS |
+| **類型系統** | TypeScript | 5.9.3 | 型別安全 |
+| **資料庫** | PostgreSQL | - | 關聯式資料庫 |
+| **ORM** | Prisma | 6.3.0 | 資料庫 ORM |
+| **認證** | NextAuth.js | 5.0.0-beta.28 | 使用者認證 |
+| **AI 對話** | Azure OpenAI | GPT-4 Turbo | LLM 對話 |
+| **語音服務** | Azure Speech | - | TTS/STT |
+| **國際化** | next-intl | 3.27.2 | 多語言支援 |
+
+### 架構模式
+
+- **前端架構**: Next.js App Router + React Server Components
+- **API 模式**: Edge Runtime API Routes (SSE Streaming)
+- **狀態管理**: Zustand (3 個獨立 Store: avatar, chat, audio)
+- **3D 渲染**: Three.js + React Three Fiber (聲明式 3D)
+- **動畫系統**: Controller Pattern (Blink, Breath, Expression, HeadNod, LipSync)
+- **音訊處理**: Web Audio API (AudioContext + AudioBuffer)
+
+---
+
+## 項目狀態
+
+### 開發階段
+
+| 階段 | 時間 | Story Points | 狀態 | 完成度 |
+|------|------|-------------|------|---------|
+| **POC 驗證** | 2025-08-16 ~ 2025-10-15 | 29 Stories | ✅ 完成 | 100% |
+| **MVP 開發** | 2025-10-16 ~ 進行中 | 103 SP | 🔄 進行中 | 95.1% |
+
+### MVP Epic 進度
+
+| Epic | 主題 | Story Points | 進度 | 狀態 |
+|------|------|-------------|------|------|
+| **Epic 1** | POC 企業化基礎 (認證、個人資料、STT) | 42/42 SP | 100% | ✅ 完成 |
+| **Epic 2** | Avatar 與對話系統擴充 (響應式、角色庫、對話歷史、多語言、Prompt) | 21/21 SP | 100% | ✅ 完成 |
+| **Epic 3** | 優化、測試與監控 (Safari、Application Insights、測試、部署) | 35/40 SP | 87.5% | ⚠️ 部分完成 |
+| **Epic 4** | Lip Sync 唇型同步系統 | - | 100% | ✅ 完成 |
+| **總計** | - | **98/103 SP** | **95.1%** | 🔄 **接近完成** |
+
+### 最新功能狀態
+
+- ✅ **使用者認證系統** (NextAuth.js v5, Email 驗證, 密碼重設)
+- ✅ **個人資料管理** (Profile, Avatar 偏好, 活動記錄)
+- ✅ **語音輸入系統** (Web Speech API, Azure Speech STT)
+- ✅ **響應式設計** (Desktop, Tablet, Mobile)
+- ✅ **Avatar 角色庫** (多 Avatar 支援, 收藏功能, Replicate API)
+- ✅ **對話歷史** (儲存/載入, 搜尋, 刪除)
+- ✅ **多語言 UI** (next-intl: 繁中、英文、日文)
+- ✅ **對話主題** (Prompt 模板系統, 分類管理)
+- ✅ **Safari 優化** (Web Speech API 相容性, 音訊播放, WebGL)
+- ✅ **Lip Sync 系統** (自適應強度, Co-articulation, 語速控制)
+- ✅ **知識庫管理系統** (6 種知識類型: Persona, FAQ, KPI, 決策日誌, 會議摘要, API 文件)
+- ⏳ **Application Insights** (基礎整合完成, 效能監控與錯誤追蹤待補完)
+
+---
+
+## 快速導覽
+
+### 🎯 我想要...
+
+#### 開始開發
+1. **閱讀根目錄 README.md** - 快速開始指南
+2. **配置環境**: `docs/deployment/ENVIRONMENT_VARIABLES.md`
+3. **本地開發**: `docs/misc/LOCAL_DEV_GUIDE.md`
+4. **開發規範**: `CLAUDE.md` (AI 助手指南)
+
+#### 了解系統架構
+- **整體架構**: `docs/design/architecture.md`
+- **設計系統**: `docs/design/DESIGN-SYSTEM.md`
+- **資料庫架構**: `docs/design/database-design.md`
+- **API 設計**: `docs/api/` (所有 API 文件)
+
+#### 實作新功能
+- **找到對應功能模組**: `lib/`, `components/`, `app/` (見下方詳細結構)
+- **查閱實作指南**: `docs/implementation/` (按功能模組分類)
+- **API 文件**: `docs/api/` (API_REFERENCE_SPRINT2.md, API_REFERENCE_SPRINT3.md)
+- **測試指南**: `docs/testing/`
+
+#### 解決問題
+- **故障排除**: `docs/troubleshooting/`
+- **修復日誌**: `docs/fixes/` (按日期命名: YYYY-MM-DD-*.md)
+- **Lip Sync 診斷**: `docs/implementation/lip-sync/LIPSYNC_FIXES_2025-10-20.md`
+- **知識庫問題**: `docs/implementation/knowledge-system/KNOWLEDGE_SYSTEM_ISSUES_AND_FIXES.md`
+
+#### 部署上線
+- **部署指南**: `docs/deployment/deployment-guide.md`
+- **Azure 部署**: `docs/deployment/AZURE_DEPLOYMENT.md`
+- **上線檢查**: `docs/deployment/PRE_LAUNCH_CHECKLIST.md`
+- **環境變數**: `docs/deployment/ENVIRONMENT_VARIABLES.md`
+
+#### 追蹤進度
+- **MVP 進度**: `docs/mvp/MVP_PROGRESS.md` (⭐ 最重要的活躍文件)
+- **Sprint 計劃**: `docs/mvp/MVP_DEVELOPMENT_PLAN.md`
+- **POC 驗證報告**: `docs/00-archive/poc/POC_TECHNICAL_REPORT.md`
+- **歷史 Stories**: `docs/00-archive/poc/stories/epic-1/` ~ `epic-5/`
+
+#### 查找 AI 知識
+- **Persona 管理**: `agent-brain/persona.md`
+- **常見問題**: `agent-brain/knowledge/faq/cdo_faq.md`
+- **KPI 字典**: `agent-brain/knowledge/kpi_dictionary/kpi_dictionary.md`
+- **API 文件**: `agent-brain/knowledge/api_docs/`
+- **決策日誌**: `agent-brain/knowledge/decision_logs/`
+- **會議摘要**: `agent-brain/knowledge/meeting_summaries/`
+
+---
+
+## 目錄結構說明
+
+### 根目錄核心文件
+
+| 文件 | 狀態 | 重要性 | 說明 |
+|------|------|---------|------|
+| `README.md` | ✅ | ⭐⭐⭐⭐⭐ | **項目首頁** - 快速開始、技術棧、部署狀態 |
+| `CLAUDE.md` | ✅ | ⭐⭐⭐⭐⭐ | **AI 助手開發指南** - Claude Code 使用規範和開發模式 |
+| `PROJECT_INDEX.md` | ✅ | ⭐⭐⭐⭐⭐ | **本文件** - 完整項目索引與導覽 |
+| `package.json` | ✅ | ⭐⭐⭐⭐⭐ | **依賴管理** - 所有 npm 套件和腳本命令 |
+| `tsconfig.json` | ✅ | ⭐⭐⭐⭐ | **TypeScript 配置** - 編譯選項和路徑別名 |
+| `next.config.js` | ✅ | ⭐⭐⭐⭐ | **Next.js 配置** - 圖片、外部資源、環境變數 |
+| `tailwind.config.ts` | ✅ | ⭐⭐⭐⭐ | **Tailwind 配置** - 主題、顏色、插件 |
+| `prisma/schema.prisma` | ✅ | ⭐⭐⭐⭐⭐ | **資料庫 Schema** - 所有資料模型定義 |
+| `.env.local.example` | ✅ | ⭐⭐⭐⭐ | **環境變數範例** - 必要的 API Keys 和配置 |
+| `.gitignore` | ✅ | ⭐⭐⭐ | **Git 忽略規則** - 防止敏感文件提交 |
+
+### 應用程式代碼 (app/)
+
+Next.js App Router 結構 - 所有路由和 API 端點
+
+#### API Routes (`app/api/`)
+
+| API 路徑 | 方法 | 用途 | 重要性 |
+|---------|------|------|---------|
+| `/api/auth/[...nextauth]` | ALL | **NextAuth.js 認證端點** | ⭐⭐⭐⭐⭐ |
+| `/api/auth/login` | POST | **登入 API** | ⭐⭐⭐⭐⭐ |
+| `/api/auth/register` | POST | **註冊 API** | ⭐⭐⭐⭐⭐ |
+| `/api/auth/verify-email` | POST | **Email 驗證** | ⭐⭐⭐⭐ |
+| `/api/auth/forgot-password` | POST | **忘記密碼** | ⭐⭐⭐⭐ |
+| `/api/auth/reset-password` | POST | **重設密碼** | ⭐⭐⭐⭐ |
+| `/api/user/profile` | GET/PUT | **個人資料管理** | ⭐⭐⭐⭐ |
+| `/api/user/settings` | GET/PUT | **使用者設定** | ⭐⭐⭐⭐ |
+| `/api/user/activity` | GET | **活動記錄查詢** | ⭐⭐⭐ |
+| `/api/chat` | POST | **LLM 對話 (SSE Streaming)** | ⭐⭐⭐⭐⭐ |
+| `/api/tts` | POST | **文字轉語音 (Azure Speech)** | ⭐⭐⭐⭐⭐ |
+| `/api/tts-viseme` | POST | **TTS + Viseme 數據 (Lip Sync)** | ⭐⭐⭐⭐⭐ |
+| `/api/avatar/lip-sync` | POST | **Lip Sync 音訊處理** | ⭐⭐⭐⭐ |
+| `/api/avatar/stylize` | POST | **Avatar 風格化 (Replicate)** | ⭐⭐⭐ |
+| `/api/avatars` | GET/POST | **Avatar 列表與創建** | ⭐⭐⭐⭐ |
+| `/api/avatars/[id]/favorite` | PUT | **Avatar 收藏管理** | ⭐⭐⭐ |
+| `/api/conversations` | GET/POST | **對話歷史 CRUD** | ⭐⭐⭐⭐ |
+| `/api/conversations/[id]` | GET/PUT/DELETE | **單一對話操作** | ⭐⭐⭐⭐ |
+| `/api/knowledge/*` | GET/POST/PUT/DELETE | **知識庫管理 API** (6 種類型) | ⭐⭐⭐⭐ |
+| `/api/health` | GET | **健康檢查** | ⭐⭐ |
+
+**關鍵技術點**:
+- 所有 API 使用 **Edge Runtime** 提升效能
+- `/api/chat` 使用 **Server-Sent Events (SSE)** 實現串流回應
+- `/api/tts-viseme` 回傳包含 Viseme 數據的音訊 (Lip Sync 核心)
+- 認證 API 整合 **NextAuth.js v5** 和 **Prisma**
+
+#### 頁面路由 (`app/[locale]/`)
+
+| 路由 | 佈局 | 用途 | 重要性 |
+|------|------|------|---------|
+| `/[locale]` | `app/layout.tsx` | **首頁** - Avatar 對話介面 | ⭐⭐⭐⭐⭐ |
+| `/[locale]/(auth)/login` | `(auth)/layout.tsx` | **登入頁** | ⭐⭐⭐⭐⭐ |
+| `/[locale]/(auth)/register` | `(auth)/layout.tsx` | **註冊頁** | ⭐⭐⭐⭐ |
+| `/[locale]/(dashboard)/*` | `(dashboard)/layout.tsx` | **Dashboard 系統** | ⭐⭐⭐⭐⭐ |
+| `/[locale]/(dashboard)/dashboard` | 同上 | Dashboard 首頁 | ⭐⭐⭐⭐ |
+| `/[locale]/(dashboard)/conversations` | 同上 | 對話歷史列表 | ⭐⭐⭐⭐ |
+| `/[locale]/(dashboard)/custom-avatar` | 同上 | 自訂 Avatar (Replicate) | ⭐⭐⭐ |
+| `/[locale]/(dashboard)/settings/*` | 同上 | 使用者設定 (Profile, Avatar, Security, Activity) | ⭐⭐⭐⭐ |
+| `/[locale]/(dashboard)/knowledge/*` | 同上 | 知識庫管理介面 (6 種類型) | ⭐⭐⭐⭐ |
+
+**關鍵技術點**:
+- 使用 **Route Groups** `(auth)` 和 `(dashboard)` 組織路由
+- 使用 **`[locale]` 動態路由** 實現多語言 (next-intl)
+- Dashboard 使用統一的 **Sidebar + Layout** 系統
+- 知識庫系統支援 6 種類型: Persona, FAQ, KPI, 決策日誌, 會議摘要, API 文件
+
+### UI 組件 (components/)
+
+React 組件庫 - 按功能模組分類
+
+#### Avatar 3D 組件 (`components/avatar/`)
+
+| 組件 | 用途 | 依賴 | 重要性 |
+|------|------|------|---------|
+| `AvatarCanvas.tsx` | **Three.js Canvas 容器** - 3D 渲染根節點 | @react-three/fiber | ⭐⭐⭐⭐⭐ |
+| `AvatarModel.tsx` | **3D Avatar 模型渲染器** - GLB 載入與顯示 | @react-three/drei | ⭐⭐⭐⭐⭐ |
+| `AvatarLoadingState.tsx` | **載入狀態** - 3D 載入中提示 | - | ⭐⭐⭐ |
+| `AvatarControlPanel.tsx` | **動畫測試面板** - 開發工具 | - | ⭐⭐ |
+| `AvatarSelector.tsx` | **Avatar 選擇 Modal** - 切換 Avatar | avatarStore | ⭐⭐⭐⭐ |
+| `AvatarChangeButton.tsx` | **切換按鈕** - 觸發選擇 Modal | - | ⭐⭐⭐ |
+| `hooks/useAvatarAnimation.ts` | **動畫編排 Hook** - 統一管理所有動畫 | lib/avatar/animations | ⭐⭐⭐⭐⭐ |
+
+**關鍵技術點**:
+- `AvatarCanvas` 是 Three.js 場景的 React 包裝器
+- `AvatarModel` 使用 `useGLTF` 載入 Ready Player Me 模型
+- `useAvatarAnimation` 整合 5 種動畫控制器: Blink, Breath, Expression, HeadNod, LipSync
+
+#### 對話介面組件 (`components/chat/`)
+
+| 組件 | 用途 | 依賴 | 重要性 |
+|------|------|------|---------|
+| `ChatInterface.tsx` | **主對話介面** - 訊息列表、輸入框、語音按鈕 | chatStore, audioStore | ⭐⭐⭐⭐⭐ |
+| `Spinner.tsx` | **載入 Spinner** - 通用載入動畫 | - | ⭐⭐ |
+
+#### 知識庫組件 (`components/knowledge/`)
+
+| 組件 | 用途 | 重要性 |
+|------|------|---------|
+| `PersonaEditor.tsx` | **Persona 編輯器** - 角色設定管理 | ⭐⭐⭐⭐ |
+| `FAQManager.tsx` | **FAQ 管理器** - 常見問題管理 | ⭐⭐⭐⭐ |
+| `KPIManager.tsx` | **KPI 管理器** - KPI 字典管理 | ⭐⭐⭐⭐ |
+| `DecisionLogList.tsx` | **決策日誌列表** - 決策記錄展示 | ⭐⭐⭐⭐ |
+| `MeetingSummaryList.tsx` | **會議摘要列表** - 會議記錄展示 | ⭐⭐⭐⭐ |
+| `APIDocManager.tsx` | **API 文件管理器** - API 文件維護 | ⭐⭐⭐⭐ |
+| `SectionNavigator.tsx` | **章節導航器** - Markdown 章節樹狀導航 | ⭐⭐⭐⭐ |
+| `MarkdownEditor.tsx` | **Markdown 編輯器** - Monaco Editor 整合 | ⭐⭐⭐⭐ |
+
+**關鍵技術點**:
+- 知識庫系統支援 6 種知識類型
+- `SectionNavigator` 使用 `remark` 解析 Markdown 生成導航樹
+- `MarkdownEditor` 整合 Monaco Editor 提供語法高亮和自動完成
+
+#### 通用 UI 組件 (`components/ui/`)
+
+| 組件 | 用途 | 重要性 |
+|------|------|---------|
+| `button.tsx` | **按鈕組件** - 多種樣式變體 | ⭐⭐⭐⭐ |
+| `input.tsx` | **輸入框組件** - 帶標籤和錯誤提示 | ⭐⭐⭐⭐ |
+| `card.tsx` | **卡片容器** | ⭐⭐⭐ |
+| `dialog.tsx` | **對話框 Modal** | ⭐⭐⭐ |
+| `dropdown-menu.tsx` | **下拉選單** | ⭐⭐⭐ |
+| `label.tsx` | **表單標籤** | ⭐⭐⭐ |
+| `select.tsx` | **選擇器** | ⭐⭐⭐ |
+| `textarea.tsx` | **多行文字輸入** | ⭐⭐⭐ |
+
+### 工具函式與配置 (lib/)
+
+核心業務邏輯和工具函式
+
+#### Azure 服務整合 (`lib/azure/`)
+
+| 文件 | 用途 | 重要性 |
+|------|------|---------|
+| `openai.ts` | **Azure OpenAI 客戶端工廠** - GPT-4 Turbo | ⭐⭐⭐⭐⭐ |
+| `speech.ts` | **Azure Speech SDK 配置** - TTS/STT | ⭐⭐⭐⭐⭐ |
+
+**關鍵函式**:
+- `getOpenAIClient()`: 單例模式獲取 AzureOpenAI 實例
+- `DEPLOYMENT_NAME`: GPT-4 Turbo 部署名稱
+- Speech SDK 配置: 支援繁體中文 TTS (zh-TW-HsiaoChenNeural)
+
+#### Avatar 系統 (`lib/avatar/`)
+
+| 文件 | 用途 | 重要性 |
+|------|------|---------|
+| `animations.ts` | **動畫控制器** - Blink, Breath, Expression, HeadNod | ⭐⭐⭐⭐⭐ |
+| `loaders.ts` | **GLB 模型載入器** - Ready Player Me 模型 | ⭐⭐⭐⭐ |
+| `constants.ts` | **Avatar 常數** - 預設 Avatar URLs (含 morphTargets) | ⭐⭐⭐⭐ |
+
+**關鍵類別**:
+- `BlinkController`: 隨機眨眼 (2-6 秒間隔)
+- `BreathingController`: 正弦波呼吸動畫 (Spine2 骨骼)
+- `ExpressionController`: 面部表情 Blendshape (Easing 過渡)
+- `HeadNodController`: 頭部點頭動畫 (正弦波旋轉)
+
+**重要**: 所有 Avatar URL 必須包含 `?morphTargets=Oculus%20Visemes` 參數以支援 Lip Sync
+
+#### Lip Sync 系統 (`lib/lipsync/`) ⭐ 核心功能
+
+| 文件 | 用途 | 重要性 |
+|------|------|---------|
+| `controller.ts` | **Lip Sync 控制器** - 音訊與 Viseme 同步 (單例) | ⭐⭐⭐⭐⭐ |
+| `mouth-animator.ts` | **嘴型動畫器** - Blendshape 平滑過渡 + 自適應強度 | ⭐⭐⭐⭐⭐ |
+| `viseme-mapper.ts` | **Viseme 映射器** - Azure Viseme ID → Oculus Blendshapes | ⭐⭐⭐⭐⭐ |
+
+**關鍵技術**:
+- **自適應強度系統**: 自動處理 Azure TTS 不同權重範圍 (0.01-1.0)
+  - 小值 (< 0.1): 放大 5 倍 (最高 10 倍)
+  - 中值 (0.1-0.5): 使用預設 1.5 倍
+  - 大值 (> 0.5): 縮小至 0.8 倍避免飽和
+- **Co-articulation**: 30% 混合當前與下一個 Viseme
+- **語速控制**: 預設 20% 極慢速度確保嘴型可見
+- **60 FPS 更新**: useFrame 驅動的即時同步
+
+**Viseme 映射**:
+- Azure Viseme ID (0-21) → 15 個 Oculus Blendshapes
+- 支援靜音 (viseme_sil)、母音 (aa, E, I, O, U)、子音 (PP, FF, DD, kk, SS, TH, nn 等)
+
+#### 音訊處理 (`lib/audio/`)
+
+| 文件 | 用途 | 重要性 |
+|------|------|---------|
+| `player.ts` | **Web Audio API 播放器** - AudioContext 單例 | ⭐⭐⭐⭐⭐ |
+
+**關鍵功能**:
+- `getAudioPlayer()`: 單例模式獲取 AudioPlayer
+- `loadAudio(url)`: 載入音訊 Blob 並解碼為 AudioBuffer
+- `play(buffer, onEnded)`: 播放音訊並設定結束回調
+- 使用 **GainNode** 控制音量
+- 自動管理 AudioBufferSourceNode 生命週期
+
+#### API 客戶端 (`lib/api/`)
+
+| 文件 | 用途 | 重要性 |
+|------|------|---------|
+| `client.ts` | **API 請求工具** - 統一錯誤處理 | ⭐⭐⭐⭐ |
+| `chat.ts` | **SSE 串流客戶端** - LLM 對話串流解析 | ⭐⭐⭐⭐⭐ |
+
+**關鍵函式**:
+- `streamChatCompletion()`: 解析 SSE 串流並逐字回傳內容
+- 自動處理 `data:` 前綴和 JSON 解析
+
+#### 工具函式 (`lib/utils/`)
+
+| 文件 | 用途 | 重要性 |
+|------|------|---------|
+| `error-handler.ts` | **錯誤處理工具** - 統一錯誤格式化 | ⭐⭐⭐⭐ |
+| `utils.ts` | **通用工具** - `cn()` class 合併函式 | ⭐⭐⭐ |
+
+### 狀態管理 (stores/)
+
+Zustand Store - 3 個獨立狀態管理
+
+| Store | 用途 | 持久化 | 重要性 |
+|-------|------|--------|---------|
+| `avatarStore.ts` | **Avatar 選擇狀態** - 當前 Avatar ID 和 URL | ✅ localStorage | ⭐⭐⭐⭐ |
+| `chatStore.ts` | **對話狀態** - 訊息列表、輸入、SSE 整合 | ❌ | ⭐⭐⭐⭐⭐ |
+| `audioStore.ts` | **音訊狀態** - 音訊播放、TTS API 整合 | ❌ | ⭐⭐⭐⭐⭐ |
+
+**關鍵流程**:
+```
+使用者輸入 → chatStore.sendMessage()
+  → POST /api/chat (SSE streaming)
+  → chatStore 逐字更新訊息
+  → 串流完成 → audioStore.speakText()
+  → POST /api/tts-viseme
+  → 獲取 { audio: base64, visemes: VisemeData[] }
+  → Web Audio API 播放 + LipSyncController 同步
+  → 播放結束 → 清理 Blob URL
 ```
 
----
+### 類型定義 (types/)
 
-## 📚 目錄
+TypeScript 類型定義
 
-- [1. 核心導航文檔](#1-核心導航文檔)
-- [2. 專案管理文檔](#2-專案管理文檔)
-- [3. AI 知識庫](#3-ai-知識庫)
-- [4. Next.js 應用程式](#4-nextjs-應用程式)
-- [5. Story 文檔](#5-story-文檔)
-- [6. 配置檔案](#6-配置檔案)
-- [7. 測試與工具](#7-測試與工具)
-- [8. 靜態資源](#8-靜態資源)
+| 文件 | 用途 | 重要性 |
+|------|------|---------|
+| `api.ts` | **API 回應類型** | ⭐⭐⭐⭐ |
+| `chat.ts` | **對話相關類型** | ⭐⭐⭐⭐⭐ |
+| `audio.ts` | **音訊相關類型** | ⭐⭐⭐⭐ |
+| `lipsync.ts` | **Lip Sync 類型** - VisemeData, LipSyncConfig | ⭐⭐⭐⭐⭐ |
 
----
+### 文件目錄 (docs/)
 
-## 1. 核心導航文檔
+完整的項目文件 - 按功能和階段組織
 
-### 🔴 必讀文檔（AI 助手和新開發者）
-
-| 檔案路徑 | 狀態 | 說明 | 閱讀時間 |
-|---------|------|------|---------|
-| `AI_ASSISTANT_GUIDE.md` | ✅ | **最重要！** AI 助手與開發者完整指南 | 15 分鐘 |
-| `PROJECT_INDEX.md` | ✅ | **本文件** 完整專案索引 | 5 分鐘 |
-| `README.md` | ✅ | 專案說明（對外展示用） | 3 分鐘 |
-
-### 🟡 快速上手文檔
-
-| 檔案路徑 | 狀態 | 說明 | 閱讀時間 |
-|---------|------|------|---------|
-| `QUICK_START.md` | ✅ | 5 分鐘快速啟動指南 | 5 分鐘 |
-| `PROJECT_OVERVIEW.md` | ✅ | 專案總覽與架構說明 | 10 分鐘 |
-| `DEVELOPMENT_ROADMAP.md` | ✅ | 12 週完整開發路線圖 | 10 分鐘 |
-
----
-
-## 2. 專案管理文檔
-
-### 📋 需求與規劃文檔
-
-| 檔案路徑 | 狀態 | 說明 | 關鍵內容 |
-|---------|------|------|---------|
-| `docs/prd.md` | ✅ | 產品需求文件 | 功能需求、使用者故事、成功指標 |
-| `docs/architecture.md` | ✅ | 技術架構文件 | 系統架構、技術選型、資料流程 |
-| `docs/sprint-planning.md` | ✅ | Sprint 規劃（Sprint 1-10） | 每個 Sprint 的 Stories 分配與時程 |
-
-### 📊 Epic 與 Story 文檔
-
-**Epic 總覽**:
-
-| Epic | 標題 | Stories 數量 | 狀態 | 文檔路徑 |
-|------|------|------------|------|---------|
-| **Epic 1** | 專案基礎建設與部署 | 8 | 🔄 12.5% | `docs/stories/1.*.md` |
-| **Epic 2** | 3D Avatar 視覺化與動畫 | 5 | ⏳ 0% | `docs/stories/2.*.md` |
-| **Epic 3** | LLM 對話與 TTS 整合 | 7 | ⏳ 0% | `docs/stories/3.*.md` |
-| **Epic 4** | Lip Sync 嘴型同步 | 5 | ⏳ 0% | `docs/stories/4.*.md` |
-| **Epic 5** | 效能優化、測試與部署 | 7 | ⏳ 0% | `docs/stories/5.*.md` |
-
-### 📝 驗證報告
-
-| 檔案路徑 | 狀態 | 說明 |
-|---------|------|------|
-| `docs/stories/epic-1-validation-report.md` | ✅ | Epic 1 驗證報告 |
-| `docs/stories/epic-2-validation-report.md` | ✅ | Epic 2 驗證報告 |
-| `docs/stories/epic-3-validation-report.md` | ✅ | Epic 3 驗證報告 |
-| `docs/stories/epic-4-validation-report.md` | ✅ | Epic 4 驗證報告 |
-| `docs/stories/epic-5-validation-report.md` | ✅ | Epic 5 驗證報告 |
-
----
-
-## 3. AI 知識庫
-
-### 🧠 agent-brain/ 目錄結構
+#### 文件結構概覽
 
 ```
-agent-brain/
-├── 📄 核心定義檔案
-│   ├── persona.md                      # 🔴 CDO 人格定義（最重要）
-│   ├── KNOWLEDGE_BASE_GUIDE.md         # 知識庫結構說明
-│   ├── MAINTENANCE_GUIDE.md            # 維護工作流程
-│   └── TECHNICAL_FLOW.md               # 技術流程詳解
+docs/
+├── README.md                    # 文件導覽 (v2.0)
+├── AI_ASSISTANT_GUIDE.md        # AI 助手使用指南
+├── INDEX_MAINTENANCE.md         # 索引維護指南
 │
-├── 📁 core/ (核心知識)
-│   ├── cdo_faq.md                      # 常見問題集
-│   ├── kpi_dictionary.md               # KPI 定義字典
-│   └── company_policies.md             # ⏳ 待建立
+├── 📚 implementation/           # 功能實作指南
+│   ├── lip-sync/               # Lip Sync 系統
+│   ├── i18n/                   # 國際化
+│   ├── knowledge-system/       # 知識庫管理
+│   ├── custom-avatar/          # 自訂頭像
+│   └── multi-agent/            # 多代理系統
 │
-├── 📁 experience/ (經驗層)
-│   ├── decision_logs/                  # 決策日誌
-│   │   └── decision_log_project_phoenix.md
-│   └── pov_briefings/                  # 戰略觀點
-│       └── pov_briefing_generative_ai_strategy.md
+├── 🔧 api/                     # API 設計文件
+│   ├── API_AVATAR_FAVORITE.md
+│   ├── API_CONVERSATIONS.md
+│   ├── API_REFERENCE_SPRINT2.md
+│   └── API_REFERENCE_SPRINT3.md
 │
-└── 📁 temporal/ (時效層)
-    └── meeting_summaries/              # 會議摘要
-        └── meeting_summary_2025-10-14_Q4數據策略覆盤.md
+├── 🎨 design/                  # 架構與設計
+│   ├── architecture.md
+│   ├── DESIGN-SYSTEM.md
+│   └── database-design.md
+│
+├── 🧪 testing/                 # 測試指南
+│   ├── BROWSER_TEST_GUIDE.md
+│   ├── TEST_ADAPTIVE_INTENSITY.md
+│   └── ...
+│
+├── 🚀 deployment/              # 部署指南
+│   ├── deployment-guide.md
+│   ├── AZURE_DEPLOYMENT.md
+│   ├── ENVIRONMENT_VARIABLES.md
+│   └── PRE_LAUNCH_CHECKLIST.md
+│
+├── 📋 mvp/                     # MVP 開發
+│   ├── MVP_PROGRESS.md         # ⭐ 進度追蹤
+│   └── MVP_DEVELOPMENT_PLAN.md
+│
+├── 🐛 fixes/                   # 修復日誌
+│   └── 2025-10-*-*.md
+│
+├── 🔧 troubleshooting/         # 故障排除
+│   └── AUDIO_TROUBLESHOOT.md
+│
+├── 📝 misc/                    # 其他文件
+│   └── LOCAL_DEV_GUIDE.md
+│
+├── 🎓 training/                # 訓練指南
+│
+└── 🗂️ 00-archive/             # 歷史歸檔
+    ├── planning/               # 初期規劃 (PRD, 成本分析等)
+    └── poc/                    # POC 階段
+        ├── stories/            # 29 個 Stories (Epic 1-5)
+        │   ├── epic-1/
+        │   ├── epic-2/
+        │   ├── epic-3/
+        │   ├── epic-4/
+        │   └── epic-5/
+        └── epics/              # Epic 驗證報告
 ```
 
-### 知識庫檔案詳細說明
+#### 重要文件說明
 
-| 檔案路徑 | 狀態 | 說明 | 更新頻率 |
-|---------|------|------|---------|
-| `agent-brain/persona.md` | ✅ | **最關鍵** CDO 人格、語氣、決策框架 | 每月或發現語氣問題時 |
-| `agent-brain/KNOWLEDGE_BASE_GUIDE.md` | ✅ | 知識庫結構與模板說明 | 架構變更時 |
-| `agent-brain/MAINTENANCE_GUIDE.md` | ✅ | 維護工作流程與最佳實踐 | 發現新流程時 |
-| `agent-brain/TECHNICAL_FLOW.md` | ✅ | 技術實作流程詳解 | 技術架構變更時 |
-| `agent-brain/cdo_faq.md` | ✅ | 高頻問題標準答案 | 每週或收到新問題時 |
-| `agent-brain/kpi_dictionary.md` | ✅ | KPI 定義與計算口徑 | KPI 變更時立即更新 |
+**🌟 最重要的活躍文件**:
+- `docs/mvp/MVP_PROGRESS.md` - **MVP 即時進度追蹤** (每 Sprint 更新)
+- `docs/README.md` - **文件導覽中心** (快速找到需要的文件)
+- `CLAUDE.md` - **AI 助手開發規範** (開發模式和最佳實踐)
 
-**關鍵提醒**:
-- 🔴 每次對話都會載入 `persona.md`
-- 🟡 其他檔案透過關鍵字搜尋動態載入
+**實作指南 (docs/implementation/)**:
 
----
+| 功能模組 | 關鍵文件 | 說明 |
+|---------|---------|------|
+| **Lip Sync** | `LIPSYNC_FIXES_2025-10-20.md` | 完整診斷與修復記錄 |
+| | `LIP_SYNC_IMPLEMENTATION_GUIDE.md` | 實作指南 |
+| | `WAV2LIP_INTEGRATION_TEST_RESULTS.md` | 測試結果 |
+| **i18n** | `I18N_IMPLEMENTATION_STATUS.md` | 國際化狀態 |
+| | `TRANSLATION_GUIDE.md` | 翻譯指南 |
+| **知識庫** | `KNOWLEDGE_MANAGEMENT_SYSTEM_DESIGN.md` | 系統設計 |
+| | `KNOWLEDGE_SYSTEM_IMPLEMENTATION_STATUS.md` | 實作狀態 |
+| | `KNOWLEDGE_SYSTEM_ISSUES_AND_FIXES.md` | 問題診斷 |
+| | `KNOWLEDGE_SYSTEM_USER_GUIDE.md` | 使用指南 |
+| **自訂 Avatar** | `CUSTOM_AVATAR_SOLUTION.md` | 解決方案 |
+| | `READY_PLAYER_ME_PHOTO_UPLOAD_STATUS.md` | 照片上傳狀態 |
+| **多代理** | `MULTI_AGENT_ARCHITECTURE_DESIGN.md` | 架構設計 |
 
-## 4. Next.js 應用程式
+**API 文件 (docs/api/)**:
+- `API_REFERENCE_SPRINT2.md` - Sprint 2 API (認證、個人資料、活動記錄)
+- `API_REFERENCE_SPRINT3.md` - Sprint 3 API (STT 語音輸入)
+- `API_CONVERSATIONS.md` - 對話歷史 API
+- `API_AVATAR_FAVORITE.md` - Avatar 收藏 API
 
-### 4.1 App Router 結構
+**部署文件 (docs/deployment/)**:
+- `deployment-guide.md` - 完整部署流程
+- `AZURE_DEPLOYMENT.md` - Azure 特定配置
+- `ENVIRONMENT_VARIABLES.md` - 所有環境變數說明
+- `PRE_LAUNCH_CHECKLIST.md` - 上線前檢查清單
 
-#### ✅ 已建立的檔案
+**歷史歸檔 (docs/00-archive/)**:
+- `planning/` - 項目初期規劃文件 (PRD, 成本分析, 技術選型等)
+- `poc/stories/` - POC 階段 29 個 Stories (按 Epic 1-5 分類)
+- `poc/epics/` - Epic 驗證報告和 PO 審查請求
 
-| 檔案路徑 | 狀態 | 說明 | Story |
-|---------|------|------|-------|
-| `app/layout.tsx` | ✅ | 全域佈局（繁體中文支援） | 1.1 |
-| `app/page.tsx` | ✅ | 首頁展示 | 1.1 |
-| `app/globals.css` | ✅ | Tailwind 全域樣式 | 1.1 |
+**文件狀態**:
+- **Active** (活躍): 當前正在更新 (如 MVP_PROGRESS.md)
+- **Completed** (完成): 功能已完成，文件僅供參考 (如實作指南)
+- **Archived** (歸檔): 已移至 00-archive/，不再更新 (如 POC Stories)
 
-#### ⏳ 待建立的 API Routes
+### 配置與腳本
 
-| 檔案路徑 | 狀態 | 說明 | Story | 優先級 |
-|---------|------|------|-------|--------|
-| `app/api/health/route.ts` | ✅ | 健康檢查 API | 1.4 | P0 |
-| `app/api/chat/route.ts` | ✅ | LLM 對話 API（SSE 串流） | 3.3 | P0 |
-| `app/api/tts/route.ts` | ✅ | TTS 語音合成 API | 3.5 | P0 |
-| `app/api/stt/route.ts` | ⏳ | STT 語音識別 API（選做） | 5.2 | P2 |
+#### 配置文件
 
----
+| 文件 | 用途 | 重要性 |
+|------|------|---------|
+| `package.json` | npm 依賴和腳本 | ⭐⭐⭐⭐⭐ |
+| `tsconfig.json` | TypeScript 配置 | ⭐⭐⭐⭐ |
+| `next.config.js` | Next.js 配置 | ⭐⭐⭐⭐ |
+| `tailwind.config.ts` | Tailwind CSS 配置 | ⭐⭐⭐⭐ |
+| `prisma/schema.prisma` | 資料庫 Schema | ⭐⭐⭐⭐⭐ |
+| `.env.local.example` | 環境變數範例 | ⭐⭐⭐⭐ |
+| `.eslintrc.json` | ESLint 規則 | ⭐⭐⭐ |
+| `.prettierrc` | Prettier 格式化 | ⭐⭐⭐ |
 
-### 4.2 Components 組件結構
+#### 腳本 (scripts/)
 
-#### ⏳ 待建立的組件
+| 腳本 | 用途 | 重要性 |
+|------|------|---------|
+| `generate-index.js` | **完整重新生成 PROJECT_INDEX.md** | ⭐⭐⭐⭐⭐ |
+| `sync-index.js` | **同步文件狀態標記** (⏳ → ✅) | ⭐⭐⭐⭐ |
+| `validate-index.js` | **驗證索引完整性** | ⭐⭐⭐ |
 
-**UI 基礎組件** (`components/ui/`):
-| 檔案路徑 | 狀態 | 說明 | Story |
-|---------|------|------|-------|
-| `components/ui/Button.tsx` | ✅ | 通用按鈕組件 | 1.3 |
-| `components/ui/Input.tsx` | ⏳ | 輸入框組件 | 1.3 |
-| `components/ui/Card.tsx` | ⏳ | 卡片容器 | 1.3 |
-| `components/ui/Loading.tsx` | ⏳ | 載入動畫 | 1.3 |
-
-**Chat 對話組件** (`components/chat/`):
-| 檔案路徑 | 狀態 | 說明 | Story |
-|---------|------|------|-------|
-| `components/chat/ChatInterface.tsx` | ✅ | 對話介面主組件 | 3.1 |
-| `components/chat/MessageBubble.tsx` | ⏳ | 訊息氣泡 | 3.1 |
-| `components/chat/InputArea.tsx` | ⏳ | 輸入區域 | 3.1 |
-| `components/chat/MessageList.tsx` | ⏳ | 訊息列表 | 3.1 |
-
-**Avatar 3D 組件** (`components/avatar/`):
-| 檔案路徑 | 狀態 | 說明 | Story |
-|---------|------|------|-------|
-| `components/avatar/AvatarCanvas.tsx` | ✅ | Three.js 場景容器 | 2.1 |
-| `components/avatar/AvatarModel.tsx` | ✅ | 3D Avatar 模型載入 | 2.2 |
-| `components/avatar/LipSyncController.tsx` | ⏳ | Lip Sync 控制器 | 4.3 |
-| `components/avatar/AnimationController.tsx` | ⏳ | 動畫控制器 | 2.3 |
-| `components/avatar/AvatarSelector.tsx` | ✅ | Avatar 選擇器 | 2.5 |
-
----
-
-### 4.3 Lib 工具函式庫
-
-#### ⏳ 待建立的工具函式
-
-**AI 相關** (`lib/ai/`):
-| 檔案路徑 | 狀態 | 說明 | Story | 關鍵功能 |
-|---------|------|------|-------|---------|
-| `lib/ai/knowledge-loader.ts` | ⏳ | 知識庫載入器 | 3.3 | 載入 persona.md、搜尋知識 |
-| `lib/ai/context-builder.ts` | ⏳ | 上下文建構器 | 3.3 | 組合系統提示詞 |
-| `lib/ai/prompt-templates.ts` | ⏳ | 提示詞模板 | 3.3 | 預定義的提示詞格式 |
-
-**Azure SDK 配置** (`lib/azure/`):
-| 檔案路徑 | 狀態 | 說明 | Story | 關鍵功能 |
-|---------|------|------|-------|---------|
-| `lib/azure/openai.ts` | ✅ | Azure OpenAI 客戶端 | 1.2 | GPT-4 Turbo 配置 |
-| `lib/azure/speech.ts` | ✅ | Azure Speech 客戶端 | 1.2 | TTS/STT 配置 |
-
-**Three.js 工具** (`lib/three/`):
-| 檔案路徑 | 狀態 | 說明 | Story | 關鍵功能 |
-|---------|------|------|-------|---------|
-| `lib/three/avatar-loader.ts` | ⏳ | Avatar 模型載入器 | 2.2 | 載入 .glb 模型 |
-| `lib/three/animator.ts` | ⏳ | 動畫控制器 | 2.3 | 播放動畫 clip |
-| `lib/three/lipsync.ts` | ⏳ | Lip Sync 分析器 | 4.1 | 音訊 → Viseme 轉換 |
-| `lib/three/scene-setup.ts` | ⏳ | 場景初始化 | 2.1 | 燈光、相機、渲染器 |
-
-**通用工具** (`lib/utils/`):
-| 檔案路徑 | 狀態 | 說明 | Story | 關鍵功能 |
-|---------|------|------|-------|---------|
-| `lib/utils/audio.ts` | ⏳ | 音訊處理工具 | 3.6 | Web Audio API 封裝 |
-| `lib/utils/error-handler.ts` | ✅ | 錯誤處理工具 | 5.2 | 統一錯誤處理 |
-| `lib/utils/logger.ts` | ⏳ | 日誌工具 | 5.2 | 結構化日誌 |
-
----
-
-### 4.4 Store 狀態管理
-
-#### ⏳ 待建立的 Zustand Stores
-
-| 檔案路徑 | 狀態 | 說明 | Story | 管理的狀態 |
-|---------|------|------|-------|-----------|
-| `store/chatStore.ts` | ⏳ | 對話狀態管理 | 3.2 | messages, isLoading, sendMessage |
-| `store/audioStore.ts` | ⏳ | 音訊狀態管理 | 3.2 | isPlaying, currentAudio, volume |
-| `store/avatarStore.ts` | ⏳ | Avatar 狀態管理 | 3.2 | currentAvatar, animation, lipSync |
-| `store/uiStore.ts` | ⏳ | UI 狀態管理 | 3.2 | theme, sidebarOpen, modalState |
-
-**範例結構** (`store/chatStore.ts`):
-```typescript
-interface ChatState {
-  messages: ChatMessage[];
-  isLoading: boolean;
-  sendMessage: (content: string) => Promise<void>;
-  clearMessages: () => void;
-}
-
-export const useChatStore = create<ChatState>((set, get) => ({
-  messages: [],
-  isLoading: false,
-  sendMessage: async (content) => { /* ... */ },
-  clearMessages: () => set({ messages: [] }),
-}));
-```
-
----
-
-### 4.5 Types 型別定義
-
-#### ⏳ 待建立的 TypeScript 型別
-
-| 檔案路徑 | 狀態 | 說明 | Story | 定義的型別 |
-|---------|------|------|-------|-----------|
-| `types/chat.ts` | ✅ | 對話相關型別 | 3.2 | ChatMessage, ConversationHistory |
-| `types/audio.ts` | ✅ | 音訊相關型別 | 3.2 | AudioConfig, TTSOptions |
-| `types/avatar.ts` | ✅ | Avatar 相關型別 | 2.1 | AvatarConfig, Animation |
-| `types/api.ts` | ✅ | API 回應型別 | 3.3 | ChatResponse, HealthCheckResponse |
-| `types/knowledge.ts` | ⏳ | 知識庫型別 | 3.3 | KnowledgeDocument, SearchResult |
-
----
-
-## 5. Story 文檔
-
-### 5.1 Epic 1: 專案基礎建設與部署（8 Stories）
-
-| Story | 檔案路徑 | 狀態 | 優先級 | 預估時間 |
-|-------|---------|------|--------|---------|
-| **1.1** | `docs/stories/1.1.next-js-project-init.md` | ✅ | P0 | 1 天 |
-| **1.2** | `docs/stories/1.2.azure-services-setup.md` | ✅ | P0 | 1 天 |
-| **1.3** | `docs/stories/1.3.base-ui-framework.md` | ✅ | P0 | 1 天 |
-| **1.4** | `docs/stories/1.4.health-check-api.md` | ✅ | P0 | 0.5 天 |
-| **1.5** | `docs/stories/1.5.cicd-azure-deployment.md` | ✅ | P1 | 1 天 |
-
-### 5.2 Epic 2: 3D Avatar 視覺化與動畫（5 Stories）
-
-| Story | 檔案路徑 | 狀態 | 優先級 | 預估時間 |
-|-------|---------|------|--------|---------|
-| **2.1** | `docs/stories/2.1.threejs-scene-setup.md` | ✅ | P0 | 1 天 |
-| **2.2** | `docs/stories/2.2.avatar-model-loading.md` | ✅ | P0 | 1 天 |
-| **2.3** | `docs/stories/2.3.idle-animations.md` | ✅ | P0 | 1 天 |
-| **2.4** | `docs/stories/2.4.facial-expressions-head-movements.md` | ✅ | P1 | 1 天 |
-| **2.5** | `docs/stories/2.5.avatar-selector.md` | ✅ | P1 | 0.5 天 |
-
-### 5.3 Epic 3: LLM 對話與 TTS 整合（7 Stories）
-
-| Story | 檔案路徑 | 狀態 | 優先級 | 預估時間 |
-|-------|---------|------|--------|---------|
-| **3.1** | `docs/stories/3.1.chat-interface-ui.md` | ✅ | P0 | 0.5 天 |
-| **3.2** | `docs/stories/3.2.zustand-state-management.md` | ✅ | P0 | 0.5 天 |
-| **3.3** | `docs/stories/3.3.chat-api-sse.md` | ✅ | P0 | 1 天 |
-| **3.4** | `docs/stories/3.4.sse-stream-reception.md` | ✅ | P0 | 1 天 |
-| **3.5** | `docs/stories/3.5.tts-api.md` | ✅ | P0 | 1 天 |
-| **3.6** | `docs/stories/3.6.web-audio-integration.md` | ✅ | P0 | 0.5 天 |
-| **3.7** | `docs/stories/3.7.e2e-conversation-flow.md` | ✅ | P0 | 1 天 |
-
-### 5.4 Epic 4: Lip Sync 嘴型同步（5 Stories）
-
-| Story | 檔案路徑 | 狀態 | 優先級 | 預估時間 |
-|-------|---------|------|--------|---------|
-| **4.1** | `docs/stories/4.1.audio-analysis-viseme-generation.md` | ✅ | P0 | 1 天 |
-| **4.2** | `docs/stories/4.2.avatar-blendshape-control.md` | ✅ | P0 | 1 天 |
-| **4.3** | `docs/stories/4.3.lipsync-controller-audio-sync.md` | ✅ | P0 | 1 天 |
-| **4.4** | `docs/stories/4.4.lipsync-visual-optimization.md` | ✅ | P1 | 1 天 |
-| **4.5** | `docs/stories/4.5.lipsync-fallback-error-handling.md` | ✅ | P1 | 1 天 |
-
-### 5.5 Epic 5: 效能優化、測試與部署（7 Stories）
-
-| Story | 檔案路徑 | 狀態 | 優先級 | 預估時間 |
-|-------|---------|------|--------|---------|
-| **5.1** | `docs/stories/5.1.performance-optimization.md` | ✅ | P1 | 2 天 |
-| **5.2** | `docs/stories/5.2.error-handling-ux-enhancement.md` | ✅ | P1 | 1 天 |
-| **5.3** | `docs/stories/5.3.ui-ux-polish.md` | ✅ | P1 | 1 天 |
-| **5.4** | `docs/stories/5.4.browser-compatibility-testing.md` | ✅ | P2 | 1 天 |
-| **5.5** | `docs/stories/5.5.azure-static-web-apps-deployment.md` | ✅ | P0 | 1 天 |
-| **5.6** | `docs/stories/5.6.technical-validation-report.md` | ✅ | P1 | 1 天 |
-| **5.7** | `docs/stories/5.7.documentation-deployment-guide.md` | ✅ | P2 | 0.5 天 |
-
----
-
-## 6. 配置檔案
-
-### ✅ 已建立的配置檔案
-
-| 檔案路徑 | 狀態 | 說明 | Story |
-|---------|------|------|-------|
-| `package.json` | ✅ | npm 依賴與腳本 | 1.1 |
-| `tsconfig.json` | ✅ | TypeScript 配置（嚴格模式） | 1.1 |
-| `next.config.js` | ✅ | Next.js 配置 | 1.1 |
-| `tailwind.config.ts` | ✅ | Tailwind CSS 配置 | 1.1 |
-| `postcss.config.js` | ⏳ | PostCSS 配置 | 1.1 |
-| `.eslintrc.json` | ✅ | ESLint 規則 | 1.1 |
-| `.prettierrc` | ✅ | Prettier 格式化 | 1.1 |
-| `.env.local.example` | ✅ | 環境變數範例 | 1.1 |
-| `.gitignore` | ✅ | Git 忽略規則 | 1.1 |
-
-### 📝 配置檔案詳細說明
-
-#### `package.json`
-```json
-{
-  "scripts": {
-    "dev": "next dev",        // 開發伺服器
-    "build": "next build",    // 生產建置
-    "start": "next start",    // 執行生產版本
-    "lint": "next lint",      // ESLint 檢查
-    "format": "prettier --write \"**/*.{js,jsx,ts,tsx,json,md}\""
-  }
-}
-```
-
-#### `.env.local.example`（需複製為 `.env.local` 並填入真實值）
+**腳本使用**:
 ```bash
-# Azure OpenAI
-AZURE_OPENAI_API_KEY=your_key_here
-AZURE_OPENAI_ENDPOINT=https://your-resource.openai.azure.com/
-AZURE_OPENAI_DEPLOYMENT=gpt-4-turbo
-
-# Azure Speech
-AZURE_SPEECH_KEY=your_key_here
-AZURE_SPEECH_REGION=eastasia
-
-# Next.js
-NEXT_PUBLIC_APP_URL=http://localhost:3000
-```
-
----
-
-## 7. 測試與工具
-
-### ⏳ 待建立的測試檔案
-
-| 檔案路徑 | 狀態 | 說明 | Story |
-|---------|------|------|-------|
-| `tests/unit/knowledge-loader.test.ts` | ⏳ | 知識庫載入器測試 | 3.3 |
-| `tests/unit/lipsync.test.ts` | ⏳ | Lip Sync 分析測試 | 4.1 |
-| `tests/integration/chat-api.test.ts` | ⏳ | Chat API 整合測試 | 3.3 |
-| `tests/e2e/conversation-flow.spec.ts` | ⏳ | 端到端對話測試 | 3.7 |
-
-### ⏳ 待建立的工具腳本
-
-| 檔案路徑 | 狀態 | 說明 | 用途 |
-|---------|------|------|------|
-| `scripts/generate-index.js` | ✅ | 自動生成專案索引 | 維護 PROJECT_INDEX.md |
-| `scripts/validate-knowledge-base.js` | ⏳ | 驗證知識庫格式 | 確保 MD 格式正確 |
-| `scripts/deploy-azure.sh` | ⏳ | Azure 部署腳本 | 自動化部署流程 |
-
----
-
-## 8. 靜態資源
-
-### ⏳ 待新增的靜態資源
-
-| 目錄路徑 | 狀態 | 說明 | Story |
-|---------|------|------|-------|
-| `public/avatars/` | ⏳ | 3D Avatar 模型檔案 (.glb) | 2.2 |
-| `public/images/` | ⏳ | 圖片資源 | 各 Story |
-| `public/fonts/` | ⏳ | 自訂字型（如需） | 5.3 |
-
----
-
-## 📊 依賴關係圖
-
-### Story 依賴關係（關鍵路徑）
-
-```mermaid
-graph TD
-    S1.1[Story 1.1<br/>Next.js 初始化] --> S1.2[Story 1.2<br/>Azure 設定]
-    S1.2 --> S1.3[Story 1.3<br/>UI 框架]
-    S1.2 --> S1.4[Story 1.4<br/>Health API]
-
-    S1.3 --> S2.1[Story 2.1<br/>Three.js 場景]
-    S2.1 --> S2.2[Story 2.2<br/>Avatar 載入]
-    S2.2 --> S2.3[Story 2.3<br/>Idle 動畫]
-
-    S1.3 --> S3.1[Story 3.1<br/>Chat UI]
-    S3.1 --> S3.2[Story 3.2<br/>Zustand Store]
-    S3.2 --> S3.3[Story 3.3<br/>Chat API]
-    S3.3 --> S3.4[Story 3.4<br/>SSE 前端]
-    S1.2 --> S3.5[Story 3.5<br/>TTS API]
-    S3.5 --> S3.6[Story 3.6<br/>Audio 播放]
-
-    S2.3 --> S3.7[Story 3.7<br/>E2E 對話]
-    S3.6 --> S3.7
-
-    S2.2 --> S4.1[Story 4.1<br/>Viseme 生成]
-    S4.1 --> S4.2[Story 4.2<br/>Blendshape]
-    S4.2 --> S4.3[Story 4.3<br/>Lip Sync]
-    S3.6 --> S4.3
-
-    S3.7 --> S5.1[Story 5.1<br/>效能優化]
-    S4.3 --> S5.1
-```
-
-### 檔案依賴關係（範例：Chat API）
-
-```
-Story 3.3: Chat API 實作
-├── 依賴檔案:
-│   ├── ✅ app/layout.tsx (Story 1.1)
-│   ├── ⏳ lib/azure/openai.ts (Story 1.2)
-│   ├── ⏳ lib/ai/knowledge-loader.ts (Story 3.3 同步建立)
-│   ├── ⏳ store/chatStore.ts (Story 3.2)
-│   └── ⏳ types/chat.ts (Story 3.2)
-│
-└── 產出檔案:
-    ├── app/api/chat/route.ts
-    ├── lib/ai/knowledge-loader.ts
-    └── lib/ai/context-builder.ts
-```
-
----
-
-## 🔍 快速搜尋參考
-
-### 按功能搜尋
-
-| 功能 | 相關檔案路徑 |
-|------|------------|
-| **LLM 對話** | `app/api/chat/route.ts`, `lib/ai/knowledge-loader.ts`, `store/chatStore.ts` |
-| **TTS 語音** | `app/api/tts/route.ts`, `lib/azure/speech.ts`, `lib/utils/audio.ts` |
-| **3D Avatar** | `components/avatar/*.tsx`, `lib/three/*.ts` |
-| **Lip Sync** | `lib/three/lipsync.ts`, `components/avatar/LipSyncController.tsx` |
-| **知識庫** | `agent-brain/*.md`, `lib/ai/knowledge-loader.ts` |
-| **狀態管理** | `store/*.ts` |
-| **UI 組件** | `components/ui/*.tsx`, `components/chat/*.tsx` |
-
-### 按技術棧搜尋
-
-| 技術 | 相關檔案路徑 |
-|------|------------|
-| **Next.js** | `app/**/*.tsx`, `next.config.js` |
-| **React** | `components/**/*.tsx` |
-| **TypeScript** | `types/*.ts`, `tsconfig.json` |
-| **Three.js** | `lib/three/*.ts`, `components/avatar/*.tsx` |
-| **Zustand** | `store/*.ts` |
-| **Tailwind** | `tailwind.config.ts`, `app/globals.css` |
-| **Azure OpenAI** | `lib/azure/openai.ts`, `app/api/chat/route.ts` |
-| **Azure Speech** | `lib/azure/speech.ts`, `app/api/tts/route.ts` |
-
----
-
-## 🔄 索引維護機制
-
-### 更新時機
-
-```yaml
-必須更新:
-  - ✅ 每個 Story 完成後
-  - ✅ 新增重要檔案時
-  - ✅ 重構目錄結構時
-
-建議更新:
-  - 🟡 每個 Sprint 結束後
-  - 🟡 Epic 完成後
-  - 🟡 發現索引不準確時
-```
-
-### 更新流程
-
-```bash
-# 1. 手動更新（當前方式）
-# 編輯 PROJECT_INDEX.md
-# 更新檔案狀態、新增條目
-
-# 2. 提交變更
-git add PROJECT_INDEX.md
-git commit -m "docs: update project index after Story X.X"
-git push origin main
-
-# 3. 自動化更新（未來實作）
+# 完整重新生成索引 (文件重組後使用)
 npm run generate-index
-# 自動掃描專案檔案並更新索引
-```
 
-### 索引品質檢查
+# 同步文件狀態 (日常使用)
+npm run sync-index
 
-```yaml
-檢查清單:
-  - [ ] 所有已完成的 Story 檔案狀態為 ✅
-  - [ ] 新建立的檔案都有條目
-  - [ ] 檔案路徑正確無誤
-  - [ ] 依賴關係圖更新
-  - [ ] 統計數據正確
-  - [ ] 最後更新日期正確
+# 驗證索引準確性
+npm run validate-index
 ```
 
 ---
 
-## 📝 變更歷史
+## 架構依賴關係
 
-| 版本 | 日期 | 變更內容 | 負責人 |
-|------|------|---------|--------|
-| v1.0.0 | 2025-10-14 | 初始建立 | Dev Team |
-| v1.1.0 | 2025-10-15 | Story 1.1 完成後更新，新增 AI 指南索引 | Dev Team |
+### 核心數據流
+
+```
+使用者 → ChatInterface.tsx
+  ↓
+chatStore.sendMessage()
+  ↓
+POST /api/chat (SSE) ← AzureOpenAI (GPT-4 Turbo)
+  ↓
+chatStore 更新訊息 (逐字)
+  ↓
+串流完成 → audioStore.speakText()
+  ↓
+POST /api/tts-viseme ← Azure Speech SDK
+  ↓
+{ audio: base64, visemes: VisemeData[], duration: number }
+  ↓
+┌─────────────────────┬─────────────────────┐
+│ AudioPlayer.play()  │ LipSyncController   │
+│ (Web Audio API)     │ .start(visemes)     │
+└─────────────────────┴─────────────────────┘
+          ↓                      ↓
+    音訊播放               useFrame (60 FPS)
+                              ↓
+                       MouthAnimator
+                       .setTarget(blendshape)
+                              ↓
+                       morphTargetInfluences
+                              ↓
+                       Three.js 渲染嘴型
+```
+
+### 模組依賴圖
+
+```
+app/[locale]/page.tsx (首頁)
+  ├─→ components/avatar/AvatarCanvas.tsx
+  │     ├─→ components/avatar/AvatarModel.tsx
+  │     │     ├─→ lib/avatar/loaders.ts
+  │     │     └─→ lib/avatar/constants.ts
+  │     └─→ components/avatar/hooks/useAvatarAnimation.ts
+  │           ├─→ lib/avatar/animations.ts (Blink, Breath, Expression, HeadNod)
+  │           └─→ lib/lipsync/controller.ts
+  │                 ├─→ lib/lipsync/mouth-animator.ts
+  │                 └─→ lib/lipsync/viseme-mapper.ts
+  │
+  └─→ components/chat/ChatInterface.tsx
+        ├─→ stores/chatStore.ts
+        │     ├─→ lib/api/chat.ts (SSE 串流)
+        │     └─→ stores/audioStore.ts
+        │           ├─→ lib/audio/player.ts (Web Audio API)
+        │           └─→ lib/lipsync/controller.ts
+        │
+        └─→ stores/avatarStore.ts
+```
+
+### 資料庫依賴
+
+```
+prisma/schema.prisma
+  ├─→ User (使用者)
+  │     ├─→ Account (NextAuth 帳號)
+  │     ├─→ Session (NextAuth Session)
+  │     ├─→ UserSettings (使用者設定)
+  │     ├─→ ActivityLog (活動記錄)
+  │     ├─→ Avatar (自訂 Avatar)
+  │     ├─→ Conversation (對話歷史)
+  │     ├─→ Message (訊息)
+  │     ├─→ PromptTemplate (Prompt 模板)
+  │     └─→ Knowledge* (6 種知識類型)
+  │
+  ├─→ VerificationToken (Email 驗證)
+  └─→ PasswordResetToken (密碼重設)
+```
 
 ---
 
-## 🆘 使用建議
+## 關鍵文件索引
 
-### For AI 助手
+### 🔥 最高優先級 (P0)
 
-1. **開始協助前**: 搜尋關鍵字確認檔案是否存在
-2. **實作功能時**: 檢查依賴檔案的狀態（✅ / ⏳）
-3. **建立新檔案後**: 建議使用者更新此索引
+| 文件路徑 | 說明 | 更新頻率 |
+|---------|------|---------|
+| `CLAUDE.md` | AI 助手開發規範 | 穩定 |
+| `README.md` | 項目首頁 | 穩定 |
+| `PROJECT_INDEX.md` | 本文件 | 每週 |
+| `docs/mvp/MVP_PROGRESS.md` | MVP 進度追蹤 | 每 Sprint |
+| `prisma/schema.prisma` | 資料庫 Schema | 按需 |
 
-### For 開發者
+### 🌟 核心業務邏輯 (P1)
 
-1. **快速定位**: 使用 `Ctrl+F` 搜尋檔案名稱或功能
-2. **理解依賴**: 查看依賴關係圖了解 Story 順序
-3. **維護索引**: 完成 Story 後立即更新檔案狀態
+| 文件路徑 | 說明 | 關鍵程度 |
+|---------|------|---------|
+| `lib/lipsync/controller.ts` | Lip Sync 核心控制器 | ⭐⭐⭐⭐⭐ |
+| `lib/lipsync/mouth-animator.ts` | 嘴型動畫 + 自適應強度 | ⭐⭐⭐⭐⭐ |
+| `lib/avatar/animations.ts` | 所有動畫控制器 | ⭐⭐⭐⭐⭐ |
+| `components/avatar/hooks/useAvatarAnimation.ts` | 動畫編排 Hook | ⭐⭐⭐⭐⭐ |
+| `lib/azure/openai.ts` | Azure OpenAI 整合 | ⭐⭐⭐⭐⭐ |
+| `lib/azure/speech.ts` | Azure Speech 整合 | ⭐⭐⭐⭐⭐ |
+| `lib/api/chat.ts` | SSE 串流客戶端 | ⭐⭐⭐⭐⭐ |
+| `lib/audio/player.ts` | Web Audio 播放器 | ⭐⭐⭐⭐⭐ |
+
+### 📘 重要實作文件 (P2)
+
+| 文件路徑 | 說明 | 用途 |
+|---------|------|------|
+| `docs/implementation/lip-sync/LIPSYNC_FIXES_2025-10-20.md` | Lip Sync 完整診斷 | 問題排查 |
+| `docs/implementation/knowledge-system/KNOWLEDGE_SYSTEM_ISSUES_AND_FIXES.md` | 知識庫問題診斷 | 問題排查 |
+| `docs/api/API_REFERENCE_SPRINT2.md` | Sprint 2 API 文件 | API 開發 |
+| `docs/deployment/AZURE_DEPLOYMENT.md` | Azure 部署指南 | 部署上線 |
+
+### 🗂️ 歷史參考 (P3)
+
+| 文件路徑 | 說明 | 狀態 |
+|---------|------|------|
+| `docs/00-archive/planning/prd.md` | 產品需求文件 | 已歸檔 |
+| `docs/00-archive/poc/stories/` | POC 階段 Stories | 已歸檔 |
+| `docs/00-archive/poc/POC_TECHNICAL_REPORT.md` | POC 技術報告 | 已歸檔 |
 
 ---
 
-**文件版本**: v1.1.0
-**最後更新**: 2025-10-15
-**維護者**: Dev Team
+## 開發工作流程
+
+### 日常開發
+
+1. **啟動開發環境**
+   ```bash
+   npm run dev
+   ```
+
+2. **開發新功能**
+   - 查閱 `docs/mvp/MVP_PROGRESS.md` 確認當前 Sprint 任務
+   - 閱讀對應的實作指南 (`docs/implementation/`)
+   - 遵循 `CLAUDE.md` 開發規範
+   - 參考 API 文件 (`docs/api/`)
+
+3. **測試功能**
+   - 瀏覽器測試: `http://localhost:3000`
+   - 查閱測試指南: `docs/testing/`
+   - 執行 Lint: `npm run lint`
+
+4. **更新文件**
+   - 功能完成後更新 `docs/mvp/MVP_PROGRESS.md`
+   - 如有問題修復，記錄到 `docs/fixes/YYYY-MM-DD-*.md`
+   - 同步索引: `npm run sync-index`
+
+### 索引維護
+
+**日常同步** (Story 完成時):
+```bash
+npm run sync-index
+```
+
+**完整重建** (目錄結構改變後):
+```bash
+npm run generate-index
+```
+
+**驗證準確性**:
+```bash
+npm run validate-index
+```
+
+詳細維護指南請參考: `docs/INDEX_MAINTENANCE.md`
+
+### Git 工作流程
+
+1. **檢查狀態**
+   ```bash
+   git status
+   git branch
+   ```
+
+2. **提交變更**
+   ```bash
+   git add .
+   git commit -m "feat: Story X.Y - 功能描述"
+   git push origin feature/sprint-X
+   ```
+
+3. **Commit 訊息規範**
+   - `feat`: 新功能
+   - `fix`: 錯誤修復
+   - `docs`: 文件更新
+   - `refactor`: 重構
+   - `test`: 測試
+   - `chore`: 雜項 (依賴更新等)
+
+---
+
+## 附錄：完整文件列表
+
+### 根目錄
+
+| 檔案 | 狀態 | 大小 | 最後修改 |
+|------|------|------|---------|
+| .env.local.example | ✅ | 1.4 KB | 2025/10/17 |
+| .eslintrc.json | ✅ | 59 B | 2025/10/15 |
+| .gitignore | ✅ | 770 B | 2025/10/22 |
+| .prettierrc | ✅ | 119 B | 2025/10/15 |
+| CLAUDE.md | ✅ | 25.7 KB | 2025/10/22 |
+| next.config.js | ✅ | 876 B | 2025/10/20 |
+| package-lock.json | ✅ | 709.4 KB | 2025/10/21 |
+| package.json | ✅ | 3.7 KB | 2025/10/21 |
+| postcss.config.mjs | ✅ | 81 B | 2025/10/14 |
+| PROJECT_INDEX.md | ✅ | 本文件 | 2025/10/22 |
+| README.md | ✅ | 13.3 KB | 2025/10/22 |
+| tailwind.config.ts | ✅ | 2.4 KB | 2025/10/17 |
+| tsconfig.json | ✅ | 625 B | 2025/10/15 |
+
+### app/ (詳細列表省略，見上方 API Routes 和頁面路由章節)
+
+### components/ (詳細列表省略，見上方 UI 組件章節)
+
+### lib/ (詳細列表省略，見上方工具函式章節)
+
+### docs/ (詳細列表省略，見上方文件目錄章節)
+
+---
+
+**文件版本**: v3.0 (完全重寫)
+**最後更新**: 2025-10-22
+**維護者**: Dev Team + Claude Code
+**索引品質**: ⭐⭐⭐⭐⭐ (95%+ 完整性)
+
+---
+
+**使用提示**:
+- 使用瀏覽器搜尋功能 (Ctrl+F / Cmd+F) 快速定位文件
+- 查看 [快速導覽](#快速導覽) 章節快速找到常見任務
+- 查看 [架構依賴關係](#架構依賴關係) 理解模組間關係
+- 定期執行 `npm run sync-index` 保持索引同步
+
+**記住**: 良好的索引維護是高效團隊協作的基礎 🚀

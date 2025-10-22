@@ -163,11 +163,36 @@ export function useAvatarAnimation(
     }
 
     // Initialize Lip Sync Controller
-    if (headMeshRef.current && !lipSyncInitialized.current) {
-      const success = lipSyncController.current.initialize(headMeshRef.current)
-      lipSyncInitialized.current = success
-      if (success) {
-        console.log('[useAvatarAnimation] Lip Sync controller initialized')
+    // 注意: Lip Sync 需要獨立尋找 headMesh，不依賴 enableBlinking
+    if (!lipSyncInitialized.current) {
+      console.log('[useAvatarAnimation] Attempting to initialize Lip Sync...')
+
+      // 如果 enableBlinking 已經找到 headMesh，使用它
+      let lipSyncHeadMesh = headMeshRef.current
+
+      // 否則獨立尋找 headMesh
+      if (!lipSyncHeadMesh) {
+        console.log('[useAvatarAnimation] headMeshRef not set, searching for head mesh...')
+        lipSyncHeadMesh = avatarRef.current.getObjectByName('Wolf3D_Head') as SkinnedMesh
+          || avatarRef.current.getObjectByName('Head') as SkinnedMesh
+
+        if (lipSyncHeadMesh) {
+          console.log('[useAvatarAnimation] Head mesh found:', lipSyncHeadMesh.name)
+          // 也設定 headMeshRef 供眨眼使用
+          headMeshRef.current = lipSyncHeadMesh
+        } else {
+          console.warn('[useAvatarAnimation] Head mesh not found, Lip Sync disabled')
+        }
+      }
+
+      if (lipSyncHeadMesh) {
+        const success = lipSyncController.current.initialize(lipSyncHeadMesh)
+        lipSyncInitialized.current = success
+        if (success) {
+          console.log('[useAvatarAnimation] ✅ Lip Sync controller initialized successfully')
+        } else {
+          console.warn('[useAvatarAnimation] ❌ Lip Sync controller initialization failed')
+        }
       }
     }
   }, [avatarRef, enableBreathing, enableBlinking])
@@ -229,7 +254,9 @@ export function useAvatarAnimation(
     if (headMeshRef.current?.morphTargetInfluences) {
       if (smileIndexRef.current !== null) {
         const smileValue = smileController.current.update(time)
-        headMeshRef.current.morphTargetInfluences[smileIndexRef.current] = smileValue
+        // 確保值域在 0-1 之間，避免破圖
+        const clampedSmileValue = Math.max(0, Math.min(1, smileValue))
+        headMeshRef.current.morphTargetInfluences[smileIndexRef.current] = clampedSmileValue
       }
 
       // 5. Lip Sync Animation (viseme blendshapes)

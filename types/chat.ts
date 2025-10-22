@@ -35,11 +35,13 @@ export interface ChatMessage {
  * @property {ChatMessage[]} messages - 對話訊息陣列
  * @property {number} [temperature] - 溫度參數（可選，預設 0.7）
  * @property {number} [max_tokens] - 最大 tokens 數量（可選，預設 800）
+ * @property {string} [language] - AI 回應語言（可選，預設 'zh-TW'）
  */
 export interface ChatRequest {
   messages: ChatMessage[]
   temperature?: number
   max_tokens?: number
+  language?: string // 'zh-TW' | 'en' | 'ja'
 }
 
 /**
@@ -72,14 +74,45 @@ export interface ErrorResponse {
  * @property {Message[]} messages - 對話訊息陣列
  * @property {string} input - 使用者輸入的文字
  * @property {boolean} isLoading - 是否正在處理訊息（Loading 狀態）
+ * @property {SupportedLanguage} selectedLanguage - 語音輸入選擇的語言
+ * @property {boolean} isTranscribing - 是否正在進行語音轉文字
  */
 export interface ChatStore {
   // State
   messages: Message[]
   input: string
   isLoading: boolean
+  selectedLanguage: 'zh-TW' | 'en-US' | 'ja-JP' // SupportedLanguage
+  isTranscribing: boolean
+  currentConversationId: string | null // Sprint 6: Current conversation ID
 
   // Actions
+  /**
+   * 設定當前對話 ID
+   * @param {string | null} id - 對話 ID (null 代表新對話)
+   */
+  setConversationId: (id: string | null) => void
+
+  /**
+   * 載入對話訊息
+   * @description 從 API 載入指定對話的所有訊息
+   * @param {string} conversationId - 對話 ID
+   */
+  loadConversationMessages: (conversationId: string) => Promise<void>
+
+  /**
+   * 儲存訊息到資料庫
+   * @description 將訊息持久化到當前對話
+   * @param {string} conversationId - 對話 ID
+   * @param {'user' | 'assistant'} role - 訊息角色
+   * @param {string} content - 訊息內容
+   */
+  saveMessageToConversation: (
+    conversationId: string,
+    role: 'user' | 'assistant',
+    content: string
+  ) => Promise<any>
+
   /**
    * 送出訊息
    * @description 驗證輸入、建立使用者訊息、更新狀態、觸發 API 呼叫
@@ -108,4 +141,24 @@ export interface ChatStore {
    * @param {boolean} isLoading - Loading 狀態
    */
   setLoading: (isLoading: boolean) => void
+
+  /**
+   * 設定語音輸入語言
+   * @param {SupportedLanguage} language - 語言代碼
+   */
+  setLanguage: (language: 'zh-TW' | 'en-US' | 'ja-JP') => void
+
+  /**
+   * 套用 Prompt Template
+   * @description 將 Prompt Template 內容填入輸入框
+   * @param {string} content - Prompt 內容
+   */
+  applyPrompt: (content: string) => void
+
+  /**
+   * 語音轉文字
+   * @param {Blob} audioBlob - 音訊資料
+   * @returns {Promise<string>} 轉換後的文字
+   */
+  transcribeAudio: (audioBlob: Blob) => Promise<string>
 }

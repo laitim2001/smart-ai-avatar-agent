@@ -1,9 +1,105 @@
 {
   "pages": {
-    "/api/health/route": [
+    "/layout": [
       "static/chunks/webpack.js",
       "static/chunks/main-app.js",
-      "static/chunks/app/api/health/route.js"
+      "static/css/app/layout.css",
+      "static/chunks/app/layout.js"
+    ],
+    "/[locale]/layout": [
+      "static/chunks/webpack.js",
+      "static/chunks/main-app.js",
+      "static/chunks/app/[locale]/layout.js"
+    ],
+    "/[locale]/(dashboard)/layout": [
+      "static/chunks/webpack.js",
+      "static/chunks/main-app.js",
+      "static/chunks/app/[locale]/(dashboard)/layout.js"
+    ],
+    "/[locale]/(dashboard)/dashboard/page": [
+      "static/chunks/webpack.js",
+      "static/chunks/main-app.js",
+      "static/chunks/app/[locale]/(dashboard)/dashboard/page.js"
+    ],
+    "/[locale]/page": [
+      "static/chunks/webpack.js",
+      "static/chunks/main-app.js",
+      "static/chunks/app/[locale]/page.js"
+    ],
+    "/api/auth/[...nextauth]/route": [
+      "static/chunks/webpack.js",
+      "static/chunks/main-app.js",
+      "static/chunks/app/api/auth/[...nextauth]/route.js"
+    ],
+    "/api/user/me/route": [
+      "static/chunks/webpack.js",
+      "static/chunks/main-app.js",
+      "static/chunks/app/api/user/me/route.js"
+    ],
+    "/api/conversations/route": [
+      "static/chunks/webpack.js",
+      "static/chunks/main-app.js",
+      "static/chunks/app/api/conversations/route.js"
+    ],
+    "/api/avatars/route": [
+      "static/chunks/webpack.js",
+      "static/chunks/main-app.js",
+      "static/chunks/app/api/avatars/route.js"
+    ],
+    "/api/user/preferences/route": [
+      "static/chunks/webpack.js",
+      "static/chunks/main-app.js",
+      "static/chunks/app/api/user/preferences/route.js"
+    ],
+    "/[locale]/(dashboard)/knowledge/page": [
+      "static/chunks/webpack.js",
+      "static/chunks/main-app.js",
+      "static/chunks/app/[locale]/(dashboard)/knowledge/page.js"
+    ],
+    "/api/knowledge/persona/route": [
+      "static/chunks/webpack.js",
+      "static/chunks/main-app.js",
+      "static/chunks/app/api/knowledge/persona/route.js"
+    ],
+    "/api/knowledge/faq/route": [
+      "static/chunks/webpack.js",
+      "static/chunks/main-app.js",
+      "static/chunks/app/api/knowledge/faq/route.js"
+    ],
+    "/api/knowledge/kpi/route": [
+      "static/chunks/webpack.js",
+      "static/chunks/main-app.js",
+      "static/chunks/app/api/knowledge/kpi/route.js"
+    ],
+    "/[locale]/(dashboard)/knowledge/persona/page": [
+      "static/chunks/webpack.js",
+      "static/chunks/main-app.js",
+      "static/chunks/app/[locale]/(dashboard)/knowledge/persona/page.js"
+    ],
+    "/[locale]/(dashboard)/conversations/page": [
+      "static/chunks/webpack.js",
+      "static/chunks/main-app.js",
+      "static/chunks/app/[locale]/(dashboard)/conversations/page.js"
+    ],
+    "/api/conversations/[id]/route": [
+      "static/chunks/webpack.js",
+      "static/chunks/main-app.js",
+      "static/chunks/app/api/conversations/[id]/route.js"
+    ],
+    "/api/chat/route": [
+      "static/chunks/webpack.js",
+      "static/chunks/main-app.js",
+      "static/chunks/app/api/chat/route.js"
+    ],
+    "/api/conversations/[id]/messages/route": [
+      "static/chunks/webpack.js",
+      "static/chunks/main-app.js",
+      "static/chunks/app/api/conversations/[id]/messages/route.js"
+    ],
+    "/api/tts/route": [
+      "static/chunks/webpack.js",
+      "static/chunks/main-app.js",
+      "static/chunks/app/api/tts/route.js"
     ]
   }
 }

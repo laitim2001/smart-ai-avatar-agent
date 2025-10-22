@@ -21,6 +21,7 @@ export type OnErrorCallback = (error: string) => void
  * @param {OnChunkCallback} onChunk - 接收到 chunk 時的回調
  * @param {OnDoneCallback} onDone - 串流完成時的回調
  * @param {OnErrorCallback} onError - 發生錯誤時的回調
+ * @param {string} language - AI 回應語言（zh-TW, en, ja）
  *
  * @example
  * ```tsx
@@ -28,7 +29,8 @@ export type OnErrorCallback = (error: string) => void
  *   [{ role: 'user', content: '你好' }],
  *   (content) => console.log('Chunk:', content),
  *   () => console.log('Done'),
- *   (error) => console.error('Error:', error)
+ *   (error) => console.error('Error:', error),
+ *   'zh-TW'
  * )
  * ```
  */
@@ -36,7 +38,8 @@ export async function sendChatMessage(
   messages: ChatMessage[],
   onChunk: OnChunkCallback,
   onDone: OnDoneCallback,
-  onError: OnErrorCallback
+  onError: OnErrorCallback,
+  language: string = 'zh-TW'
 ): Promise<void> {
   try {
     // 使用 retryAsync 包裝 fetch 請求，支援自動重試
@@ -47,7 +50,7 @@ export async function sendChatMessage(
           headers: {
             'Content-Type': 'application/json',
           },
-          body: JSON.stringify({ messages }),
+          body: JSON.stringify({ messages, language }),
         })
 
         // 如果是 5xx 錯誤，拋出錯誤以觸發重試

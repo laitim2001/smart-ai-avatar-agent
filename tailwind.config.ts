@@ -29,11 +29,32 @@ const config: Config = {
 
   // 主題設定
   theme: {
+    // 響應式斷點：Mobile-First 設計策略
+    screens: {
+      'xs': '375px',    // 小型手機 (iPhone SE)
+      'sm': '640px',    // 標準手機
+      'md': '768px',    // 平板直向
+      'lg': '1024px',   // 平板橫向 / 小型桌面
+      'xl': '1280px',   // 標準桌面
+      '2xl': '1536px',  // 大型桌面
+    },
+
     // 容器佈局：統一的頁面寬度與響應式設定
     container: {
       center: true,           // 自動置中
-      padding: '2rem',        // 左右內距 (32px)
+      padding: {
+        DEFAULT: '1rem',      // 預設 16px (行動裝置)
+        'sm': '1.5rem',       // 24px (標準手機)
+        'md': '2rem',         // 32px (平板)
+        'lg': '2.5rem',       // 40px (小型桌面)
+        'xl': '3rem',         // 48px (標準桌面)
+        '2xl': '3.5rem',      // 56px (大型桌面)
+      },
       screens: {
+        'sm': '640px',
+        'md': '768px',
+        'lg': '1024px',
+        'xl': '1280px',
         '2xl': '1400px',      // 最大寬度限制
       },
     },

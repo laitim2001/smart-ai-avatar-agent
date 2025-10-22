@@ -40,8 +40,8 @@ export const authConfig: NextAuthConfig = {
           throw new Error('Email 或密碼錯誤')
         }
 
-        // Check if email is verified
-        if (!user.emailVerified) {
+        // Check if email is verified (skip in development mode)
+        if (!user.emailVerified && process.env.NODE_ENV === 'production') {
           throw new Error('請先驗證您的 Email')
         }
 
@@ -64,10 +64,10 @@ export const authConfig: NextAuthConfig = {
   ],
 
   pages: {
-    signIn: '/auth/login',
-    signOut: '/auth/logout',
-    error: '/auth/error',
-    verifyRequest: '/auth/verify-request',
+    signIn: '/login',
+    signOut: '/logout',
+    error: '/error',
+    verifyRequest: '/verify-request',
   },
 
   session: {

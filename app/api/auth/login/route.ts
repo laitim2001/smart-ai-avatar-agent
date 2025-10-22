@@ -13,6 +13,8 @@ import {
   getClientIp,
   createRateLimitResponse,
 } from '@/lib/redis/rate-limit'
+import { logLogin } from '@/lib/activity/logger'
+import { prisma } from '@/lib/db/prisma'
 
 // 使用 Node.js runtime
 export const runtime = 'nodejs'
@@ -58,6 +60,24 @@ export async function POST(request: NextRequest) {
         { error: result.error },
         { status: 401 }
       )
+    }
+
+    // 記錄登入活動
+    try {
+      const user = await prisma.user.findUnique({
+        where: { email },
+        select: { id: true },
+      })
+
+      if (user) {
+        await logLogin(user.id, {
+          method: 'credentials',
+          timestamp: new Date().toISOString(),
+        })
+      }
+    } catch (logError) {
+      // 記錄失敗不影響登入
+      console.error('[Login Activity Log Error]', logError)
     }
 
     return NextResponse.json({

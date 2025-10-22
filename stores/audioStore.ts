@@ -189,10 +189,13 @@ export const useAudioStore = create<AudioStore>((set, get) => ({
       }
 
       const audioUrl = URL.createObjectURL(audioBlob)
+      console.log('[audioStore] Blob URL created:', audioUrl)
 
       // 載入音訊
       const audioPlayer = getAudioPlayer()
+      console.log('[audioStore] Loading audio buffer...')
       const audioBuffer = await audioPlayer.loadAudio(audioUrl)
+      console.log('[audioStore] Audio buffer loaded, duration:', audioBuffer.duration.toFixed(2), 's')
 
       // 建立 AudioItem
       const audioItem: AudioItem = {
@@ -204,13 +207,15 @@ export const useAudioStore = create<AudioStore>((set, get) => ({
       }
 
       // 更新狀態並播放
+      console.log('[audioStore] Setting state to PLAYING, visemes count:', visemes?.length || 0)
       set({
         currentAudio: audioItem,
         currentVisemes: visemes as VisemeData[],
         state: AudioState.PLAYING,
       })
 
-      audioPlayer.play(audioBuffer, () => {
+      console.log('[audioStore] Starting playback...')
+      await audioPlayer.play(audioBuffer, () => {
         // 播放結束回調
         set({
           currentAudio: null,
@@ -270,11 +275,11 @@ export const useAudioStore = create<AudioStore>((set, get) => ({
     })
   },
 
-  resumeAudio: () => {
+  resumeAudio: async () => {
     const { state, currentAudio } = get()
     if (state === AudioState.PAUSED && currentAudio) {
       const audioPlayer = getAudioPlayer()
-      audioPlayer.resume()
+      await audioPlayer.resume()
       set({ state: AudioState.PLAYING })
     }
   },

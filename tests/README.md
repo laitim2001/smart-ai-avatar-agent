@@ -8,15 +8,28 @@
 
 單元測試使用 Vitest + Testing Library，測試範圍包括：
 
+**核心工具函數**:
 - **lib/auth/password.ts**: 密碼強度驗證、雜湊與驗證
 - **lib/auth/tokens.ts**: Email 驗證 token 產生
 - **lib/redis/rate-limit.ts**: Rate limiting 配置與 IP 提取
+- **lib/activity/logger.ts**: 活動記錄工具函數與便捷函數
+- **lib/utils/api-response.ts**: 統一 API 回應格式工具
+
+**語音輸入功能 (Sprint 3)**:
+- **stores/chatStore.ts**: 語音功能狀態管理（語言設定、音訊轉文字）
+- **components/chat/VoiceInputButton.tsx**: 語音輸入按鈕組件
+- **components/chat/RecordingIndicator.tsx**: 錄音指示器組件
+- **components/chat/LanguageSelector.tsx**: 語言選擇器組件
 
 #### 執行單元測試
 
 ```bash
 # 執行所有單元測試
 npm test
+
+# 執行特定測試檔案
+npm test -- tests/stores/chatStore.voice.test.ts
+npm test -- tests/components/chat/
 
 # Watch 模式（開發時使用）
 npm run test:watch
@@ -29,9 +42,12 @@ npm run test:coverage
 
 端對端測試使用 Playwright，測試範圍包括：
 
-- **認證流程**: 註冊、登入、密碼重置
-- **路由保護**: Middleware 重導向行為
-- **UI/UX**: 響應式設計、載入狀態
+- **認證流程** (auth-flow.spec.ts): 註冊、登入、密碼重置
+- **路由保護** (auth-flow.spec.ts): Middleware 重導向行為
+- **UI/UX** (auth-flow.spec.ts): 響應式設計、載入狀態
+- **個人資料管理** (profile-flow.spec.ts): 個人資料編輯、密碼變更、表單驗證
+- **Avatar 選擇** (avatar-flow.spec.ts): Avatar 圖庫、3D 預覽、偏好儲存
+- **活動追蹤** (activity-tracking.spec.ts): 活動記錄、API 端點、安全性驗證
 
 #### 執行 E2E 測試
 
@@ -56,6 +72,10 @@ npm run test:e2e:ui
 - ✅ Password utilities (100%)
 - ✅ Token generation (100%)
 - ✅ Rate limit configuration (100%)
+- ✅ Activity logger utilities (100%)
+- ✅ API response utilities (100%)
+- ✅ Chat store voice features (100%) - Sprint 3
+- ✅ Voice input UI components (100%) - Sprint 3
 - ⚠️ Database operations (需要 integration test)
 
 **E2E 測試**:
@@ -63,7 +83,11 @@ npm run test:e2e:ui
 - ✅ 表單驗證行為
 - ✅ 路由保護與重導向
 - ✅ 響應式設計
-- ⚠️ 完整註冊/登入流程（需要測試資料庫）
+- ✅ 個人資料編輯流程
+- ✅ Avatar 選擇與預覽
+- ✅ 活動記錄 API 端點
+- ⚠️ 完整認證流程（需要測試資料庫）
+- ⚠️ 實際資料儲存驗證（需要測試資料庫）
 
 ### 未來改進
 
@@ -143,3 +167,83 @@ npm run test:e2e:ui
 1. 單元測試應該 < 5 秒完成
 2. E2E 測試單一 spec < 30 秒
 3. 使用 `--workers=1` 避免並行問題
+
+## Sprint 3 測試統計
+
+### 語音輸入功能測試
+
+**總測試數**: 59 tests
+
+**測試檔案**:
+1. `tests/stores/chatStore.voice.test.ts` - 13 tests
+   - setLanguage 方法: 4 tests
+   - transcribeAudio 方法: 7 tests
+   - localStorage 持久化: 2 tests
+   - TypeScript 型別安全: 1 test
+
+2. `tests/components/chat/VoiceInputButton.test.tsx` - 14 tests
+   - 狀態顯示: 4 tests
+   - 點擊互動: 4 tests
+   - disabled 屬性: 2 tests
+   - CSS 樣式: 2 tests
+   - Accessibility: 2 tests
+
+3. `tests/components/chat/RecordingIndicator.test.tsx` - 15 tests
+   - 錄音時長顯示: 3 tests
+   - 進度條顯示: 3 tests
+   - 音量指示器: 3 tests
+   - 停止按鈕: 3 tests
+   - 視覺動畫: 2 tests
+   - Accessibility: 1 test
+
+4. `tests/components/chat/LanguageSelector.test.tsx` - 17 tests
+   - 完整模式 (full): 3 tests
+   - 緊湊模式 (compact): 2 tests
+   - 語言選項: 3 tests
+   - 語言切換: 2 tests
+   - disabled 狀態: 2 tests
+   - 自訂樣式: 1 test
+   - 預設行為: 2 tests
+   - Accessibility: 2 tests
+
+**執行時間**:
+- chatStore.voice.test.ts: ~10ms
+- VoiceInputButton.test.tsx: ~230ms
+- RecordingIndicator.test.tsx: ~93ms
+- LanguageSelector.test.tsx: ~178ms
+- **總計**: ~520ms ✅
+
+**測試覆蓋率**: 100% (所有關鍵功能)
+
+### 測試技術要點
+
+1. **Mock 策略**:
+   - `global.fetch` 用於 API 測試
+   - `vi.fn()` 用於回調函數
+   - FormData mock 用於檔案上傳測試
+
+2. **Radix UI 測試挑戰**:
+   - Select 組件在 happy-dom 中的限制
+   - 使用 `data-disabled` 而非 `aria-disabled`
+   - 簡化互動測試策略
+
+3. **CSS 測試技巧**:
+   - 使用 `container.querySelector()` 查找元素
+   - 檢查 `className` 包含特定 class
+   - 使用 `toHaveStyle()` 驗證內聯樣式
+
+4. **非同步測試**:
+   - `async/await` 處理 Promise
+   - `userEvent.setup()` 模擬使用者互動
+   - `expect().rejects.toThrow()` 測試錯誤處理
+
+### 相關文件
+
+- **API 文件**: `docs/API_REFERENCE_SPRINT3.md`
+- **Sprint 3 計劃**: `docs/SPRINT_3_PLAN.md`
+- **MVP 進度**: `docs/MVP_PROGRESS.md`
+
+---
+
+**Last Updated**: 2025-10-17
+**Sprint**: Sprint 3 Phase 5 完成

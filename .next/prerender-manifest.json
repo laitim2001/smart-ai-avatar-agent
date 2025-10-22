@@ -1,11 +1,1 @@
-{
-  "version": 4,
-  "routes": {},
-  "dynamicRoutes": {},
-  "notFoundRoutes": [],
-  "preview": {
-    "previewModeId": "e55b929edb58a1ad864edf6ff671eee7",
-    "previewModeSigningKey": "06fd272d12fdd0ba25e9f60cb161367be1e5464394a5eb62f7994dbfff70c85a",
-    "previewModeEncryptionKey": "a35959d3e5567a18745c08e61645b01322ae275062cfd4245b96ba437cea19d2"
-  }
-}
+{"version":4,"routes":{"/zh-TW/dashboard":{},"/en/dashboard":{},"/ja/dashboard":{},"/zh-TW":{},"/en":{},"/ja":{},"/zh-TW/knowledge":{},"/en/knowledge":{},"/ja/knowledge":{},"/zh-TW/knowledge/persona":{},"/en/knowledge/persona":{},"/ja/knowledge/persona":{},"/zh-TW/conversations":{},"/en/conversations":{},"/ja/conversations":{}},"dynamicRoutes":{"/[locale]/dashboard":{"dataRoute":null,"dataRouteRegex":null,"fallback":null,"fallbackRevalidate":false,"fallbackSourceRoute":"/[locale]/dashboard","routeRegex":"^\\/([^/]+?)\\/dashboard(?:\\/)?$","allowHeader":[]},"/[locale]":{"dataRoute":null,"dataRouteRegex":null,"fallback":null,"fallbackRevalidate":false,"fallbackSourceRoute":"/[locale]","routeRegex":"^\\/([^/]+?)(?:\\/)?$","allowHeader":[]},"/[locale]/knowledge":{"dataRoute":null,"dataRouteRegex":null,"fallback":null,"fallbackRevalidate":false,"fallbackSourceRoute":"/[locale]/knowledge","routeRegex":"^\\/([^/]+?)\\/knowledge(?:\\/)?$","allowHeader":[]},"/[locale]/knowledge/persona":{"dataRoute":null,"dataRouteRegex":null,"fallback":null,"fallbackRevalidate":false,"fallbackSourceRoute":"/[locale]/knowledge/persona","routeRegex":"^\\/([^/]+?)\\/knowledge\\/persona(?:\\/)?$","allowHeader":[]},"/[locale]/conversations":{"dataRoute":null,"dataRouteRegex":null,"fallback":null,"fallbackRevalidate":false,"fallbackSourceRoute":"/[locale]/conversations","routeRegex":"^\\/([^/]+?)\\/conversations(?:\\/)?$","allowHeader":[]}},"notFoundRoutes":[],"preview":{"previewModeId":"c9f5a80ab8292b4e9d5b17bd730c4f8b","previewModeSigningKey":"f660416790433fb29f76c1dab92f176111d4bd3494dd5fa3e7fea8f9c95db146","previewModeEncryptionKey":"5e8c4f4789ba4702bea62a751b34efe0c08e1c5fde4bac6c0fb652110c4ddf0c"}}

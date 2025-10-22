@@ -2,6 +2,7 @@
 
 import { useState } from 'react'
 import { signOut, useSession } from 'next-auth/react'
+import { useTranslations } from 'next-intl'
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -14,6 +15,7 @@ import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
 import { User, Settings, LogOut } from 'lucide-react'
 
 export default function UserMenu() {
+  const t = useTranslations('nav')
   const { data: session } = useSession()
   const [isLoggingOut, setIsLoggingOut] = useState(false)
 
@@ -22,7 +24,7 @@ export default function UserMenu() {
     try {
       await signOut({ callbackUrl: '/login' })
     } catch (error) {
-      console.error('登出錯誤:', error)
+      console.error('Logout error:', error)
       setIsLoggingOut(false)
     }
   }
@@ -55,7 +57,7 @@ export default function UserMenu() {
         <DropdownMenuLabel>
           <div className="flex flex-col space-y-1">
             <p className="text-sm font-medium leading-none">
-              {session?.user?.name || '使用者'}
+              {session?.user?.name || t('user')}
             </p>
             <p className="text-xs leading-none text-gray-500">
               {session?.user?.email}
@@ -67,12 +69,12 @@ export default function UserMenu() {
 
         <DropdownMenuItem className="cursor-pointer">
           <User className="mr-2 h-4 w-4" />
-          <span>個人資料</span>
+          <span>{t('profile')}</span>
         </DropdownMenuItem>
 
         <DropdownMenuItem className="cursor-pointer">
           <Settings className="mr-2 h-4 w-4" />
-          <span>設定</span>
+          <span>{t('settings')}</span>
         </DropdownMenuItem>
 
         <DropdownMenuSeparator />
@@ -83,7 +85,7 @@ export default function UserMenu() {
           disabled={isLoggingOut}
         >
           <LogOut className="mr-2 h-4 w-4" />
-          <span>{isLoggingOut ? '登出中...' : '登出'}</span>
+          <span>{isLoggingOut ? t('loggingOut') : t('logout')}</span>
         </DropdownMenuItem>
       </DropdownMenuContent>
     </DropdownMenu>

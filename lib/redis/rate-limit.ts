@@ -5,7 +5,7 @@
  * 使用滑動視窗演算法（Sliding Window）
  */
 
-import { redis, REDIS_KEYS } from './upstash'
+import { redis, REDIS_KEYS, isRedisAvailable } from './upstash'
 
 export interface RateLimitConfig {
   /**
@@ -89,8 +89,21 @@ export async function rateLimit(
   identifier: string,
   config: RateLimitConfig
 ): Promise<RateLimitResult> {
-  const key = REDIS_KEYS.RATE_LIMIT(identifier)
   const now = Math.floor(Date.now() / 1000) // 當前時間（秒）
+
+  // 如果 Redis 不可用（開發環境），直接允許請求通過
+  if (!isRedisAvailable || !redis) {
+    console.warn('[Rate Limit] Redis not available, allowing request')
+    return {
+      success: true,
+      remaining: config.max,
+      limit: config.max,
+      reset: now + config.window,
+      limited: false,
+    }
+  }
+
+  const key = REDIS_KEYS.RATE_LIMIT(identifier)
   const windowStart = now - config.window
 
   try {

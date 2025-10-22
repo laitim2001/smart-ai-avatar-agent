@@ -33,8 +33,8 @@ export class LipSyncController implements ILipSyncController {
   constructor(config: LipSyncConfig = {}) {
     this.config = {
       enabled: config.enabled ?? true,
-      smoothing: config.smoothing ?? 0.05,
-      intensity: config.intensity ?? 1.0,
+      smoothing: config.smoothing ?? 0.03, // 極短過渡時間（30ms），快速響應 viseme 變化
+      intensity: config.intensity ?? 1.5, // 1.5 倍強度，保持自然變化
       lookAhead: config.lookAhead ?? 0.1,
       fallbackMode: config.fallbackMode ?? 'volume',
     }
@@ -57,9 +57,16 @@ export class LipSyncController implements ILipSyncController {
    * @returns {boolean} 是否初始化成功
    */
   initialize(headMesh: SkinnedMesh): boolean {
+    // 調試: 輸出所有可用的 morphTargets
+    console.log('[LipSyncController] 可用的 morphTargets:',
+      Object.keys(headMesh.morphTargetDictionary || {}))
+
     if (!checkVisemeSupport(headMesh.morphTargetDictionary)) {
       console.warn(
         '[LipSyncController] Avatar 不支援 Viseme Blendshapes，Lip Sync 將被禁用'
+      )
+      console.warn(
+        '[LipSyncController] 需要至少 3 個 viseme blendshapes (例如: viseme_sil, viseme_PP, viseme_aa)'
       )
       this.config.enabled = false
       return false

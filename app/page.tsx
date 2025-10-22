@@ -52,12 +52,12 @@ export default function Home() {
   }, [])
 
   return (
-    <main className="flex h-screen bg-gradient-to-b from-slate-900 to-slate-800">
+    <main className="flex flex-col lg:flex-row h-screen bg-gradient-to-b from-slate-900 to-slate-800">
       {/* 導航列 */}
       <Navigation />
 
-      {/* 左側：Avatar 顯示區 */}
-      <div className="flex-1 relative">
+      {/* Avatar 顯示區 - 行動裝置高度 1/2, 桌面佔滿 */}
+      <div className="flex-1 relative h-1/2 lg:h-full">
         <AvatarCanvas />
 
         {/* Avatar Change Button - 右上角觸發按鈕 */}
@@ -68,11 +68,11 @@ export default function Home() {
 
         {/* UI Overlay - 覆蓋在 3D 場景上的資訊面板 */}
         <div className="absolute inset-0 pointer-events-none">
-          <div className="container mx-auto h-full flex flex-col p-8">
-            {/* 頂部標題區 */}
+          <div className="container mx-auto h-full flex flex-col p-4 md:p-6 lg:p-8">
+            {/* 頂部標題區 - 行動裝置簡化 */}
             <div className="flex-none pointer-events-auto">
-              <div className="bg-card/80 backdrop-blur-md border border-border rounded-lg p-6 max-w-2xl">
-                <h1 className="text-3xl md:text-4xl font-bold text-foreground mb-2">
+              <div className="bg-card/80 backdrop-blur-md border border-border rounded-lg p-3 md:p-4 lg:p-6 max-w-2xl">
+                <h1 className="text-xl sm:text-2xl md:text-3xl lg:text-4xl font-bold text-foreground mb-2">
                   3D Avatar{' '}
                   <span className="text-primary">對話系統</span>
                 </h1>
@@ -88,9 +88,9 @@ export default function Home() {
               </div>
             </div>
 
-            {/* 底部資訊區 */}
+            {/* 底部資訊區 - 行動裝置隱藏 */}
             <div className="flex-1" />
-            <div className="flex-none flex gap-4 pointer-events-auto">
+            <div className="hidden lg:flex flex-none gap-4 pointer-events-auto">
               {/* 控制提示 */}
               <div className="flex-1 bg-card/80 backdrop-blur-md border border-border rounded-lg p-4">
                 <h3 className="text-sm font-semibold text-card-foreground mb-2">
@@ -170,8 +170,8 @@ export default function Home() {
         </div>
       </div>
 
-      {/* 右側：對話介面 */}
-      <div className="w-96 p-4 flex flex-col">
+      {/* 對話介面 - 行動裝置全寬，桌面固定寬度 */}
+      <div className="w-full lg:w-96 p-3 md:p-4 flex flex-col h-1/2 lg:h-full">
         <ChatInterface />
       </div>
     </main>
