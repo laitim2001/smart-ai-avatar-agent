@@ -9,6 +9,7 @@ import { persist } from 'zustand/middleware'
 import { Message, ChatStore } from '@/types/chat'
 import { sendChatMessage } from '@/lib/api/chat'
 import { useAudioStore } from './audioStore'
+import { useAgentStore } from './agentStore'
 import { getFriendlyErrorMessage } from '@/lib/utils/error-messages'
 import type { SupportedLanguage } from '@/types/stt'
 
@@ -41,8 +42,12 @@ export const useChatStore = create<ChatStore>()(
       selectedLanguage: 'zh-TW',
       isTranscribing: false,
       currentConversationId: null, // Sprint 6: Current conversation ID
+      selectedAgentId: null, // Phase 4: Selected Agent ID for conversations
 
       // Actions
+      setSelectedAgent: (agentId: string | null) => {
+        set({ selectedAgentId: agentId })
+      },
       setConversationId: (id) => {
         set({ currentConversationId: id })
       },
@@ -156,6 +161,28 @@ export const useChatStore = create<ChatStore>()(
       content: msg.content,
     }))
 
+    // 取得當前選擇的 Agent 資訊
+    const { selectedAgentId } = get()
+
+    // 如果沒有選擇 Agent，使用預設 CDO Agent
+    const effectiveAgentId = selectedAgentId || 'system-cdo-advisor'
+    let agentName = '預設助理'
+
+    // 嘗試取得 Agent 名稱
+    try {
+      const { loadAgentDetail } = useAgentStore.getState()
+      const agentDetail = await loadAgentDetail(effectiveAgentId)
+      if (agentDetail) {
+        agentName = agentDetail.name
+      }
+    } catch (error) {
+      console.warn('[sendMessage] Failed to load agent name:', error)
+      // 如果載入失敗，使用預設名稱
+      if (effectiveAgentId === 'system-cdo-advisor') {
+        agentName = 'CDO 商務顧問'
+      }
+    }
+
     // 建立 Avatar 訊息（用於即時更新）
     const avatarMessageId = `avatar-${Date.now()}`
     const avatarMessage: Message = {
@@ -163,6 +190,8 @@ export const useChatStore = create<ChatStore>()(
       role: 'avatar',
       content: '',
       timestamp: new Date(),
+      agentId: effectiveAgentId,
+      agentName,
     }
 
     // 加入空 Avatar 訊息
@@ -190,6 +219,7 @@ export const useChatStore = create<ChatStore>()(
 
     const language = getCurrentLanguage()
     console.log(`[chatStore] 🌍 Sending message with language: ${language}`)
+    console.log(`[chatStore] 🤖 Using Agent ID: ${effectiveAgentId}`)
 
     // 呼叫 Chat API（SSE 串流）
     sendChatMessage(
@@ -197,11 +227,12 @@ export const useChatStore = create<ChatStore>()(
       // onChunk: 即時更新 Avatar 訊息內容
       (content) => {
         set((state) => ({
-          messages: state.messages.map((msg) =>
-            msg.id === avatarMessageId
-              ? { ...msg, content: msg.content + content }
-              : msg
-          ),
+          messages: state.messages.map((msg) => {
+            if (msg.id === avatarMessageId) {
+              return { ...msg, content: msg.content + content }
+            }
+            return msg
+          }),
         }))
       },
       // onDone: 串流完成
@@ -282,7 +313,8 @@ export const useChatStore = create<ChatStore>()(
           isLoading: false,
         }))
       },
-      language // 傳遞語言參數
+      language, // 傳遞語言參數
+      effectiveAgentId // 傳遞 Agent ID (包含預設值)
     )
   },
 
