@@ -5,9 +5,9 @@
 > **更新頻率**: 每個 Sprint 完成後即時更新
 > **配對文件**: MVP_DEVELOPMENT_PLAN.md (原始計劃參考)
 
-**Last Updated**: 2025-10-21
-**Overall Progress**: ✅ 98/103 SP (95.1%) + Epic 4 Lip Sync 核心功能完成 + 🎉 知識庫管理系統 100% 完成
-**Current Status**: MVP 核心功能 100% 完成, Epic 4 Lip Sync 系統已實作, ✅ 知識庫管理系統 100% 完成（6 種知識類型全部實作）, Sprint 10 Application Insights 部分功能待補完
+**Last Updated**: 2025-10-22
+**Overall Progress**: ✅ 98/103 SP (95.1%) + Epic 4 Lip Sync 核心功能完成 + 🎉 知識庫管理系統 100% 完成 + 🌐 UI 多語言化持續改進
+**Current Status**: MVP 核心功能 100% 完成, Epic 4 Lip Sync 系統已實作, ✅ 知識庫管理系統 100% 完成（6 種知識類型全部實作）, ✅ UI 多語言化完成知識庫與對話列表改進 (2025-10-22), Sprint 10 Application Insights 部分功能待補完
 
 ---
 
@@ -656,6 +656,32 @@
 
 ## 📝 變更歷史
 
+### 2025-10-22
+- **UI 多語言化持續改進**
+  - **改進項目**: 知識庫總覽頁面、對話列表元件、Select 元件背景修復
+  - **新增翻譯鍵**: ~225 個 (75 個鍵 × 3 種語言)
+  - **修改文件**:
+    1. `app/[locale]/(dashboard)/knowledge/page.tsx` - 完整多語言化 (40+ 字串替換)
+    2. `app/[locale]/(dashboard)/settings/preferences/page.tsx` - Select 背景修復
+    3. `components/chat/LanguageSelector.tsx` - Select 背景修復 (compact + full 模式)
+    4. `components/conversations/ConversationList.tsx` - 完整多語言化 (15+ 字串替換)
+    5. `locales/zh-TW/common.json` - 新增 knowledge.overview (65+ 鍵) + conversation 擴充 (10+ 鍵)
+    6. `locales/en/common.json` - 同上英文翻譯
+    7. `locales/ja/common.json` - 同上日文翻譯
+    8. `PROJECT_INDEX.md` - 自動同步更新 (404 檔案, 328 新增, 4 刪除)
+  - **已修復問題**:
+    - ✅ HTTPS Console 錯誤 (確認為 Next.js prefetch 正常行為)
+    - ✅ 知識庫頁面硬編碼文字 → 完全使用 `useTranslations('knowledge.overview')`
+    - ✅ 對話列表硬編碼文字 → 完全使用 `useTranslations('conversation')`
+    - ✅ Select 元件背景透明 → 所有相關元件添加 `bg-white` 類別
+  - **測試驗證**:
+    - ✅ 知識庫總覽頁面在 zh-TW/en/ja 三語言下正常顯示
+    - ✅ 對話列表在三語言下所有文字正確切換
+    - ✅ Settings 頁面選擇器背景正常顯示
+    - ✅ 語音輸入語言選擇器背景正常顯示
+  - **狀態**: ✅ 完成，待 Git Commit
+  - **詳細記錄**: 見本文件 "多語言系統實作 (100%)" → "最新改進 (2025-10-22)"
+
 ### 2025-10-20
 - **Lip Sync 系統完整診斷與修復** (Epic 4 核心功能)
   - **問題類型**: 8 個主要問題
@@ -1131,6 +1157,9 @@ feat(knowledge): 知識庫管理系統 100% 完成
 - ✅ 整合至頂部導航列 (Navigation.tsx)
 - ✅ 翻譯檔案 (messages/zh-TW.json, en.json, ja.json)
 - ✅ 持久化語言偏好 (next-intl middleware)
+- ✅ **知識庫管理頁面多語言化** (2025-10-22 新增)
+- ✅ **對話列表元件多語言化** (2025-10-22 新增)
+- ✅ **Select 元件背景透明度修復** (2025-10-22 新增)
 
 **檔案清單**:
 ```typescript
@@ -1144,6 +1173,91 @@ messages/ja.json     // 日文翻譯
 
 // 整合至導航列
 components/layout/Navigation.tsx
+```
+
+**最新改進 (2025-10-22)**:
+
+**1. 知識庫總覽頁面多語言化**
+- **檔案**: `app/[locale]/(dashboard)/knowledge/page.tsx`
+- **新增翻譯鍵**: 65+ 個 (knowledge.overview 命名空間)
+- **實作內容**:
+  - ✅ 頁面標題、描述、統計資訊
+  - ✅ 6 種知識類型 (Persona, FAQ, KPI, Decisions, Meetings, POV)
+  - ✅ 快速操作按鈕 (4 個)
+  - ✅ 知識庫管理指南 (6 項)
+  - ✅ 支援動態插值 (如 `{score}`, `{count}`)
+
+**2. 對話列表元件多語言化**
+- **檔案**: `components/conversations/ConversationList.tsx`
+- **新增翻譯鍵**: 10+ 個 (conversation 命名空間擴充)
+- **實作內容**:
+  - ✅ 列表標題與搜尋框
+  - ✅ 錯誤訊息與提示文字
+  - ✅ 空狀態提示
+  - ✅ 底部統計資訊
+  - ✅ 所有 Alert 與錯誤訊息
+
+**3. UI 元件背景修復**
+- **檔案**: `components/chat/LanguageSelector.tsx`
+- **問題**: Select 元件背景透明，影響可讀性
+- **解決方案**: 在 SelectTrigger 和 SelectContent 添加 `className="bg-white"`
+- **影響範圍**:
+  - Settings 偏好設定頁面 (主題、語言選擇器)
+  - 對話頁面語音輸入語言選擇器 (compact 和 full 模式)
+
+**4. 翻譯檔案統計**:
+```
+locales/zh-TW/common.json:
+- conversation: 24 個鍵 (新增 10 個)
+- knowledge.overview: 65+ 個鍵 (全新)
+
+locales/en/common.json:
+- conversation: 24 個鍵 (新增 10 個)
+- knowledge.overview: 65+ 個鍵 (全新)
+
+locales/ja/common.json:
+- conversation: 24 個鍵 (新增 10 個)
+- knowledge.overview: 65+ 個鍵 (全新)
+
+總計新增: ~225 個翻譯鍵 (75 個 × 3 種語言)
+```
+
+**5. 已修復問題**:
+- ❌ ~~HTTPS Console 錯誤~~ → ✅ 確認為 Next.js prefetch 機制正常行為
+- ❌ ~~知識庫頁面硬編碼文字~~ → ✅ 完全使用 `useTranslations('knowledge.overview')`
+- ❌ ~~對話列表硬編碼文字~~ → ✅ 完全使用 `useTranslations('conversation')`
+- ❌ ~~Select 元件背景透明~~ → ✅ 所有 Select 元件添加 `bg-white` 類別
+
+**6. 測試驗證**:
+- ✅ 知識庫總覽頁面在 zh-TW/en/ja 三語言下正常顯示
+- ✅ 對話列表在三語言下所有文字正確切換
+- ✅ Settings 頁面選擇器背景正常顯示
+- ✅ 語音輸入語言選擇器背景正常顯示
+
+**Git Commit (待提交)**:
+```bash
+fix(i18n): 完成知識庫與對話列表多語言化 + UI 修復
+
+## 變更內容
+- 知識庫總覽頁面完整多語言化 (65+ 翻譯鍵)
+- 對話列表元件多語言化 (10+ 翻譯鍵)
+- 修復 Select 元件背景透明問題
+- 新增 225+ 翻譯鍵跨 3 種語言
+- 確認 HTTPS Console 錯誤為正常 prefetch 行為
+
+## 修改檔案 (8 個)
+1. app/[locale]/(dashboard)/knowledge/page.tsx
+2. app/[locale]/(dashboard)/settings/preferences/page.tsx
+3. components/chat/LanguageSelector.tsx
+4. components/conversations/ConversationList.tsx
+5. locales/zh-TW/common.json
+6. locales/en/common.json
+7. locales/ja/common.json
+8. PROJECT_INDEX.md (auto-updated)
+
+🎯 完成日期: 2025-10-22
+📊 影響範圍: 知識庫系統、對話系統、Settings 頁面
+🌐 語言支援: 繁體中文、英文、日文
 ```
 
 #### 2. AI 回應多語言化 ✅

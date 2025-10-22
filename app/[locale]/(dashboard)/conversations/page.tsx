@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from 'react'
 import { useRouter } from 'next/navigation'
+import { useTranslations } from 'next-intl'
 import dynamic from 'next/dynamic'
 import ConversationList from '@/components/conversations/ConversationList'
 import ChatInterface from '@/components/chat/ChatInterface'
@@ -27,6 +28,7 @@ const AvatarCanvas = dynamic(() => import('@/components/avatar/AvatarCanvas'), {
 
 export default function ConversationsPage() {
   const router = useRouter()
+  const t = useTranslations('conversation')
   const [selectedConversationId, setSelectedConversationId] = useState<
     string | null
   >(null)
@@ -53,7 +55,7 @@ export default function ConversationsPage() {
       await loadConversationMessages(conversationId)
     } catch (error) {
       console.error('[ConversationsPage] Load conversation error:', error)
-      alert('載入對話失敗，請重試')
+      alert(t('loadingError'))
     }
   }
 
@@ -71,7 +73,7 @@ export default function ConversationsPage() {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
-          title: '新對話',
+          title: t('startNewConversation'),
           avatarId: currentAvatarId,
         }),
       })
@@ -94,7 +96,7 @@ export default function ConversationsPage() {
       setRefreshTrigger((prev) => prev + 1)
     } catch (error) {
       console.error('[ConversationsPage] Create conversation error:', error)
-      alert('建立對話失敗，請重試')
+      alert(t('createError'))
     } finally {
       setIsCreatingConversation(false)
     }
@@ -134,7 +136,7 @@ export default function ConversationsPage() {
             <div className="flex h-full items-center justify-center">
               <div className="text-center">
                 <Loader2 className="mx-auto h-8 w-8 animate-spin text-blue-600 mb-3" />
-                <p className="text-sm text-gray-600">建立新對話中...</p>
+                <p className="text-sm text-gray-600">{t('creating')}</p>
               </div>
             </div>
           ) : selectedConversationId ? (
@@ -162,10 +164,10 @@ export default function ConversationsPage() {
                   </div>
                 </div>
                 <h3 className="text-lg font-semibold text-gray-900 mb-2">
-                  選擇或建立對話
+                  {t('selectOrCreate')}
                 </h3>
                 <p className="text-sm text-gray-500 max-w-sm">
-                  從左側選擇現有對話，或點擊「新對話」開始與 AI 助手交流
+                  {t('selectOrCreateHint')}
                 </p>
               </div>
             </div>

@@ -126,7 +126,29 @@
     "theme": "主題",
     "notifications": "通知",
     "privacy": "隱私權",
-    "security": "安全性"
+    "security": "安全性",
+    "preferencesTitle": "偏好設定",
+    "preferencesDesc": "自訂您的使用體驗",
+    "loading": "載入中...",
+    "themeLabel": "主題",
+    "themeDesc": "選擇您偏好的介面主題",
+    "themeLight": "淺色",
+    "themeDark": "深色",
+    "themeSystem": "跟隨系統",
+    "languageLabel": "語言",
+    "languageDesc": "選擇您偏好的介面語言",
+    "languageZhTW": "繁體中文",
+    "languageEnUS": "English (US)",
+    "notificationsTitle": "通知設定",
+    "emailNotifications": "Email 通知",
+    "emailNotificationsDesc": "接收重要更新和活動通知",
+    "pushNotifications": "推播通知",
+    "pushNotificationsDesc": "接收即時推播通知 (即將推出)",
+    "cancel": "取消",
+    "save": "儲存變更",
+    "saving": "儲存中...",
+    "savedSuccess": "偏好設定已更新",
+    "loadError": "載入設定失敗"
   },
   "profile": {
     "title": "個人資料",
@@ -160,10 +182,26 @@
     "search": "搜尋對話...",
     "noConversations": "尚無對話記錄",
     "startNewConversation": "開始新對話",
+    "newConversation": "新對話",
     "delete": "刪除對話",
     "confirmDelete": "確定要刪除此對話嗎?",
     "messageCount": "{count} 則訊息",
-    "lastUpdated": "最後更新於 {time}"
+    "lastUpdated": "最後更新於 {time}",
+    "creating": "建立新對話中...",
+    "selectOrCreate": "選擇或建立對話",
+    "selectOrCreateHint": "從左側選擇現有對話，或點擊「新對話」開始與 AI 助手交流",
+    "loadingError": "載入對話失敗，請重試",
+    "createError": "建立對話失敗，請重試",
+    "loadFailed": "載入對話列表失敗",
+    "deleteFailed": "刪除對話失敗",
+    "updateFailed": "更新失敗",
+    "updateTitleFailed": "更新標題失敗",
+    "retry": "重試",
+    "noResults": "找不到符合的對話",
+    "tryOtherKeywords": "試試其他搜尋關鍵字",
+    "startChatHint": "點擊「新對話」開始與 AI 助手交流",
+    "totalCount": "共 {count} 個對話",
+    "searchResults": "搜尋結果"
   },
   "language": {
     "title": "語言",
@@ -171,6 +209,72 @@
     "zhTW": "繁體中文",
     "en": "English",
     "ja": "日本語"
+  },
+  "knowledge": {
+    "title": "知識庫管理",
+    "description": "管理 AI Agent 的知識來源與訓練資料",
+    "loading": "載入知識庫統計資料...",
+    "overview": {
+      "title": "知識庫管理",
+      "stats": {
+        "totalFiles": "知識檔案總數",
+        "personaQuality": "Persona 品質",
+        "lastUpdated": "最後更新"
+      },
+      "types": {
+        "title": "知識類型",
+        "persona": {
+          "title": "Persona 定義",
+          "description": "AI Agent 的角色定義與行為準則",
+          "stat": "品質分數: {score}%"
+        },
+        "faq": {
+          "title": "FAQ 管理",
+          "description": "常見問題與回答知識庫",
+          "stat": "{count} 個問答"
+        },
+        "kpi": {
+          "title": "KPI 字典",
+          "description": "業務指標定義與計算邏輯",
+          "stat": "{count} 個指標"
+        },
+        "decisions": {
+          "title": "決策日誌",
+          "description": "重要決策的記錄與追蹤",
+          "stat": "即將推出"
+        },
+        "meetings": {
+          "title": "會議摘要",
+          "description": "會議記錄與待辦事項",
+          "stat": "即將推出"
+        },
+        "pov": {
+          "title": "觀點簡報",
+          "description": "Point of View 策略簡報",
+          "stat": "即將推出"
+        }
+      },
+      "quickActions": {
+        "title": "快速操作",
+        "editPersona": "編輯 Persona",
+        "editPersonaDesc": "更新 AI 角色定義",
+        "addFaq": "新增 FAQ",
+        "addFaqDesc": "新增常見問題",
+        "addKpi": "新增 KPI",
+        "addKpiDesc": "定義新的業務指標",
+        "search": "搜尋知識庫",
+        "searchDesc": "全域搜尋所有知識"
+      },
+      "guide": {
+        "title": "知識庫管理指南",
+        "persona": "Persona 定義: 定義 AI Agent 的角色、專業領域、溝通風格",
+        "faq": "FAQ 管理: 新增常見問題，提升 AI 回答準確度",
+        "kpi": "KPI 字典: 定義業務指標計算邏輯，確保一致性",
+        "decisions": "決策日誌: 記錄重要決策過程，建立知識傳承",
+        "meetings": "會議摘要: 保存會議記錄與行動項目",
+        "pov": "觀點簡報: 儲存策略簡報與分析報告"
+      }
+    }
   },
   "prompt": {
     "title": "對話主題",

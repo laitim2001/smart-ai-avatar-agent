@@ -126,7 +126,29 @@
     "theme": "Theme",
     "notifications": "Notifications",
     "privacy": "Privacy",
-    "security": "Security"
+    "security": "Security",
+    "preferencesTitle": "Preferences",
+    "preferencesDesc": "Customize your experience",
+    "loading": "Loading...",
+    "themeLabel": "Theme",
+    "themeDesc": "Choose your preferred interface theme",
+    "themeLight": "Light",
+    "themeDark": "Dark",
+    "themeSystem": "System",
+    "languageLabel": "Language",
+    "languageDesc": "Choose your preferred interface language",
+    "languageZhTW": "繁體中文",
+    "languageEnUS": "English (US)",
+    "notificationsTitle": "Notification Settings",
+    "emailNotifications": "Email Notifications",
+    "emailNotificationsDesc": "Receive important updates and activity notifications",
+    "pushNotifications": "Push Notifications",
+    "pushNotificationsDesc": "Receive real-time push notifications (coming soon)",
+    "cancel": "Cancel",
+    "save": "Save Changes",
+    "saving": "Saving...",
+    "savedSuccess": "Preferences updated successfully",
+    "loadError": "Failed to load settings"
   },
   "profile": {
     "title": "Profile",
@@ -160,10 +182,26 @@
     "search": "Search conversations...",
     "noConversations": "No conversations yet",
     "startNewConversation": "Start new conversation",
+    "newConversation": "New Chat",
     "delete": "Delete conversation",
     "confirmDelete": "Are you sure you want to delete this conversation?",
     "messageCount": "{count} messages",
-    "lastUpdated": "Last updated {time}"
+    "lastUpdated": "Last updated {time}",
+    "creating": "Creating new conversation...",
+    "selectOrCreate": "Select or Create Conversation",
+    "selectOrCreateHint": "Select an existing conversation from the left, or click 'New Conversation' to start chatting with AI assistant",
+    "loadingError": "Failed to load conversation, please try again",
+    "createError": "Failed to create conversation, please try again",
+    "loadFailed": "Failed to load conversation list",
+    "deleteFailed": "Failed to delete conversation",
+    "updateFailed": "Update failed",
+    "updateTitleFailed": "Failed to update title",
+    "retry": "Retry",
+    "noResults": "No matching conversations found",
+    "tryOtherKeywords": "Try other search keywords",
+    "startChatHint": "Click 'New Chat' to start chatting with AI assistant",
+    "totalCount": "Total {count} conversations",
+    "searchResults": "Search Results"
   },
   "language": {
     "title": "Language",
@@ -171,6 +209,72 @@
     "zhTW": "繁體中文",
     "en": "English",
     "ja": "日本語"
+  },
+  "knowledge": {
+    "title": "Knowledge Management",
+    "description": "Manage AI Agent's knowledge sources and training data",
+    "loading": "Loading knowledge base statistics...",
+    "overview": {
+      "title": "Knowledge Management",
+      "stats": {
+        "totalFiles": "Total Knowledge Files",
+        "personaQuality": "Persona Quality",
+        "lastUpdated": "Last Updated"
+      },
+      "types": {
+        "title": "Knowledge Types",
+        "persona": {
+          "title": "Persona Definition",
+          "description": "AI Agent's role definition and behavior guidelines",
+          "stat": "Quality Score: {score}%"
+        },
+        "faq": {
+          "title": "FAQ Management",
+          "description": "Frequently asked questions and answers knowledge base",
+          "stat": "{count} Q&As"
+        },
+        "kpi": {
+          "title": "KPI Dictionary",
+          "description": "Business metric definitions and calculation logic",
+          "stat": "{count} Metrics"
+        },
+        "decisions": {
+          "title": "Decision Logs",
+          "description": "Record and track important decisions",
+          "stat": "Coming Soon"
+        },
+        "meetings": {
+          "title": "Meeting Summaries",
+          "description": "Meeting records and action items",
+          "stat": "Coming Soon"
+        },
+        "pov": {
+          "title": "Point of View",
+          "description": "Strategic presentations and POV documents",
+          "stat": "Coming Soon"
+        }
+      },
+      "quickActions": {
+        "title": "Quick Actions",
+        "editPersona": "Edit Persona",
+        "editPersonaDesc": "Update AI role definition",
+        "addFaq": "Add FAQ",
+        "addFaqDesc": "Add frequently asked question",
+        "addKpi": "Add KPI",
+        "addKpiDesc": "Define new business metric",
+        "search": "Search Knowledge",
+        "searchDesc": "Global search all knowledge"
+      },
+      "guide": {
+        "title": "Knowledge Management Guide",
+        "persona": "Persona Definition: Define AI Agent's role, expertise domain, and communication style",
+        "faq": "FAQ Management: Add frequently asked questions to improve AI response accuracy",
+        "kpi": "KPI Dictionary: Define business metric calculation logic to ensure consistency",
+        "decisions": "Decision Logs: Record important decision processes for knowledge transfer",
+        "meetings": "Meeting Summaries: Save meeting records and action items",
+        "pov": "Point of View: Store strategy presentations and analysis reports"
+      }
+    }
   },
   "prompt": {
     "title": "Conversation Topics",

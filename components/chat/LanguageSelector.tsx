@@ -51,10 +51,10 @@ export function LanguageSelector({
           onValueChange={(val) => onChange(val as SupportedLanguage)}
           disabled={disabled}
         >
-          <SelectTrigger className="w-24 h-8 text-xs">
+          <SelectTrigger className="w-24 h-8 text-xs bg-white">
             <SelectValue />
           </SelectTrigger>
-          <SelectContent>
+          <SelectContent className="bg-white">
             {SUPPORTED_LANGUAGES.map((lang) => (
               <SelectItem key={lang.code} value={lang.code} className="text-xs">
                 {lang.nativeLabel}
@@ -78,10 +78,10 @@ export function LanguageSelector({
         onValueChange={(val) => onChange(val as SupportedLanguage)}
         disabled={disabled}
       >
-        <SelectTrigger className="w-full">
+        <SelectTrigger className="w-full bg-white">
           <SelectValue />
         </SelectTrigger>
-        <SelectContent>
+        <SelectContent className="bg-white">
           {SUPPORTED_LANGUAGES.map((lang) => (
             <SelectItem key={lang.code} value={lang.code}>
               <div className="flex items-center justify-between w-full">

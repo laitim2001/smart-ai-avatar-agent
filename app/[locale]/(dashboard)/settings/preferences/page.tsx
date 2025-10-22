@@ -8,6 +8,7 @@
 import { useEffect, useState } from 'react'
 import { useSession } from 'next-auth/react'
 import { useRouter } from 'next/navigation'
+import { useTranslations } from 'next-intl'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import * as z from 'zod'
@@ -48,6 +49,7 @@ type PreferencesFormValues = z.infer<typeof preferencesSchema>
 export default function PreferencesPage() {
   const router = useRouter()
   const { status } = useSession()
+  const t = useTranslations('settings')
   const [isLoading, setIsLoading] = useState(false)
   const [message, setMessage] = useState<{
     type: 'success' | 'error'
@@ -87,14 +89,14 @@ export default function PreferencesPage() {
           })
         }
       } catch (error) {
-        console.error('載入設定失敗:', error)
+        console.error(t('loadError'), error)
       }
     }
 
     if (status === 'authenticated') {
       loadSettings()
     }
-  }, [status, form])
+  }, [status, form, t])
 
   async function onSubmit(values: PreferencesFormValues) {
     setIsLoading(true)
@@ -110,14 +112,14 @@ export default function PreferencesPage() {
       const data = await response.json()
 
       if (!response.ok) {
-        throw new Error(data.error || '更新失敗')
+        throw new Error(data.error || t('loadError'))
       }
 
-      setMessage({ type: 'success', text: '偏好設定已更新' })
+      setMessage({ type: 'success', text: t('savedSuccess') })
     } catch (err) {
       setMessage({
         type: 'error',
-        text: err instanceof Error ? err.message : '更新時發生錯誤',
+        text: err instanceof Error ? err.message : t('loadError'),
       })
     } finally {
       setIsLoading(false)
@@ -129,8 +131,8 @@ export default function PreferencesPage() {
     return (
       <Card>
         <CardHeader>
-          <CardTitle>偏好設定</CardTitle>
-          <CardDescription>載入中...</CardDescription>
+          <CardTitle>{t('preferencesTitle')}</CardTitle>
+          <CardDescription>{t('loading')}</CardDescription>
         </CardHeader>
       </Card>
     )
@@ -144,8 +146,8 @@ export default function PreferencesPage() {
   return (
     <Card>
       <CardHeader>
-        <CardTitle>偏好設定</CardTitle>
-        <CardDescription>自訂您的使用體驗</CardDescription>
+        <CardTitle>{t('preferencesTitle')}</CardTitle>
+        <CardDescription>{t('preferencesDesc')}</CardDescription>
       </CardHeader>
       <CardContent>
         <Form {...form}>
@@ -168,23 +170,23 @@ export default function PreferencesPage() {
               name="theme"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>主題</FormLabel>
+                  <FormLabel>{t('themeLabel')}</FormLabel>
                   <Select
                     onValueChange={field.onChange}
                     defaultValue={field.value}
                   >
                     <FormControl>
-                      <SelectTrigger>
-                        <SelectValue placeholder="選擇主題" />
+                      <SelectTrigger className="bg-white">
+                        <SelectValue placeholder={t('themeLabel')} />
                       </SelectTrigger>
                     </FormControl>
-                    <SelectContent>
-                      <SelectItem value="light">淺色</SelectItem>
-                      <SelectItem value="dark">深色</SelectItem>
-                      <SelectItem value="system">跟隨系統</SelectItem>
+                    <SelectContent className="bg-white">
+                      <SelectItem value="light">{t('themeLight')}</SelectItem>
+                      <SelectItem value="dark">{t('themeDark')}</SelectItem>
+                      <SelectItem value="system">{t('themeSystem')}</SelectItem>
                     </SelectContent>
                   </Select>
-                  <FormDescription>選擇您偏好的介面主題</FormDescription>
+                  <FormDescription>{t('themeDesc')}</FormDescription>
                 </FormItem>
               )}
             />
@@ -195,29 +197,29 @@ export default function PreferencesPage() {
               name="language"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>語言</FormLabel>
+                  <FormLabel>{t('languageLabel')}</FormLabel>
                   <Select
                     onValueChange={field.onChange}
                     defaultValue={field.value}
                   >
                     <FormControl>
-                      <SelectTrigger>
-                        <SelectValue placeholder="選擇語言" />
+                      <SelectTrigger className="bg-white">
+                        <SelectValue placeholder={t('languageLabel')} />
                       </SelectTrigger>
                     </FormControl>
-                    <SelectContent>
-                      <SelectItem value="zh-TW">繁體中文</SelectItem>
-                      <SelectItem value="en-US">English (US)</SelectItem>
+                    <SelectContent className="bg-white">
+                      <SelectItem value="zh-TW">{t('languageZhTW')}</SelectItem>
+                      <SelectItem value="en-US">{t('languageEnUS')}</SelectItem>
                     </SelectContent>
                   </Select>
-                  <FormDescription>選擇您偏好的介面語言</FormDescription>
+                  <FormDescription>{t('languageDesc')}</FormDescription>
                 </FormItem>
               )}
             />
 
             {/* 通知設定 */}
             <div className="space-y-4 pt-4 border-t">
-              <h3 className="font-medium">通知設定</h3>
+              <h3 className="font-medium">{t('notificationsTitle')}</h3>
 
               <FormField
                 control={form.control}
@@ -225,9 +227,9 @@ export default function PreferencesPage() {
                 render={({ field }) => (
                   <FormItem className="flex items-center justify-between rounded-lg border p-4">
                     <div className="space-y-0.5">
-                      <FormLabel className="text-base">Email 通知</FormLabel>
+                      <FormLabel className="text-base">{t('emailNotifications')}</FormLabel>
                       <FormDescription>
-                        接收重要更新和活動通知
+                        {t('emailNotificationsDesc')}
                       </FormDescription>
                     </div>
                     <FormControl>
@@ -248,9 +250,9 @@ export default function PreferencesPage() {
                 render={({ field }) => (
                   <FormItem className="flex items-center justify-between rounded-lg border p-4">
                     <div className="space-y-0.5">
-                      <FormLabel className="text-base">推播通知</FormLabel>
+                      <FormLabel className="text-base">{t('pushNotifications')}</FormLabel>
                       <FormDescription>
-                        接收即時推播通知 (即將推出)
+                        {t('pushNotificationsDesc')}
                       </FormDescription>
                     </div>
                     <FormControl>
@@ -275,10 +277,10 @@ export default function PreferencesPage() {
                 onClick={() => router.push('/settings')}
                 disabled={isLoading}
               >
-                取消
+                {t('cancel')}
               </Button>
               <Button type="submit" disabled={isLoading}>
-                {isLoading ? '儲存中...' : '儲存變更'}
+                {isLoading ? t('saving') : t('save')}
               </Button>
             </div>
           </form>

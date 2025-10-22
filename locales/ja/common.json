@@ -126,7 +126,29 @@
     "theme": "テーマ",
     "notifications": "通知",
     "privacy": "プライバシー",
-    "security": "セキュリティ"
+    "security": "セキュリティ",
+    "preferencesTitle": "環境設定",
+    "preferencesDesc": "使用体験をカスタマイズ",
+    "loading": "読み込み中...",
+    "themeLabel": "テーマ",
+    "themeDesc": "お好みのインターフェーステーマを選択",
+    "themeLight": "ライト",
+    "themeDark": "ダーク",
+    "themeSystem": "システムに従う",
+    "languageLabel": "言語",
+    "languageDesc": "お好みのインターフェース言語を選択",
+    "languageZhTW": "繁體中文",
+    "languageEnUS": "English (US)",
+    "notificationsTitle": "通知設定",
+    "emailNotifications": "メール通知",
+    "emailNotificationsDesc": "重要な更新情報と活動通知を受信",
+    "pushNotifications": "プッシュ通知",
+    "pushNotificationsDesc": "リアルタイムのプッシュ通知を受信 (近日公開)",
+    "cancel": "キャンセル",
+    "save": "変更を保存",
+    "saving": "保存中...",
+    "savedSuccess": "環境設定が更新されました",
+    "loadError": "設定の読み込みに失敗しました"
   },
   "profile": {
     "title": "プロフィール",
@@ -160,10 +182,26 @@
     "search": "会話を検索...",
     "noConversations": "まだ会話がありません",
     "startNewConversation": "新しい会話を開始",
+    "newConversation": "新しい会話",
     "delete": "会話を削除",
     "confirmDelete": "この会話を削除してもよろしいですか?",
     "messageCount": "{count}件のメッセージ",
-    "lastUpdated": "最終更新: {time}"
+    "lastUpdated": "最終更新: {time}",
+    "creating": "新しい会話を作成中...",
+    "selectOrCreate": "会話を選択または作成",
+    "selectOrCreateHint": "左側から既存の会話を選択するか、「新しい会話」をクリックして AI アシスタントとチャットを開始してください",
+    "loadingError": "会話の読み込みに失敗しました。もう一度お試しください",
+    "createError": "会話の作成に失敗しました。もう一度お試しください",
+    "loadFailed": "会話リストの読み込みに失敗しました",
+    "deleteFailed": "会話の削除に失敗しました",
+    "updateFailed": "更新に失敗しました",
+    "updateTitleFailed": "タイトルの更新に失敗しました",
+    "retry": "再試行",
+    "noResults": "一致する会話が見つかりません",
+    "tryOtherKeywords": "他の検索キーワードをお試しください",
+    "startChatHint": "「新しい会話」をクリックしてAIアシスタントとのチャットを開始",
+    "totalCount": "合計{count}件の会話",
+    "searchResults": "検索結果"
   },
   "language": {
     "title": "言語",
@@ -171,6 +209,72 @@
     "zhTW": "繁體中文",
     "en": "English",
     "ja": "日本語"
+  },
+  "knowledge": {
+    "title": "ナレッジ管理",
+    "description": "AI Agentのナレッジソースとトレーニングデータを管理",
+    "loading": "ナレッジベース統計を読み込み中...",
+    "overview": {
+      "title": "ナレッジ管理",
+      "stats": {
+        "totalFiles": "ナレッジファイル総数",
+        "personaQuality": "Persona品質",
+        "lastUpdated": "最終更新"
+      },
+      "types": {
+        "title": "ナレッジタイプ",
+        "persona": {
+          "title": "Persona定義",
+          "description": "AI Agentの役割定義と行動ガイドライン",
+          "stat": "品質スコア: {score}%"
+        },
+        "faq": {
+          "title": "FAQ管理",
+          "description": "よくある質問と回答のナレッジベース",
+          "stat": "{count}個のQ&A"
+        },
+        "kpi": {
+          "title": "KPI辞書",
+          "description": "ビジネス指標の定義と計算ロジック",
+          "stat": "{count}個の指標"
+        },
+        "decisions": {
+          "title": "決定ログ",
+          "description": "重要な決定の記録と追跡",
+          "stat": "近日公開"
+        },
+        "meetings": {
+          "title": "会議要約",
+          "description": "会議記録とアクションアイテム",
+          "stat": "近日公開"
+        },
+        "pov": {
+          "title": "観点資料",
+          "description": "戦略プレゼンテーションとPOV文書",
+          "stat": "近日公開"
+        }
+      },
+      "quickActions": {
+        "title": "クイックアクション",
+        "editPersona": "Personaを編集",
+        "editPersonaDesc": "AI役割定義を更新",
+        "addFaq": "FAQを追加",
+        "addFaqDesc": "よくある質問を追加",
+        "addKpi": "KPIを追加",
+        "addKpiDesc": "新しいビジネス指標を定義",
+        "search": "ナレッジを検索",
+        "searchDesc": "すべてのナレッジをグローバル検索"
+      },
+      "guide": {
+        "title": "ナレッジ管理ガイド",
+        "persona": "Persona定義: AI Agentの役割、専門領域、コミュニケーションスタイルを定義",
+        "faq": "FAQ管理: よくある質問を追加し、AI応答精度を向上",
+        "kpi": "KPI辞書: ビジネス指標計算ロジックを定義し、一貫性を確保",
+        "decisions": "決定ログ: 重要な決定プロセスを記録し、知識継承を構築",
+        "meetings": "会議要約: 会議記録とアクションアイテムを保存",
+        "pov": "観点資料: 戦略プレゼンテーションと分析レポートを保存"
+      }
+    }
   },
   "prompt": {
     "title": "会話トピック",

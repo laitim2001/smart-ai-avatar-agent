@@ -1,6 +1,7 @@
 'use client'
 
 import { useState, useEffect } from 'react'
+import { useTranslations } from 'next-intl'
 import { MessageSquare, Plus, Search, Loader2 } from 'lucide-react'
 import ConversationItem from './ConversationItem'
 import { Button } from '@/components/ui/button'
@@ -34,6 +35,7 @@ export default function ConversationList({
   onSelect,
   onNewConversation,
 }: ConversationListProps) {
+  const t = useTranslations('conversation')
   const [conversations, setConversations] = useState<Conversation[]>([])
   const [isLoading, setIsLoading] = useState(true)
   const [searchQuery, setSearchQuery] = useState('')
@@ -52,14 +54,14 @@ export default function ConversationList({
       const response = await fetch('/api/conversations')
 
       if (!response.ok) {
-        throw new Error('載入對話列表失敗')
+        throw new Error(t('loadFailed'))
       }
 
       const data = await response.json()
       setConversations(data.conversations || [])
     } catch (err) {
       console.error('[ConversationList] Error:', err)
-      setError(err instanceof Error ? err.message : '載入失敗')
+      setError(err instanceof Error ? err.message : t('loadFailed'))
     } finally {
       setIsLoading(false)
     }
@@ -73,7 +75,7 @@ export default function ConversationList({
       })
 
       if (!response.ok) {
-        throw new Error('刪除對話失敗')
+        throw new Error(t('deleteFailed'))
       }
 
       // 更新本地狀態
@@ -87,7 +89,7 @@ export default function ConversationList({
       }
     } catch (err) {
       console.error('[ConversationList] Delete error:', err)
-      alert(err instanceof Error ? err.message : '刪除失敗')
+      alert(err instanceof Error ? err.message : t('deleteFailed'))
     }
   }
 
@@ -103,7 +105,7 @@ export default function ConversationList({
       })
 
       if (!response.ok) {
-        throw new Error('更新標題失敗')
+        throw new Error(t('updateTitleFailed'))
       }
 
       const data = await response.json()
@@ -118,7 +120,7 @@ export default function ConversationList({
       )
     } catch (err) {
       console.error('[ConversationList] Rename error:', err)
-      alert(err instanceof Error ? err.message : '更新失敗')
+      alert(err instanceof Error ? err.message : t('updateFailed'))
     }
   }
 
@@ -142,7 +144,7 @@ export default function ConversationList({
         <div className="flex items-center justify-between mb-3">
           <div className="flex items-center gap-2">
             <MessageSquare className="h-5 w-5 text-gray-700" />
-            <h2 className="text-lg font-semibold text-gray-900">對話記錄</h2>
+            <h2 className="text-lg font-semibold text-gray-900">{t('title')}</h2>
           </div>
           <Button
             size="sm"
@@ -150,7 +152,7 @@ export default function ConversationList({
             className="gap-1.5"
           >
             <Plus className="h-4 w-4" />
-            新對話
+            {t('newConversation')}
           </Button>
         </div>
 
@@ -159,7 +161,7 @@ export default function ConversationList({
           <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-gray-400" />
           <Input
             type="text"
-            placeholder="搜尋對話..."
+            placeholder={t('search')}
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
             className="pl-9"
@@ -182,19 +184,19 @@ export default function ConversationList({
               onClick={loadConversations}
               className="mt-2"
             >
-              重試
+              {t('retry')}
             </Button>
           </div>
         ) : filteredConversations.length === 0 ? (
           <div className="flex flex-col items-center justify-center py-12 px-4">
             <MessageSquare className="h-12 w-12 text-gray-300 mb-3" />
             <p className="text-sm font-medium text-gray-900 mb-1">
-              {searchQuery ? '找不到符合的對話' : '尚無對話記錄'}
+              {searchQuery ? t('noResults') : t('noConversations')}
             </p>
             <p className="text-xs text-gray-500 text-center">
               {searchQuery
-                ? '試試其他搜尋關鍵字'
-                : '點擊「新對話」開始與 AI 助手交流'}
+                ? t('tryOtherKeywords')
+                : t('startChatHint')}
             </p>
           </div>
         ) : (
@@ -217,8 +219,8 @@ export default function ConversationList({
       {!isLoading && !error && filteredConversations.length > 0 && (
         <div className="border-t border-gray-200 px-4 py-2">
           <p className="text-xs text-gray-500">
-            共 {filteredConversations.length} 個對話
-            {searchQuery && ` (搜尋結果)`}
+            {t('totalCount', { count: filteredConversations.length })}
+            {searchQuery && ` (${t('searchResults')})`}
           </p>
         </div>
       )}
