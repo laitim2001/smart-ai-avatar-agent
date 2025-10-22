@@ -1,19 +1,17 @@
 /**
- * Chat API Route - Azure OpenAI + SSE 串流 + AI Agent 知識庫
+ * Chat API Route - Azure OpenAI + SSE 串流 + Multi AI Agent 知識庫
  * @module app/api/chat
- * @description 處理 LLM 對話，整合 AI Agent 知識庫（persona、FAQ、KPI 等），
+ * @description 處理 LLM 對話，支援多 AI Agent 系統，動態載入 Agent 專屬知識庫，
  *              並使用 Server-Sent Events 串流回應
+ * @updated 2025-10-22 - 整合新的資料庫驅動 AgentKnowledgeLoader
  */
 
 import { NextRequest, NextResponse } from 'next/server'
 import { getOpenAIClient, DEPLOYMENT_NAME } from '@/lib/azure/openai'
 import { ChatRequest, ErrorResponse } from '@/types/chat'
-import {
-  getKnowledgeLoader,
-  buildSystemPrompt,
-} from '@/lib/ai/knowledge-loader'
+import { getKnowledgeLoader } from '@/lib/knowledge/loader'
 
-// 使用 Node.js Runtime（需要 fs API 讀取知識庫檔案）
+// 使用 Node.js Runtime（需要 Prisma 資料庫查詢）
 export const runtime = 'nodejs'
 
 // 超時設定：10 秒
@@ -50,52 +48,59 @@ export async function POST(request: NextRequest) {
       )
     }
 
-    // 取得使用者最後一條訊息（用於知識庫搜尋）
-    const lastUserMessage =
-      body.messages.filter((m) => m.role === 'user').pop()?.content || ''
-
-    console.log('📩 User message:', lastUserMessage)
+    // ═══════════════════════════════════════════════
+    // 🤖 步驟 1: 確定要使用的 AI Agent
+    // ═══════════════════════════════════════════════
+    const agentId = body.agentId || 'system-cdo-advisor' // 預設使用 CDO Agent
+    console.log(`🤖 Selected Agent: ${agentId}`)
 
     // ═══════════════════════════════════════════════
-    // 🌍 步驟 1: 取得使用者語言偏好
+    // 🌍 步驟 2: 取得使用者語言偏好
     // ═══════════════════════════════════════════════
     const userLanguage = body.language || 'zh-TW'
     console.log(`🌍 User language: ${userLanguage}`)
 
     // ═══════════════════════════════════════════════
-    // 🧠 步驟 2: 載入 AI Agent 知識庫
+    // 🧠 步驟 3: 載入 AI Agent 專屬知識庫
     // ═══════════════════════════════════════════════
-    const knowledgeLoader = await getKnowledgeLoader()
+    const knowledgeLoader = getKnowledgeLoader()
     const loadTime = Date.now()
-    console.log(`✅ Knowledge loader ready (${loadTime - startTime}ms)`)
 
-    // ═══════════════════════════════════════════════
-    // 🎭 步驟 3: 載入多語言 Persona（CDO 人格定義）
-    // ═══════════════════════════════════════════════
-    const persona = await knowledgeLoader.getPersonaByLanguage(userLanguage)
+    const agentKnowledge = await knowledgeLoader.loadAgentKnowledge(agentId)
+
+    if (!agentKnowledge) {
+      return NextResponse.json(
+        {
+          error: `Agent not found: ${agentId}`,
+          code: 'AGENT_NOT_FOUND',
+          timestamp: new Date().toISOString(),
+        } as ErrorResponse,
+        { status: 404 }
+      )
+    }
+
     console.log(
-      `✅ Persona loaded for ${userLanguage} (${persona.length} characters, ${Date.now() - loadTime}ms)`
+      `✅ Loaded ${agentKnowledge.agentName} knowledge: ${agentKnowledge.totalItems} items (${Date.now() - loadTime}ms)`
     )
 
     // ═══════════════════════════════════════════════
-    // 🔍 步驟 4: 搜尋相關知識文件（多語言）
+    // 📝 步驟 4: 建構增強的 System Prompt
     // ═══════════════════════════════════════════════
-    const relevantKnowledge = knowledgeLoader.searchKnowledge(
-      lastUserMessage,
-      3, // 最多返回 3 個相關文件
-      userLanguage // 根據語言搜尋對應的知識庫檔案
-    )
-    const searchTime = Date.now()
-    console.log(
-      `✅ Found ${relevantKnowledge.length} relevant documents (${searchTime - loadTime}ms)`
-    )
+    const systemPrompt = await knowledgeLoader.buildEnhancedSystemPrompt(agentId)
 
-    // ═══════════════════════════════════════════════
-    // 📝 步驟 5: 組合完整 System Prompt（多語言）
-    // ═══════════════════════════════════════════════
-    const systemPrompt = buildSystemPrompt(persona, relevantKnowledge, userLanguage)
+    if (!systemPrompt) {
+      return NextResponse.json(
+        {
+          error: `Failed to build system prompt for agent: ${agentId}`,
+          code: 'SYSTEM_PROMPT_ERROR',
+          timestamp: new Date().toISOString(),
+        } as ErrorResponse,
+        { status: 500 }
+      )
+    }
+
     console.log(
-      `✅ System prompt built (${systemPrompt.length} characters, ${Date.now() - searchTime}ms)`
+      `✅ System prompt built (${systemPrompt.length} characters, ${Date.now() - loadTime}ms)`
     )
 
     // 建立 OpenAI 客戶端

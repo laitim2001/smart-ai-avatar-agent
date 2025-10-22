@@ -12,6 +12,7 @@ import { z } from 'zod'
 const createConversationSchema = z.object({
   title: z.string().optional().default('新對話'),
   avatarId: z.string().optional().nullable(),
+  agentId: z.string().optional().nullable(), // 新增：關聯的 AI Agent ID
 })
 
 /**
@@ -51,11 +52,26 @@ export async function POST(request: NextRequest) {
         userId: user.id,
         title: validatedData.title,
         avatarId: validatedData.avatarId,
+        agentId: validatedData.agentId, // 新增：關聯 Agent
       },
       include: {
         messages: {
           orderBy: {
             timestamp: 'asc',
+          },
+        },
+        agent: {
+          select: {
+            id: true,
+            name: true,
+            description: true,
+            persona: {
+              select: {
+                id: true,
+                name: true,
+                role: true,
+              },
+            },
           },
         },
       },

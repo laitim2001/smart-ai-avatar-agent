@@ -44,6 +44,16 @@ export default function ConversationsPage() {
 
   const { currentAvatarUrl } = useAvatarStore()
 
+  // 處理從 URL 查詢參數載入對話
+  useEffect(() => {
+    const urlParams = new URLSearchParams(window.location.search)
+    const conversationId = urlParams.get('id')
+
+    if (conversationId && conversationId !== selectedConversationId) {
+      handleSelectConversation(conversationId)
+    }
+  }, [])
+
   // 處理對話選擇
   const handleSelectConversation = async (conversationId: string) => {
     if (conversationId === selectedConversationId) return

@@ -22,6 +22,7 @@ export type OnErrorCallback = (error: string) => void
  * @param {OnDoneCallback} onDone - 串流完成時的回調
  * @param {OnErrorCallback} onError - 發生錯誤時的回調
  * @param {string} language - AI 回應語言（zh-TW, en, ja）
+ * @param {string} agentId - Agent ID（可選）
  *
  * @example
  * ```tsx
@@ -30,7 +31,8 @@ export type OnErrorCallback = (error: string) => void
  *   (content) => console.log('Chunk:', content),
  *   () => console.log('Done'),
  *   (error) => console.error('Error:', error),
- *   'zh-TW'
+ *   'zh-TW',
+ *   'agent-123'
  * )
  * ```
  */
@@ -39,7 +41,8 @@ export async function sendChatMessage(
   onChunk: OnChunkCallback,
   onDone: OnDoneCallback,
   onError: OnErrorCallback,
-  language: string = 'zh-TW'
+  language: string = 'zh-TW',
+  agentId?: string
 ): Promise<void> {
   try {
     // 使用 retryAsync 包裝 fetch 請求，支援自動重試
@@ -50,7 +53,11 @@ export async function sendChatMessage(
           headers: {
             'Content-Type': 'application/json',
           },
-          body: JSON.stringify({ messages, language }),
+          body: JSON.stringify({
+            messages,
+            language,
+            ...(agentId && { agentId })
+          }),
         })
 
         // 如果是 5xx 錯誤，拋出錯誤以觸發重試

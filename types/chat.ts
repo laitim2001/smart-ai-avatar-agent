@@ -10,12 +10,16 @@
  * @property {'user' | 'avatar'} role - 訊息來源：使用者或 Avatar
  * @property {string} content - 訊息內容（支援多行文字）
  * @property {Date} timestamp - 訊息時間戳記（用於顯示時間與排序）
+ * @property {string} [agentId] - Agent ID（僅 avatar 訊息有）
+ * @property {string} [agentName] - Agent 名稱（僅 avatar 訊息有）
  */
 export interface Message {
   id: string
   role: 'user' | 'avatar'
   content: string
   timestamp: Date
+  agentId?: string
+  agentName?: string
 }
 
 /**
@@ -33,12 +37,14 @@ export interface ChatMessage {
  * Chat API 請求介面
  * @interface ChatRequest
  * @property {ChatMessage[]} messages - 對話訊息陣列
+ * @property {string} [agentId] - AI Agent ID（可選，預設 'system-cdo-advisor'）
  * @property {number} [temperature] - 溫度參數（可選，預設 0.7）
  * @property {number} [max_tokens] - 最大 tokens 數量（可選，預設 800）
  * @property {string} [language] - AI 回應語言（可選，預設 'zh-TW'）
  */
 export interface ChatRequest {
   messages: ChatMessage[]
+  agentId?: string
   temperature?: number
   max_tokens?: number
   language?: string // 'zh-TW' | 'en' | 'ja'
@@ -85,8 +91,14 @@ export interface ChatStore {
   selectedLanguage: 'zh-TW' | 'en-US' | 'ja-JP' // SupportedLanguage
   isTranscribing: boolean
   currentConversationId: string | null // Sprint 6: Current conversation ID
+  selectedAgentId: string | null // Phase 4: Selected Agent ID
 
   // Actions
+  /**
+   * 設定選擇的 Agent ID
+   * @param {string | null} agentId - Agent ID (null 代表使用預設 Agent)
+   */
+  setSelectedAgent: (agentId: string | null) => void
   /**
    * 設定當前對話 ID
    * @param {string | null} id - 對話 ID (null 代表新對話)

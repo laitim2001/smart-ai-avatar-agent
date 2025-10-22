@@ -367,6 +367,46 @@ export interface KnowledgeStatusResponse {
 }
 
 // ============================================
+// Agent 知識庫關聯型別 (for AgentKnowledgeLoader)
+// ============================================
+
+/**
+ * 知識庫項目 (統一介面)
+ */
+export interface KnowledgeItem {
+  id: string
+  name: string
+  type: string
+  category: string
+  content: string
+  priority: number
+  isRequired: boolean
+  language?: string
+  version?: string
+  filePath?: string
+}
+
+/**
+ * 載入的 Agent 知識庫資料
+ */
+export interface LoadedKnowledge {
+  agentId: string
+  agentName: string
+  knowledgeItems: KnowledgeItem[]
+  totalItems: number
+  systemPrompt?: string
+}
+
+/**
+ * 知識庫搜尋結果
+ */
+export interface KnowledgeSearchResult {
+  item: KnowledgeItem
+  score: number
+  matchedContent?: string
+}
+
+// ============================================
 // API 回應型別
 // ============================================
 

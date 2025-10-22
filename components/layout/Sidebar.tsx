@@ -22,6 +22,7 @@ import {
   FileText,
   Users,
   Calendar,
+  Bot,
 } from 'lucide-react'
 
 interface SidebarProps {
@@ -46,6 +47,12 @@ export default function Sidebar({ className }: SidebarProps) {
       href: '/conversations',
       icon: MessageSquare,
       label: t('conversations'),
+    },
+    {
+      href: '/agents',
+      icon: Bot,
+      label: t('agents'),
+      badge: 'NEW',
     },
     {
       href: '/knowledge',

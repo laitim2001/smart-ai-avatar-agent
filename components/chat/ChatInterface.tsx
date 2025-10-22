@@ -1,14 +1,16 @@
 'use client'
 
 import { useRef, useEffect, useState, useCallback } from 'react'
-import { Sparkles } from 'lucide-react'
+import { Sparkles, Bot } from 'lucide-react'
 import Spinner from './Spinner'
 import { useChatStore } from '@/stores/chatStore'
+import { useAgentStore } from '@/stores/agentStore'
 import { useAudioRecorder } from '@/hooks/useAudioRecorder'
 import { VoiceInputButton } from './VoiceInputButton'
 import { RecordingIndicator } from './RecordingIndicator'
 import { VoiceWaveform } from './VoiceWaveform'
 import { LanguageSelector } from './LanguageSelector'
+import { AgentSelector } from '@/components/agents/AgentSelector'
 import PromptGalleryModal from '@/components/prompt/PromptGalleryModal'
 import type { PromptTemplate } from '@/types/prompt'
 import { toast } from 'sonner'
@@ -50,7 +52,12 @@ export default function ChatInterface() {
     setLanguage,
     transcribeAudio,
     applyPrompt,
+    selectedAgentId,
+    setSelectedAgent,
   } = useChatStore()
+
+  // Agent Store
+  const { agents, loadAgentDetail } = useAgentStore()
 
   // 語音錄音 Hook
   const {
@@ -69,6 +76,12 @@ export default function ChatInterface() {
 
   // Prompt Gallery Modal 狀態
   const [showPromptGallery, setShowPromptGallery] = useState(false)
+
+  // Agent Selector 狀態
+  const [showAgentSelector, setShowAgentSelector] = useState(false)
+
+  // 當前選擇的 Agent 資訊
+  const [currentAgentName, setCurrentAgentName] = useState<string>('預設助理')
 
   // Refs
   const messagesEndRef = useRef<HTMLDivElement>(null)
@@ -162,6 +175,26 @@ export default function ChatInterface() {
   )
 
   /**
+   * 處理選擇 Agent
+   */
+  const handleSelectAgent = useCallback(
+    async (agentId: string) => {
+      try {
+        const agentDetail = await loadAgentDetail(agentId)
+        if (agentDetail) {
+          setSelectedAgent(agentId)
+          setCurrentAgentName(agentDetail.name)
+          toast.success(`已選擇 Agent: ${agentDetail.name}`)
+        }
+      } catch (error) {
+        console.error('[Select Agent Error]', error)
+        toast.error('選擇 Agent 失敗')
+      }
+    },
+    [setSelectedAgent, loadAgentDetail]
+  )
+
+  /**
    * 處理錄音錯誤
    */
   useEffect(() => {
@@ -202,6 +235,13 @@ export default function ChatInterface() {
                     : 'bg-white border border-gray-200 text-gray-900'
                 }`}
               >
+                {/* Avatar 訊息顯示 Agent 名稱 */}
+                {message.role === 'avatar' && message.agentName && (
+                  <div className="flex items-center gap-1 mb-1 text-xs text-gray-500">
+                    <Bot className="h-3 w-3" />
+                    <span>{message.agentName}</span>
+                  </div>
+                )}
                 <p className="text-sm whitespace-pre-wrap break-words">
                   {message.content}
                 </p>
@@ -222,13 +262,27 @@ export default function ChatInterface() {
       <div className="border-t border-gray-200 p-2 sm:p-4 bg-white">
         {/* 頂部控制列 */}
         <div className="mb-2 flex items-center justify-between gap-2">
-          {/* 語言選擇器 */}
-          <LanguageSelector
-            value={selectedLanguage}
-            onChange={setLanguage}
-            disabled={isLoading || recordingState === 'recording'}
-            variant="compact"
-          />
+          <div className="flex items-center gap-2">
+            {/* 語言選擇器 */}
+            <LanguageSelector
+              value={selectedLanguage}
+              onChange={setLanguage}
+              disabled={isLoading || recordingState === 'recording'}
+              variant="compact"
+            />
+
+            {/* Agent 選擇器按鈕 */}
+            <button
+              onClick={() => setShowAgentSelector(true)}
+              disabled={isLoading || recordingState === 'recording'}
+              className="flex items-center gap-1.5 px-3 py-1.5 text-sm bg-blue-500 hover:bg-blue-600 text-white rounded-md transition-colors disabled:bg-gray-300 disabled:cursor-not-allowed"
+              aria-label="選擇 Agent"
+              title={`當前: ${currentAgentName}`}
+            >
+              <Bot className="h-4 w-4" />
+              <span className="hidden sm:inline">{currentAgentName}</span>
+            </button>
+          </div>
 
           {/* Prompt Gallery 按鈕 */}
           <button
@@ -321,6 +375,13 @@ export default function ChatInterface() {
         open={showPromptGallery}
         onClose={() => setShowPromptGallery(false)}
         onSelectPrompt={handleSelectPrompt}
+      />
+
+      {/* Agent Selector Modal */}
+      <AgentSelector
+        open={showAgentSelector}
+        onOpenChange={setShowAgentSelector}
+        onSelect={handleSelectAgent}
       />
     </div>
   )

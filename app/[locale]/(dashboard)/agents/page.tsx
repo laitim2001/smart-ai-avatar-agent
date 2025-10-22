@@ -7,6 +7,7 @@
 'use client'
 
 import { useEffect, useState } from 'react'
+import { useRouter } from 'next/navigation'
 import { useAgentStore } from '@/stores/agentStore'
 import { AgentCard } from '@/components/agents/AgentCard'
 import { AgentEditor } from '@/components/agents/AgentEditor'
@@ -50,6 +51,7 @@ import { toast } from 'sonner'
  * Agent 市集主頁面
  */
 export default function AgentMarketPage() {
+  const router = useRouter()
   const t = useTranslations('agents')
   const [searchQuery, setSearchQuery] = useState('')
   const [categoryFilter, setCategoryFilter] = useState<string>('all')
@@ -161,9 +163,38 @@ export default function AgentMarketPage() {
   }
 
   // 處理 Agent 選擇（用於對話）
-  const handleSelect = (agent: any) => {
-    setCurrentAgent(agent)
-    toast.success(t('selectedForConversation', { name: agent.name }))
+  const handleSelect = async (agent: any) => {
+    try {
+      // 1. 設定當前 Agent 到 Store
+      setCurrentAgent(agent)
+
+      // 2. 建立新對話並關聯此 Agent
+      const response = await fetch('/api/conversations', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          title: `與 ${agent.name} 的對話`,
+          avatarId: agent.avatar?.id || null,
+          agentId: agent.id, // 關聯 Agent
+        }),
+      })
+
+      if (!response.ok) {
+        throw new Error('建立對話失敗')
+      }
+
+      const data = await response.json()
+      const newConversation = data.conversation
+
+      // 3. 跳轉到對話頁面
+      toast.success(t('selectedForConversation', { name: agent.name }))
+      router.push(`/conversations?id=${newConversation.id}`)
+    } catch (error) {
+      console.error('[Agent Select Error]', error)
+      toast.error('無法開始對話，請稍後再試')
+    }
   }
 
   return (
