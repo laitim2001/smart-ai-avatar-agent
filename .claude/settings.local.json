@@ -26,7 +26,19 @@
       "Bash(git push:*)",
       "Bash(git log:*)",
       "Bash(node -e:*)",
-      "Bash(find:*)"
+      "Bash(find:*)",
+      "Bash(git commit:*)",
+      "Bash(git rev-list:*)",
+      "Bash(timeout 10 bash -c 'sleep 5 && curl -s http://localhost:3002/en/dashboard')",
+      "Bash(git checkout:*)",
+      "Bash(taskkill:*)",
+      "Bash(timeout 10 bash:*)",
+      "Bash(npx prisma format)",
+      "Bash(npx prisma:*)",
+      "Bash(npx tsx:*)",
+      "Bash(git check-ignore:*)",
+      "Bash(git mv:*)",
+      "Bash(git rm:*)"
     ],
     "deny": [],
     "ask": []

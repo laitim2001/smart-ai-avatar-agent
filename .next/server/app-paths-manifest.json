@@ -1,4 +1,12 @@
 {
+  "/api/auth/[...nextauth]/route": "app/api/auth/[...nextauth]/route.js",
+  "/api/user/me/route": "app/api/user/me/route.js",
+  "/api/conversations/route": "app/api/conversations/route.js",
+  "/api/avatars/route": "app/api/avatars/route.js",
+  "/api/user/preferences/route": "app/api/user/preferences/route.js",
+  "/[locale]/page": "app/[locale]/page.js",
+  "/[locale]/(dashboard)/dashboard/page": "app/[locale]/(dashboard)/dashboard/page.js",
+  "/[locale]/(dashboard)/knowledge/page": "app/[locale]/(dashboard)/knowledge/page.js",
   "/[locale]/(dashboard)/knowledge/persona/page": "app/[locale]/(dashboard)/knowledge/persona/page.js",
-  "/[locale]/(dashboard)/knowledge/page": "app/[locale]/(dashboard)/knowledge/page.js"
+  "/[locale]/(dashboard)/conversations/page": "app/[locale]/(dashboard)/conversations/page.js"
 }
