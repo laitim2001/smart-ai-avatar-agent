@@ -16,10 +16,10 @@ import type {
 } from '@/types/knowledge'
 
 // 知識庫根目錄
-const KNOWLEDGE_BASE_PATH = path.join(process.cwd(), 'agent-brain')
+const KNOWLEDGE_BASE_PATH = path.join(process.cwd(), 'agent-brain', 'agents', 'cdo-advisor')
 
 // 歸檔目錄
-const ARCHIVE_PATH = path.join(KNOWLEDGE_BASE_PATH, 'archive')
+const ARCHIVE_PATH = path.join(process.cwd(), 'agent-brain', 'archive')
 
 /**
  * 確保目錄存在
