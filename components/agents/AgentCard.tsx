@@ -120,7 +120,7 @@ export function AgentCard({
           {agent.avatar && (
             <div className="flex-shrink-0 w-14 h-14 rounded-full overflow-hidden bg-gradient-to-br from-blue-100 to-purple-100 border-2 border-white shadow-md">
               <img
-                src={agent.avatar.modelUrl}
+                src={agent.avatar.thumbnail || agent.avatar.url}
                 alt={agent.avatar.name}
                 className="w-full h-full object-cover"
                 onError={(e) => {

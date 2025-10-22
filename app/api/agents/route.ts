@@ -5,7 +5,7 @@
  */
 
 import { NextRequest, NextResponse } from 'next/server'
-import { PrismaClient } from '@prisma/client'
+import { PrismaClient } from '@/lib/generated/prisma'
 import { getServerSession } from 'next-auth'
 import { authOptions } from '@/lib/auth/config'
 
@@ -75,7 +75,8 @@ export async function GET(request: NextRequest) {
           select: {
             id: true,
             name: true,
-            modelUrl: true,
+            url: true,
+            thumbnail: true,
           },
         },
         knowledgeBases: {
@@ -131,12 +132,14 @@ export async function GET(request: NextRequest) {
     })
   } catch (error) {
     console.error('[GET /api/agents Error]', error)
+    console.error('[GET /api/agents Error Details]', (error as any).message, (error as any).stack)
 
     return NextResponse.json(
       {
         success: false,
         error: 'Failed to fetch agents',
         code: 'FETCH_ERROR',
+        details: (error as any).message,
         timestamp: new Date().toISOString(),
       },
       { status: 500 }

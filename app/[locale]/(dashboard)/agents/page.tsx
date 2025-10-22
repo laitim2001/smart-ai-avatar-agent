@@ -250,7 +250,7 @@ export default function AgentMarketPage() {
                   {agent.avatar && (
                     <div className="flex-shrink-0 w-16 h-16 rounded-full overflow-hidden bg-white border-2 border-orange-200">
                       <img
-                        src={agent.avatar.modelUrl}
+                        src={agent.avatar.thumbnail || agent.avatar.url}
                         alt={agent.avatar.name}
                         className="w-full h-full object-cover"
                       />
