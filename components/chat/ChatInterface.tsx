@@ -179,12 +179,20 @@ export default function ChatInterface() {
    */
   const handleSelectAgent = useCallback(
     async (agentId: string) => {
+      console.log('[ChatInterface] handleSelectAgent called with ID:', agentId)
       try {
+        console.log('[ChatInterface] Loading agent detail...')
         const agentDetail = await loadAgentDetail(agentId)
+        console.log('[ChatInterface] Agent detail loaded:', agentDetail)
+
         if (agentDetail) {
+          console.log('[ChatInterface] Setting selected agent:', agentDetail.name)
           setSelectedAgent(agentId)
           setCurrentAgentName(agentDetail.name)
           toast.success(`已選擇 Agent: ${agentDetail.name}`)
+        } else {
+          console.warn('[ChatInterface] Agent detail is null')
+          toast.error('無法載入 Agent 詳細資料')
         }
       } catch (error) {
         console.error('[Select Agent Error]', error)

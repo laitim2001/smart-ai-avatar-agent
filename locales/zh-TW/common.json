@@ -381,6 +381,8 @@
     "deleteConfirmTitle": "刪除 Agent",
     "deleteConfirmDescription": "確定要刪除 Agent「{name}」嗎？此操作無法復原。",
     "selectedForConversation": "已選擇 {name} 進行對話",
+    "agentsFound": "個 Agent",
+    "confirm": "確認",
     "cancel": "取消",
     "delete": "刪除",
     "update": "更新",

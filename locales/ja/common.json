@@ -358,6 +358,8 @@
     "deleteConfirmTitle": "Agentを削除",
     "deleteConfirmDescription": "Agent「{name}」を削除してもよろしいですか？この操作は元に戻せません。",
     "selectedForConversation": "{name}を会話用に選択しました",
+    "agentsFound": "エージェント",
+    "confirm": "確認",
     "cancel": "キャンセル",
     "delete": "削除",
     "update": "更新",

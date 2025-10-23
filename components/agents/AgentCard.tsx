@@ -73,10 +73,17 @@ export function AgentCard({
     <Card
       className={`group relative transition-all duration-200 ${
         selected
-          ? 'ring-2 ring-blue-500 shadow-lg scale-105'
-          : 'hover:shadow-xl hover:scale-102 hover:border-blue-300'
-      } ${compact ? 'p-3' : ''} cursor-pointer overflow-hidden`}
-      onClick={() => onSelect?.(agent)}
+          ? 'ring-4 ring-blue-500 bg-blue-50 shadow-xl scale-105 border-blue-500'
+          : 'hover:shadow-xl hover:border-blue-300 hover:scale-102'
+      } ${compact ? 'p-3' : ''} ${
+        onSelect && compact ? 'cursor-pointer active:scale-100' : ''
+      } overflow-hidden`}
+      onClick={() => {
+        if (onSelect && compact) {
+          console.log('[AgentCard] Clicked:', agent.name, 'ID:', agent.id)
+          onSelect(agent)
+        }
+      }}
     >
       {/* 背景漸層效果 */}
       <div
@@ -118,16 +125,28 @@ export function AgentCard({
             </CardTitle>
           </div>
           {agent.avatar && (
-            <div className="flex-shrink-0 w-14 h-14 rounded-full overflow-hidden bg-gradient-to-br from-blue-100 to-purple-100 border-2 border-white shadow-md">
-              <img
-                src={agent.avatar.thumbnail || agent.avatar.url}
-                alt={agent.avatar.name}
-                className="w-full h-full object-cover"
-                onError={(e) => {
-                  // Fallback to placeholder
-                  e.currentTarget.src = '/placeholder-avatar.png'
-                }}
-              />
+            <div className="flex-shrink-0 w-14 h-14 rounded-full overflow-hidden bg-gradient-to-br from-blue-100 to-purple-100 border-2 border-white shadow-md flex items-center justify-center">
+              {agent.avatar.thumbnail ? (
+                // 如果是 emoji thumbnail,直接顯示
+                typeof agent.avatar.thumbnail === 'string' && agent.avatar.thumbnail.length <= 4 ? (
+                  <span className="text-3xl">{agent.avatar.thumbnail}</span>
+                ) : (
+                  <img
+                    src={agent.avatar.thumbnail || agent.avatar.url}
+                    alt={agent.avatar.name}
+                    className="w-full h-full object-cover"
+                    onError={(e) => {
+                      // Fallback to bot emoji
+                      const parent = e.currentTarget.parentElement
+                      if (parent) {
+                        parent.innerHTML = '<span class="text-3xl">🤖</span>'
+                      }
+                    }}
+                  />
+                )
+              ) : (
+                <span className="text-3xl">🤖</span>
+              )}
             </div>
           )}
         </div>

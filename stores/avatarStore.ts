@@ -100,6 +100,8 @@ export const useAvatarStore = create<AvatarState>()(
             const invalidUrls = [
               '65c3d4e5f6a7b8c9d0e1f2a3',
               '6419b4d5c2efa2a5b0f4c3d1', // 新增：2025-10-18 失效的 URL
+              '65d5a1b8e37f9e000a7aa0ec', // 新增：2025-10-23 失效的 URL (404)
+              '658228794c1a2f27fd06b253', // 新增：2025-10-23 失效的 URL (404)
             ]
 
             if (state?.currentAvatarUrl && invalidUrls.some(url => state.currentAvatarUrl.includes(url))) {

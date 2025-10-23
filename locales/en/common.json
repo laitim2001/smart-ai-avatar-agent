@@ -358,6 +358,8 @@
     "deleteConfirmTitle": "Delete Agent",
     "deleteConfirmDescription": "Are you sure you want to delete Agent \"{name}\"? This action cannot be undone.",
     "selectedForConversation": "Selected {name} for conversation",
+    "agentsFound": "Agents",
+    "confirm": "Confirm",
     "cancel": "Cancel",
     "delete": "Delete",
     "update": "Update",

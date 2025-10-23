@@ -41,12 +41,21 @@ export default function AvatarSelector() {
 
   return (
     <div
-      className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50"
+      className="fixed inset-0 flex items-center justify-center z-50"
       role="dialog"
       aria-modal="true"
       aria-labelledby="avatar-selector-title"
+      style={{
+        backgroundColor: 'rgba(0, 0, 0, 0.5)',
+        backdropFilter: 'blur(4px)',
+      }}
     >
-      <div className="bg-slate-800 rounded-xl shadow-2xl p-6 max-w-2xl w-full mx-4">
+      <div
+        className="rounded-xl shadow-2xl p-6 max-w-2xl w-full mx-4"
+        style={{
+          backgroundColor: '#1e293b', // slate-800
+        }}
+      >
         {/* Header */}
         <div className="flex justify-between items-center mb-6">
           <h2 id="avatar-selector-title" className="text-2xl font-bold text-white">
@@ -70,20 +79,36 @@ export default function AvatarSelector() {
               <div
                 key={avatar.id}
                 className={`
-                  bg-slate-700 rounded-lg p-4 cursor-pointer transition-all duration-200
+                  rounded-lg p-4 cursor-pointer transition-all duration-200
                   ${
                     isSelected
                       ? 'ring-4 ring-blue-500 shadow-2xl scale-105'
-                      : 'hover:bg-slate-600 hover:scale-105 hover:shadow-xl'
+                      : 'hover:scale-105 hover:shadow-xl'
                   }
                 `}
+                style={{
+                  backgroundColor: isSelected ? '#334155' : '#334155', // slate-700
+                }}
+                onMouseEnter={(e) => {
+                  if (!isSelected) {
+                    e.currentTarget.style.backgroundColor = '#475569' // slate-600
+                  }
+                }}
+                onMouseLeave={(e) => {
+                  if (!isSelected) {
+                    e.currentTarget.style.backgroundColor = '#334155' // slate-700
+                  }
+                }}
                 onClick={() => {
                   setAvatar(avatar.id)
                   toggleSelector()
                 }}
               >
                 {/* Avatar 縮圖（Emoji Placeholder）*/}
-                <div className="aspect-square bg-slate-600 rounded-lg mb-3 flex items-center justify-center">
+                <div
+                  className="aspect-square rounded-lg mb-3 flex items-center justify-center"
+                  style={{ backgroundColor: '#475569' }} // slate-600
+                >
                   <span className="text-6xl">{avatar.thumbnail}</span>
                 </div>
 
@@ -94,14 +119,21 @@ export default function AvatarSelector() {
 
                 {/* 選擇按鈕 */}
                 <button
-                  className={`
-                    w-full py-2 rounded-md font-medium transition-colors
-                    ${
-                      isSelected
-                        ? 'bg-blue-500 text-white'
-                        : 'bg-slate-600 text-gray-300 hover:bg-slate-500'
+                  className="w-full py-2 rounded-md font-medium transition-colors"
+                  style={{
+                    backgroundColor: isSelected ? '#3b82f6' : '#475569', // blue-500 or slate-600
+                    color: isSelected ? 'white' : '#d1d5db', // white or gray-300
+                  }}
+                  onMouseEnter={(e) => {
+                    if (!isSelected) {
+                      e.currentTarget.style.backgroundColor = '#64748b' // slate-500
                     }
-                  `}
+                  }}
+                  onMouseLeave={(e) => {
+                    if (!isSelected) {
+                      e.currentTarget.style.backgroundColor = '#475569' // slate-600
+                    }
+                  }}
                   onClick={(e) => {
                     e.stopPropagation() // 避免觸發卡片的 onClick
                     setAvatar(avatar.id)

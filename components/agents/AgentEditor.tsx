@@ -123,6 +123,7 @@ export function AgentEditor({
   // 重置表單
   useEffect(() => {
     if (isOpen && agent) {
+      // 編輯模式：載入 Agent 現有資料
       setFormData({
         name: agent.name,
         description: agent.description,
@@ -134,7 +135,11 @@ export function AgentEditor({
         isPublic: agent.isPublic,
         knowledgeBaseIds: [],
       })
+
+      // 載入已關聯的知識庫
+      loadAgentKnowledgeBases(agent.id)
     } else if (isOpen && !agent) {
+      // 建立模式：重置為空白表單
       setFormData({
         name: '',
         description: '',
@@ -148,6 +153,28 @@ export function AgentEditor({
       })
     }
   }, [isOpen, agent])
+
+  // 載入 Agent 已關聯的知識庫
+  const loadAgentKnowledgeBases = async (agentId: string) => {
+    try {
+      const response = await fetch(`/api/agents/${agentId}/knowledge`)
+
+      if (!response.ok) {
+        throw new Error('Failed to load agent knowledge bases')
+      }
+
+      const data = await response.json()
+      const linkedKnowledgeBaseIds = (data.data || []).map((link: any) => link.knowledgeBaseId)
+
+      setFormData((prev) => ({
+        ...prev,
+        knowledgeBaseIds: linkedKnowledgeBaseIds,
+      }))
+    } catch (error) {
+      console.error('[AgentEditor] Load agent knowledge bases error:', error)
+      // 不顯示錯誤 toast，靜默失敗
+    }
+  }
 
   // 更新表單欄位
   const updateField = (field: keyof AgentFormData, value: any) => {
@@ -269,8 +296,8 @@ export function AgentEditor({
         )}
       </DialogTrigger>
 
-      <DialogContent className="max-w-3xl max-h-[85vh] p-0">
-        <DialogHeader className="p-6 pb-4">
+      <DialogContent className="max-w-3xl max-h-[85vh] p-0 bg-white">
+        <DialogHeader className="p-6 pb-4 bg-white">
           <DialogTitle className="text-2xl flex items-center gap-2">
             <Bot className="w-6 h-6" />
             {isEditMode ? t('editAgent') : t('createAgent')}
@@ -282,8 +309,8 @@ export function AgentEditor({
           </DialogDescription>
         </DialogHeader>
 
-        <ScrollArea className="max-h-[calc(85vh-200px)]">
-          <div className="px-6 pb-4">
+        <ScrollArea className="max-h-[calc(85vh-200px)] bg-white">
+          <div className="px-6 pb-4 bg-white">
             <Tabs value={currentTab} onValueChange={setCurrentTab}>
               <TabsList className="grid w-full grid-cols-4">
                 <TabsTrigger value="basic">{t('basicInfo')}</TabsTrigger>
@@ -488,7 +515,7 @@ export function AgentEditor({
           </div>
         </ScrollArea>
 
-        <DialogFooter className="p-6 pt-4 border-t">
+        <DialogFooter className="p-6 pt-4 border-t bg-white">
           <Button
             variant="outline"
             onClick={() => setOpen(false)}

@@ -10,7 +10,6 @@ import { useEffect, useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { useAgentStore } from '@/stores/agentStore'
 import { AgentCard } from '@/components/agents/AgentCard'
-import { AgentEditor } from '@/components/agents/AgentEditor'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
@@ -56,8 +55,6 @@ export default function AgentMarketPage() {
   const [searchQuery, setSearchQuery] = useState('')
   const [categoryFilter, setCategoryFilter] = useState<string>('all')
   const [selectedTab, setSelectedTab] = useState('all')
-  const [editorOpen, setEditorOpen] = useState(false)
-  const [editingAgent, setEditingAgent] = useState<any>(null)
   const [deletingAgent, setDeletingAgent] = useState<any>(null)
 
   const {
@@ -139,10 +136,9 @@ export default function AgentMarketPage() {
     .sort((a, b) => (b.conversationsCount || 0) - (a.conversationsCount || 0))
     .slice(0, 3)
 
-  // 處理編輯 Agent
+  // 處理編輯 Agent - 導航到獨立編輯頁面
   const handleEdit = (agent: any) => {
-    setEditingAgent(agent)
-    setEditorOpen(true)
+    router.push(`/agents/${agent.id}/edit`)
   }
 
   // 處理刪除 Agent
@@ -212,24 +208,14 @@ export default function AgentMarketPage() {
             </p>
           </div>
 
-          <AgentEditor
-            open={editorOpen}
-            onOpenChange={setEditorOpen}
-            agent={editingAgent}
-            onSuccess={() => {
-              setEditingAgent(null)
-              loadAgents()
-            }}
-            trigger={
-              <Button
-                size="lg"
-                className="gap-2 bg-white text-blue-600 hover:bg-blue-50"
-              >
-                <Plus className="w-5 h-5" />
-                {t('createAgent')}
-              </Button>
-            }
-          />
+          <Button
+            size="lg"
+            className="gap-2 bg-white text-blue-600 hover:bg-blue-50"
+            onClick={() => router.push('/agents/new')}
+          >
+            <Plus className="w-5 h-5" />
+            {t('createAgent')}
+          </Button>
         </div>
       </div>
 

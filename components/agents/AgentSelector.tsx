@@ -44,6 +44,8 @@ export function AgentSelector({
   const [internalOpen, setInternalOpen] = useState(false)
   const [searchQuery, setSearchQuery] = useState('')
   const [selectedTab, setSelectedTab] = useState('all')
+  // 臨時選中的 Agent (確認前)
+  const [tempSelectedAgentId, setTempSelectedAgentId] = useState<string | null>(null)
 
   const {
     agents,
@@ -56,6 +58,13 @@ export function AgentSelector({
   // 使用外部控制或內部狀態
   const isOpen = controlledOpen !== undefined ? controlledOpen : internalOpen
   const setOpen = onOpenChange || setInternalOpen
+
+  // 當對話框打開時,初始化臨時選中狀態為當前 Agent
+  useEffect(() => {
+    if (isOpen) {
+      setTempSelectedAgentId(currentAgent?.id || null)
+    }
+  }, [isOpen, currentAgent])
 
   // 載入 Agent 列表
   useEffect(() => {
@@ -84,10 +93,48 @@ export function AgentSelector({
     )
   })
 
-  // 處理 Agent 選擇
-  const handleSelectAgent = (agent: typeof agents[0]) => {
-    setCurrentAgent(agent)
-    onSelect?.(agent.id)
+  // 處理點擊 Agent 卡片 (僅更新臨時選中狀態)
+  const handleClickAgent = (agent: typeof agents[0]) => {
+    console.log('[AgentSelector] Click agent:', agent.name, 'ID:', agent.id)
+    setTempSelectedAgentId(agent.id)
+  }
+
+  // 處理確認選擇 (執行真正的選擇動作)
+  const handleConfirmSelection = () => {
+    if (!tempSelectedAgentId) {
+      console.warn('[AgentSelector] No agent selected')
+      return
+    }
+
+    const selectedAgent = agents.find(a => a.id === tempSelectedAgentId)
+    if (!selectedAgent) {
+      console.error('[AgentSelector] Selected agent not found:', tempSelectedAgentId)
+      return
+    }
+
+    console.log('[AgentSelector] Confirm selection:', selectedAgent.name, 'ID:', selectedAgent.id)
+    console.log('[AgentSelector] Current agent before:', currentAgent?.name)
+
+    // 更新全局狀態
+    setCurrentAgent(selectedAgent)
+
+    console.log('[AgentSelector] setCurrentAgent called')
+    console.log('[AgentSelector] Calling onSelect callback with ID:', selectedAgent.id)
+
+    // 呼叫 callback
+    onSelect?.(selectedAgent.id)
+
+    console.log('[AgentSelector] Closing dialog')
+    // 關閉對話框
+    setOpen(false)
+  }
+
+  // 處理取消選擇
+  const handleCancelSelection = () => {
+    console.log('[AgentSelector] Cancel selection')
+    // 恢復為當前 Agent
+    setTempSelectedAgentId(currentAgent?.id || null)
+    // 關閉對話框
     setOpen(false)
   }
 
@@ -146,8 +193,8 @@ export function AgentSelector({
                       <AgentCard
                         key={agent.id}
                         agent={agent}
-                        onSelect={handleSelectAgent}
-                        selected={currentAgent?.id === agent.id}
+                        onSelect={handleClickAgent}
+                        selected={tempSelectedAgentId === agent.id}
                         compact
                       />
                     ))}
@@ -163,10 +210,10 @@ export function AgentSelector({
             {filteredAgents.length} {t('agentsFound')}
           </div>
           <div className="flex gap-2">
-            <Button variant="outline" onClick={() => setOpen(false)}>
+            <Button variant="outline" onClick={handleCancelSelection}>
               {t('cancel')}
             </Button>
-            <Button onClick={() => setOpen(false)} disabled={!currentAgent}>
+            <Button onClick={handleConfirmSelection} disabled={!tempSelectedAgentId}>
               {t('confirm')}
             </Button>
           </div>

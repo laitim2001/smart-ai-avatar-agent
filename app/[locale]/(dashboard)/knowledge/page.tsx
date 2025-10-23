@@ -220,6 +220,9 @@ export default function KnowledgePage() {
       {/* 知識類型卡片 */}
       <div>
         <h2 className="text-xl font-semibold text-gray-900 mb-4">{t('types.title')}</h2>
+        <p className="text-sm text-gray-600 mb-4">
+          💡 知識庫可以關聯到不同的 AI Agent，讓 Agent 擁有專屬的知識與能力。前往 <Link href="/agents" className="text-blue-600 hover:underline">Agent 管理頁面</Link> 設定關聯。
+        </p>
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
           {knowledgeTypes.map((type) => {
             const Icon = type.icon

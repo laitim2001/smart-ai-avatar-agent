@@ -46,7 +46,7 @@ export const AVATARS_METADATA: AvatarMetadata[] = [
     nameEn: 'Lily',
     description: '休閒活潑風格，適合輕鬆友好的日常對話',
     descriptionEn: 'Casual and lively style, suitable for relaxed daily conversations',
-    url: 'https://models.readyplayer.me/658228794c1a2f27fd06b253.glb?morphTargets=Oculus%20Visemes',
+    url: 'https://models.readyplayer.me/64bfa15f0e72c63d7c3934a6.glb?morphTargets=Oculus%20Visemes', // 使用有效的模型
     thumbnail: '👩',
     category: 'female',
     tags: ['casual', 'friendly', 'everyday'],
@@ -59,7 +59,7 @@ export const AVATARS_METADATA: AvatarMetadata[] = [
     nameEn: 'Sophie',
     description: '創意藝術風格，適合設計與創意主題對話',
     descriptionEn: 'Creative artistic style, suitable for design and creative topics',
-    url: 'https://models.readyplayer.me/64bfa15f0e72c63d7c3934a6.glb?morphTargets=Oculus%20Visemes', // 使用艾莉絲的模型
+    url: 'https://models.readyplayer.me/64bfa15f0e72c63d7c3934a6.glb?morphTargets=Oculus%20Visemes',
     thumbnail: '👩‍🎨',
     category: 'female',
     tags: ['creative', 'artistic', 'design'],
@@ -72,7 +72,7 @@ export const AVATARS_METADATA: AvatarMetadata[] = [
     nameEn: 'Emma',
     description: '科技專業風格，適合技術討論與教學對話',
     descriptionEn: 'Tech professional style, suitable for technical discussions',
-    url: 'https://models.readyplayer.me/658228794c1a2f27fd06b253.glb?morphTargets=Oculus%20Visemes', // 使用莉莉的模型
+    url: 'https://models.readyplayer.me/64bfa15f0e72c63d7c3934a6.glb?morphTargets=Oculus%20Visemes', // 使用有效的模型
     thumbnail: '👩‍💻',
     category: 'female',
     tags: ['tech', 'professional', 'education'],
@@ -87,7 +87,7 @@ export const AVATARS_METADATA: AvatarMetadata[] = [
     nameEn: 'Jack',
     description: '休閒友善風格，適合日常交流與輕鬆對話',
     descriptionEn: 'Casual friendly style, suitable for daily communication',
-    url: 'https://models.readyplayer.me/65d5a1b8e37f9e000a7aa0ec.glb?morphTargets=Oculus%20Visemes',
+    url: 'https://models.readyplayer.me/64bfa15f0e72c63d7c3934a6.glb?morphTargets=Oculus%20Visemes',
     thumbnail: '👨',
     category: 'male',
     tags: ['casual', 'friendly', 'everyday'],
@@ -100,7 +100,7 @@ export const AVATARS_METADATA: AvatarMetadata[] = [
     nameEn: 'Mike',
     description: '專業商務風格，適合正式商談與諮詢服務',
     descriptionEn: 'Professional business style, suitable for formal consultations',
-    url: 'https://models.readyplayer.me/65d5a1b8e37f9e000a7aa0ec.glb?morphTargets=Oculus%20Visemes', // 使用傑克的模型
+    url: 'https://models.readyplayer.me/64bfa15f0e72c63d7c3934a6.glb?morphTargets=Oculus%20Visemes', // 使用有效的模型
     thumbnail: '👨‍💼',
     category: 'male',
     tags: ['professional', 'business', 'consultant'],
@@ -113,7 +113,7 @@ export const AVATARS_METADATA: AvatarMetadata[] = [
     nameEn: 'Ryan',
     description: '運動活力風格，適合健身與運動主題對話',
     descriptionEn: 'Sporty energetic style, suitable for fitness topics',
-    url: 'https://models.readyplayer.me/65d5a1b8e37f9e000a7aa0ec.glb?morphTargets=Oculus%20Visemes', // 使用傑克的模型
+    url: 'https://models.readyplayer.me/64bfa15f0e72c63d7c3934a6.glb?morphTargets=Oculus%20Visemes', // 使用有效的模型
     thumbnail: '🏃‍♂️',
     category: 'male',
     tags: ['sporty', 'energetic', 'fitness'],
@@ -126,7 +126,7 @@ export const AVATARS_METADATA: AvatarMetadata[] = [
     nameEn: 'David',
     description: '學術專業風格，適合教育與研究主題討論',
     descriptionEn: 'Academic professional style, suitable for education and research',
-    url: 'https://models.readyplayer.me/65d5a1b8e37f9e000a7aa0ec.glb?morphTargets=Oculus%20Visemes', // 使用傑克的模型
+    url: 'https://models.readyplayer.me/64bfa15f0e72c63d7c3934a6.glb?morphTargets=Oculus%20Visemes', // 使用有效的模型
     thumbnail: '👨‍🏫',
     category: 'male',
     tags: ['academic', 'education', 'research'],
@@ -141,7 +141,7 @@ export const AVATARS_METADATA: AvatarMetadata[] = [
     nameEn: 'Casey',
     description: '現代中性風格，適合多元包容的對話場景',
     descriptionEn: 'Modern neutral style, suitable for inclusive conversations',
-    url: 'https://models.readyplayer.me/64bfa15f0e72c63d7c3934a6.glb?morphTargets=Oculus%20Visemes', // 使用艾莉絲的模型
+    url: 'https://models.readyplayer.me/64bfa15f0e72c63d7c3934a6.glb?morphTargets=Oculus%20Visemes',
     thumbnail: '🧑',
     category: 'neutral',
     tags: ['modern', 'neutral', 'inclusive'],
@@ -154,7 +154,7 @@ export const AVATARS_METADATA: AvatarMetadata[] = [
     nameEn: 'Taylor',
     description: '科技中性風格，適合未來科技與 AI 主題',
     descriptionEn: 'Tech neutral style, suitable for future tech and AI topics',
-    url: 'https://models.readyplayer.me/658228794c1a2f27fd06b253.glb?morphTargets=Oculus%20Visemes', // 使用莉莉的模型
+    url: 'https://models.readyplayer.me/64bfa15f0e72c63d7c3934a6.glb?morphTargets=Oculus%20Visemes', // 使用有效的模型
     thumbnail: '🧑‍💻',
     category: 'neutral',
     tags: ['tech', 'futuristic', 'ai'],
@@ -167,7 +167,7 @@ export const AVATARS_METADATA: AvatarMetadata[] = [
     nameEn: 'Jordan',
     description: '創意中性風格，適合藝術與設計主題對話',
     descriptionEn: 'Creative neutral style, suitable for art and design topics',
-    url: 'https://models.readyplayer.me/65d5a1b8e37f9e000a7aa0ec.glb?morphTargets=Oculus%20Visemes', // 使用傑克的有效模型
+    url: 'https://models.readyplayer.me/64bfa15f0e72c63d7c3934a6.glb?morphTargets=Oculus%20Visemes', // 使用有效的模型
     thumbnail: '🧑‍🎨',
     category: 'neutral',
     tags: ['creative', 'artistic', 'design'],
