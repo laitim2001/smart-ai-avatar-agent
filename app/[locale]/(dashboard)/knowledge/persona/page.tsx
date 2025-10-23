@@ -1,294 +1,457 @@
+/**
+ * Persona 管理頁面
+ * @module app/[locale]/(dashboard)/knowledge/persona/page
+ * @description 瀏覽、建立、編輯、刪除 Persona 的完整管理介面
+ */
+
 'use client'
 
 import { useEffect, useState } from 'react'
-import { Users, Save, RotateCcw, CheckCircle2, AlertCircle, TrendingUp } from 'lucide-react'
-import MarkdownEditor from '@/components/knowledge/MarkdownEditor'
-import MarkdownPreview from '@/components/knowledge/MarkdownPreview'
+import { Users, Search, Plus, Loader2, Bot, Globe, CheckCircle, AlertCircle, TrendingUp } from 'lucide-react'
+import { PersonaCard } from '@/components/knowledge/PersonaCard'
+import { PersonaForm } from '@/components/knowledge/PersonaForm'
+import { Button } from '@/components/ui/button'
+import { Input } from '@/components/ui/input'
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from '@/components/ui/alert-dialog'
+import { toast } from 'sonner'
 
-interface PersonaSection {
-  title: string
-  content: string
-  wordCount: number
-  isComplete: boolean
-  warnings: string[]
-}
-
-interface PersonaData {
-  content: string
-  metadata: {
-    filename: string
-    lastModified: string
-    size: number
-    wordCount: number
+interface Persona {
+  id: string
+  name: string
+  role: string
+  description: string
+  systemPrompt: string
+  language: string
+  tone: string
+  style?: string[]
+  capabilities?: string[]
+  restrictions?: string[]
+  version: string
+  isActive: boolean
+  _count?: {
+    agents: number
   }
-  structure: {
-    sections: PersonaSection[]
-    completeness: number
-    consistency: number
-  }
-}
-
-interface ValidationResult {
-  valid: boolean
-  errors: Array<{ field: string; message: string }>
-  warnings: Array<{ field: string; message: string }>
-  score: number
+  agents?: any[]
+  createdAt: string
+  updatedAt: string
 }
 
 /**
- * Persona 編輯器頁面
- * 提供 Markdown 編輯、即時預覽、結構檢查等功能
+ * Persona 管理主頁面
  */
-export default function PersonaEditorPage() {
-  const [content, setContent] = useState('')
-  const [originalContent, setOriginalContent] = useState('')
-  const [personaData, setPersonaData] = useState<PersonaData | null>(null)
-  const [validation, setValidation] = useState<ValidationResult | null>(null)
-  const [loading, setLoading] = useState(true)
-  const [saving, setSaving] = useState(false)
-  const [showPreview, setShowPreview] = useState(true)
-  const [hasChanges, setHasChanges] = useState(false)
+export default function PersonaManagementPage() {
+  const [personas, setPersonas] = useState<Persona[]>([])
+  const [filteredPersonas, setFilteredPersonas] = useState<Persona[]>([])
+  const [isLoading, setIsLoading] = useState(true)
+  const [searchQuery, setSearchQuery] = useState('')
+  const [languageFilter, setLanguageFilter] = useState<string>('all')
+  const [statusFilter, setStatusFilter] = useState<string>('all')
 
-  // 載入 Persona 資料
-  useEffect(() => {
-    async function loadPersona() {
-      try {
-        const response = await fetch('/api/knowledge/persona')
-        const result = await response.json()
+  // 表單狀態
+  const [isFormOpen, setIsFormOpen] = useState(false)
+  const [editingPersona, setEditingPersona] = useState<Persona | null>(null)
 
-        if (result.success) {
-          const data = result.data as PersonaData
-          console.log('[Persona 編輯器] 載入成功 - 內容長度:', data.content.length, '字元')
-          console.log('[Persona 編輯器] 前 100 字元:', data.content.substring(0, 100))
-          setPersonaData(data)
-          setContent(data.content)
-          setOriginalContent(data.content)
-        } else {
-          console.error('[Persona 編輯器] 載入失敗:', result.error)
-        }
-      } catch (error) {
-        console.error('[Persona 編輯器] 載入錯誤:', error)
-      } finally {
-        setLoading(false)
-      }
-    }
+  // 刪除狀態
+  const [deletingPersona, setDeletingPersona] = useState<{
+    persona: Persona
+    linkedAgents: any[]
+    canDelete: boolean
+  } | null>(null)
 
-    loadPersona()
-  }, [])
-
-  // 監控內容變更
-  useEffect(() => {
-    setHasChanges(content !== originalContent)
-  }, [content, originalContent])
-
-  // 儲存 Persona
-  const handleSave = async () => {
-    setSaving(true)
+  // 載入 Persona 列表
+  const loadPersonas = async () => {
     try {
-      const response = await fetch('/api/knowledge/persona', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ content }),
-      })
+      setIsLoading(true)
+      const response = await fetch('/api/personas')
+      const data = await response.json()
 
-      const result = await response.json()
-
-      if (result.success) {
-        setOriginalContent(content)
-        setValidation(result.data.validation)
-        alert('✅ Persona 儲存成功！')
+      if (data.success) {
+        // 載入完整資料（包含 Agent 數量）
+        const personasWithCount = await Promise.all(
+          data.data.map(async (persona: Persona) => {
+            try {
+              const agentsResponse = await fetch(`/api/personas/${persona.id}/agents`)
+              const agentsData = await agentsResponse.json()
+              return {
+                ...persona,
+                _count: { agents: agentsData.total || 0 },
+                agents: agentsData.data || [],
+              }
+            } catch {
+              return { ...persona, _count: { agents: 0 }, agents: [] }
+            }
+          })
+        )
+        setPersonas(personasWithCount)
+        setFilteredPersonas(personasWithCount)
       } else {
-        alert(`❌ 儲存失敗: ${result.error.message}`)
-        if (result.error.details) {
-          setValidation(result.error.details)
-        }
+        toast.error('載入 Persona 列表失敗')
       }
     } catch (error) {
-      console.error('[Persona 編輯器] 儲存錯誤:', error)
-      alert('❌ 儲存失敗，請檢查網路連線')
+      console.error('[Load Personas Error]', error)
+      toast.error('載入 Persona 列表失敗')
     } finally {
-      setSaving(false)
+      setIsLoading(false)
     }
   }
 
-  // 重置變更
-  const handleReset = () => {
-    if (confirm('確定要放棄所有未儲存的變更嗎？')) {
-      setContent(originalContent)
+  // 初始載入
+  useEffect(() => {
+    loadPersonas()
+  }, [])
+
+  // 篩選邏輯
+  useEffect(() => {
+    let result = [...personas]
+
+    // 搜尋過濾
+    if (searchQuery) {
+      const query = searchQuery.toLowerCase()
+      result = result.filter(
+        (persona) =>
+          persona.name.toLowerCase().includes(query) ||
+          persona.role.toLowerCase().includes(query) ||
+          persona.description.toLowerCase().includes(query) ||
+          persona.capabilities?.some((cap) => cap.toLowerCase().includes(query))
+      )
+    }
+
+    // 語言過濾
+    if (languageFilter !== 'all') {
+      result = result.filter((persona) => persona.language === languageFilter)
+    }
+
+    // 狀態過濾
+    if (statusFilter === 'active') {
+      result = result.filter((persona) => persona.isActive)
+    } else if (statusFilter === 'inactive') {
+      result = result.filter((persona) => !persona.isActive)
+    }
+
+    setFilteredPersonas(result)
+  }, [searchQuery, languageFilter, statusFilter, personas])
+
+  // 統計資料
+  const totalPersonas = personas.length
+  const totalLinkedAgents = personas.reduce((sum, p) => sum + (p._count?.agents || 0), 0)
+  const uniqueLanguages = [...new Set(personas.map((p) => p.language))].length
+  const activePersonas = personas.filter((p) => p.isActive).length
+
+  // 處理建立 Persona
+  const handleCreate = () => {
+    setEditingPersona(null)
+    setIsFormOpen(true)
+  }
+
+  // 處理編輯 Persona
+  const handleEdit = async (persona: Persona) => {
+    try {
+      // 載入完整的 Persona 資料
+      const response = await fetch(`/api/personas/${persona.id}`)
+      const data = await response.json()
+
+      if (data.success) {
+        setEditingPersona(data.data)
+        setIsFormOpen(true)
+      } else {
+        toast.error('載入 Persona 詳情失敗')
+      }
+    } catch (error) {
+      console.error('[Load Persona Detail Error]', error)
+      toast.error('載入 Persona 詳情失敗')
     }
   }
 
-  if (loading) {
-    return (
-      <div className="flex items-center justify-center h-96">
-        <div className="text-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto mb-4"></div>
-          <p className="text-gray-600">載入 Persona 資料...</p>
-        </div>
-      </div>
-    )
+  // 處理刪除 Persona（顯示確認對話框）
+  const handleDelete = async (persona: Persona) => {
+    try {
+      // 檢查關聯的 Agent
+      const response = await fetch(`/api/personas/${persona.id}/agents`)
+      const data = await response.json()
+
+      if (data.success) {
+        setDeletingPersona({
+          persona,
+          linkedAgents: data.data || [],
+          canDelete: data.total === 0,
+        })
+      }
+    } catch (error) {
+      console.error('[Check Linked Agents Error]', error)
+      toast.error('檢查 Persona 關聯失敗')
+    }
+  }
+
+  // 確認刪除 Persona
+  const confirmDelete = async () => {
+    if (!deletingPersona || !deletingPersona.canDelete) return
+
+    try {
+      const response = await fetch(`/api/personas/${deletingPersona.persona.id}`, {
+        method: 'DELETE',
+      })
+
+      const data = await response.json()
+
+      if (data.success) {
+        toast.success('Persona 已刪除')
+        loadPersonas() // 重新載入列表
+      } else {
+        toast.error(data.error?.message || '刪除失敗')
+      }
+    } catch (error) {
+      console.error('[Delete Persona Error]', error)
+      toast.error('刪除 Persona 失敗')
+    } finally {
+      setDeletingPersona(null)
+    }
   }
 
   return (
-    <div className="space-y-4">
-      {/* 頁面標題與操作按鈕 */}
-      <div className="flex items-center justify-between">
-        <div>
-          <h1 className="text-3xl font-bold text-gray-900 flex items-center gap-3">
-            <Users className="h-8 w-8 text-blue-600" />
-            Persona 定義編輯器
-          </h1>
-          <p className="text-gray-600 mt-2">定義 AI Agent 的角色、專業領域、溝通風格</p>
-        </div>
-
-        <div className="flex items-center gap-2">
-          <button
-            onClick={() => setShowPreview(!showPreview)}
-            className="px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors"
-          >
-            {showPreview ? '隱藏預覽' : '顯示預覽'}
-          </button>
-
-          {hasChanges && (
-            <button
-              onClick={handleReset}
-              disabled={saving}
-              className="px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors flex items-center gap-2 disabled:opacity-50"
-            >
-              <RotateCcw className="h-4 w-4" />
-              重置
-            </button>
-          )}
-
-          <button
-            onClick={handleSave}
-            disabled={!hasChanges || saving}
-            className="px-4 py-2 text-sm font-medium text-white bg-blue-600 rounded-lg hover:bg-blue-700 transition-colors flex items-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
-          >
-            <Save className="h-4 w-4" />
-            {saving ? '儲存中...' : '儲存變更'}
-          </button>
-        </div>
-      </div>
-
-      {/* 統計資訊 */}
-      {personaData && (
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-          <div className="bg-white p-4 rounded-lg border border-gray-200">
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-sm text-gray-600">完整度</p>
-                <p className="text-2xl font-bold text-gray-900">
-                  {personaData.structure.completeness}%
-                </p>
-              </div>
-              <TrendingUp
-                className={`h-8 w-8 ${
-                  personaData.structure.completeness >= 80
-                    ? 'text-green-500'
-                    : 'text-orange-500'
-                }`}
-              />
-            </div>
-          </div>
-
-          <div className="bg-white p-4 rounded-lg border border-gray-200">
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-sm text-gray-600">章節數量</p>
-                <p className="text-2xl font-bold text-gray-900">
-                  {personaData.structure.sections.length}
-                </p>
-              </div>
-              <CheckCircle2 className="h-8 w-8 text-blue-500" />
-            </div>
-          </div>
-
-          <div className="bg-white p-4 rounded-lg border border-gray-200">
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-sm text-gray-600">字數</p>
-                <p className="text-2xl font-bold text-gray-900">
-                  {personaData.metadata.wordCount.toLocaleString()}
-                </p>
-              </div>
-              <Users className="h-8 w-8 text-purple-500" />
-            </div>
-          </div>
-        </div>
-      )}
-
-      {/* 驗證警告 */}
-      {validation && validation.warnings && validation.warnings.length > 0 && (
-        <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-4">
-          <h3 className="font-semibold text-yellow-900 mb-2 flex items-center gap-2">
-            <AlertCircle className="h-5 w-5" />
-            建議改善 ({validation.warnings.length})
-          </h3>
-          <ul className="space-y-1 text-sm text-yellow-800">
-            {validation.warnings.map((warning, idx) => (
-              <li key={idx}>• {warning.message}</li>
-            ))}
-          </ul>
-        </div>
-      )}
-
-      {/* 編輯器與預覽 */}
-      <div className={`grid ${showPreview ? 'grid-cols-2' : 'grid-cols-1'} gap-4`}>
-        {/* Markdown 編輯器 */}
-        <div>
-          <div className="mb-2 flex items-center justify-between">
-            <h2 className="text-sm font-semibold text-gray-700">編輯器 (Markdown)</h2>
-            {hasChanges && (
-              <span className="text-xs text-orange-600 font-medium">● 未儲存變更</span>
-            )}
-          </div>
-          {content && (
-            <MarkdownEditor
-              key={personaData?.metadata.lastModified || 'editor'}
-              value={content}
-              onChange={setContent}
-              height="calc(100vh - 400px)"
-              onSave={handleSave}
-            />
-          )}
-          {!content && (
-            <div className="border border-gray-200 rounded-lg overflow-hidden flex items-center justify-center bg-gray-50" style={{height: 'calc(100vh - 400px)'}}>
-              <div className="text-gray-500">載入編輯器...</div>
-            </div>
-          )}
-          <p className="text-xs text-gray-500 mt-2">
-            💡 提示: 使用 Ctrl+S (或 Cmd+S) 快速儲存
-          </p>
-        </div>
-
-        {/* Markdown 預覽 */}
-        {showPreview && (
+    <div className="space-y-6">
+      {/* 頁面標題區塊 */}
+      <div className="rounded-lg bg-gradient-to-r from-purple-600 to-blue-600 p-8 text-white shadow-lg">
+        <div className="flex items-center justify-between">
           <div>
-            <div className="mb-2">
-              <h2 className="text-sm font-semibold text-gray-700">即時預覽</h2>
-            </div>
-            <MarkdownPreview content={content} className="h-[calc(100vh-400px)]" />
+            <h1 className="text-4xl font-bold flex items-center gap-3">
+              <Users className="w-10 h-10" />
+              Persona 管理
+            </h1>
+            <p className="text-purple-100 mt-2 text-lg">
+              定義 AI Agent 的角色、專業領域、溝通風格
+            </p>
           </div>
-        )}
+
+          <Button
+            size="lg"
+            className="gap-2 bg-white text-purple-600 hover:bg-purple-50"
+            onClick={handleCreate}
+          >
+            <Plus className="w-5 h-5" />
+            建立 Persona
+          </Button>
+        </div>
       </div>
 
-      {/* 章節導航 */}
-      {personaData && personaData.structure.sections.length > 0 && (
-        <div className="bg-white p-4 rounded-lg border border-gray-200">
-          <h3 className="font-semibold text-gray-900 mb-3">📑 章節導航</h3>
-          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-2">
-            {personaData.structure.sections.map((section, idx) => (
-              <div
-                key={idx}
-                className="text-sm text-gray-700 px-3 py-2 bg-gray-50 rounded border border-gray-200"
-              >
-                {section.title}
-              </div>
-            ))}
+      {/* 統計卡片 */}
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+        <div className="bg-white p-6 rounded-lg border border-gray-200 shadow-sm hover:shadow-md transition-shadow">
+          <div className="flex items-center justify-between">
+            <div>
+              <p className="text-sm text-gray-600 mb-1">總 Persona 數</p>
+              <p className="text-3xl font-bold text-gray-900">{totalPersonas}</p>
+            </div>
+            <div className="flex h-12 w-12 items-center justify-center rounded-full bg-blue-50">
+              <Users className="h-6 w-6 text-blue-600" />
+            </div>
           </div>
         </div>
+
+        <div className="bg-white p-6 rounded-lg border border-gray-200 shadow-sm hover:shadow-md transition-shadow">
+          <div className="flex items-center justify-between">
+            <div>
+              <p className="text-sm text-gray-600 mb-1">關聯 Agent 數</p>
+              <p className="text-3xl font-bold text-gray-900">{totalLinkedAgents}</p>
+            </div>
+            <div className="flex h-12 w-12 items-center justify-center rounded-full bg-green-50">
+              <Bot className="h-6 w-6 text-green-600" />
+            </div>
+          </div>
+        </div>
+
+        <div className="bg-white p-6 rounded-lg border border-gray-200 shadow-sm hover:shadow-md transition-shadow">
+          <div className="flex items-center justify-between">
+            <div>
+              <p className="text-sm text-gray-600 mb-1">支援語言</p>
+              <p className="text-3xl font-bold text-gray-900">{uniqueLanguages}</p>
+            </div>
+            <div className="flex h-12 w-12 items-center justify-center rounded-full bg-purple-50">
+              <Globe className="h-6 w-6 text-purple-600" />
+            </div>
+          </div>
+        </div>
+
+        <div className="bg-white p-6 rounded-lg border border-gray-200 shadow-sm hover:shadow-md transition-shadow">
+          <div className="flex items-center justify-between">
+            <div>
+              <p className="text-sm text-gray-600 mb-1">啟用中</p>
+              <p className="text-3xl font-bold text-gray-900">{activePersonas}</p>
+            </div>
+            <div className="flex h-12 w-12 items-center justify-center rounded-full bg-yellow-50">
+              <CheckCircle className="h-6 w-6 text-yellow-600" />
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* 搜尋和篩選 */}
+      <div className="flex flex-col sm:flex-row gap-4">
+        <div className="relative flex-1">
+          <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
+          <Input
+            placeholder="搜尋 Persona 名稱、角色、描述、能力..."
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+            className="pl-10"
+          />
+        </div>
+
+        <Select value={languageFilter} onValueChange={setLanguageFilter}>
+          <SelectTrigger className="w-full sm:w-[180px] bg-white">
+            <SelectValue placeholder="選擇語言" />
+          </SelectTrigger>
+          <SelectContent className="bg-white">
+            <SelectItem value="all">所有語言</SelectItem>
+            <SelectItem value="zh-TW">繁體中文</SelectItem>
+            <SelectItem value="en">English</SelectItem>
+            <SelectItem value="ja">日本語</SelectItem>
+          </SelectContent>
+        </Select>
+
+        <Select value={statusFilter} onValueChange={setStatusFilter}>
+          <SelectTrigger className="w-full sm:w-[180px] bg-white">
+            <SelectValue placeholder="選擇狀態" />
+          </SelectTrigger>
+          <SelectContent className="bg-white">
+            <SelectItem value="all">所有狀態</SelectItem>
+            <SelectItem value="active">啟用中</SelectItem>
+            <SelectItem value="inactive">已停用</SelectItem>
+          </SelectContent>
+        </Select>
+      </div>
+
+      {/* Persona 列表 */}
+      {isLoading ? (
+        <div className="flex items-center justify-center py-20">
+          <Loader2 className="w-8 h-8 animate-spin text-purple-600" />
+        </div>
+      ) : filteredPersonas.length === 0 ? (
+        <div className="text-center py-20 bg-white rounded-lg border border-gray-200">
+          <Users className="w-16 h-16 mx-auto mb-4 opacity-50 text-gray-400" />
+          <p className="text-lg text-gray-600 mb-4">
+            {searchQuery || languageFilter !== 'all' || statusFilter !== 'all'
+              ? '找不到符合條件的 Persona'
+              : '尚未建立任何 Persona'}
+          </p>
+          <Button
+            variant="outline"
+            onClick={() => {
+              setSearchQuery('')
+              setLanguageFilter('all')
+              setStatusFilter('all')
+            }}
+          >
+            清除篩選
+          </Button>
+        </div>
+      ) : (
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          {filteredPersonas.map((persona) => (
+            <PersonaCard
+              key={persona.id}
+              persona={persona}
+              onEdit={handleEdit}
+              onDelete={handleDelete}
+            />
+          ))}
+        </div>
       )}
+
+      {/* 使用指南 */}
+      <div className="bg-purple-50 border border-purple-200 rounded-lg p-6">
+        <h3 className="font-semibold text-purple-900 mb-3 flex items-center gap-2">
+          <TrendingUp className="h-5 w-5" />
+          使用指南
+        </h3>
+        <ul className="space-y-2 text-sm text-purple-800">
+          <li>• 建立 Persona 定義 AI Agent 的角色、專業領域、溝通風格</li>
+          <li>• 每個 Agent 必須綁定一個 Persona，決定其行為和回應方式</li>
+          <li>• 編輯 Persona 會影響所有使用它的 Agent</li>
+          <li>• 如果 Persona 被 Agent 使用，需先解除綁定才能刪除</li>
+        </ul>
+      </div>
+
+      {/* Persona 表單對話框 */}
+      <PersonaForm
+        persona={editingPersona}
+        open={isFormOpen}
+        onOpenChange={setIsFormOpen}
+        onSuccess={loadPersonas}
+      />
+
+      {/* 刪除確認對話框 */}
+      <AlertDialog
+        open={!!deletingPersona}
+        onOpenChange={(open) => !open && setDeletingPersona(null)}
+      >
+        <AlertDialogContent className="bg-white">
+          <AlertDialogHeader>
+            <AlertDialogTitle className={deletingPersona?.canDelete ? '' : 'flex items-center gap-2 text-orange-600'}>
+              {deletingPersona?.canDelete ? (
+                '確認刪除 Persona'
+              ) : (
+                <>
+                  <AlertCircle className="w-5 h-5" />
+                  無法刪除 Persona
+                </>
+              )}
+            </AlertDialogTitle>
+            <AlertDialogDescription>
+              {deletingPersona?.canDelete ? (
+                <div>
+                  您確定要刪除 <span className="font-semibold">"{deletingPersona.persona.name}"</span> 嗎？
+                  <br />
+                  此操作無法復原。
+                </div>
+              ) : (
+                <div className="space-y-3">
+                  <p>
+                    <span className="font-semibold">"{deletingPersona?.persona.name}"</span> 目前被以下{' '}
+                    {deletingPersona?.linkedAgents.length} 個 Agent 使用，無法刪除：
+                  </p>
+
+                  <div className="bg-orange-50 border border-orange-200 rounded-lg p-3 max-h-[200px] overflow-y-auto">
+                    <ul className="space-y-2">
+                      {deletingPersona?.linkedAgents.map((agent) => (
+                        <li key={agent.id} className="flex items-center gap-2 text-sm">
+                          <Bot className="w-4 h-4 text-orange-600" />
+                          <span className="font-medium">{agent.name}</span>
+                          <span className="text-gray-500">({agent.category})</span>
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+
+                  <p className="text-sm text-gray-600">
+                    💡 提示：請先將這些 Agent 切換到其他 Persona，或刪除這些 Agent 後再刪除此 Persona。
+                  </p>
+                </div>
+              )}
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>{deletingPersona?.canDelete ? '取消' : '了解'}</AlertDialogCancel>
+            {deletingPersona?.canDelete && (
+              <AlertDialogAction
+                onClick={confirmDelete}
+                className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+              >
+                確認刪除
+              </AlertDialogAction>
+            )}
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </div>
   )
 }

@@ -57,6 +57,17 @@ interface KnowledgeBase {
   category: string
 }
 
+interface Persona {
+  id: string
+  name: string
+  role: string
+  description: string
+  language: string
+  tone: string
+  capabilities?: string[]
+  version: string
+}
+
 /**
  * Agent 編輯器對話框元件
  */
@@ -73,6 +84,8 @@ export function AgentEditor({
   const [currentTab, setCurrentTab] = useState('basic')
   const [availableKnowledgeBases, setAvailableKnowledgeBases] = useState<KnowledgeBase[]>([])
   const [isLoadingKnowledge, setIsLoadingKnowledge] = useState(false)
+  const [availablePersonas, setAvailablePersonas] = useState<Persona[]>([])
+  const [isLoadingPersonas, setIsLoadingPersonas] = useState(false)
 
   const { createAgent, updateAgent, error, clearError } = useAgentStore()
 
@@ -94,10 +107,11 @@ export function AgentEditor({
   const setOpen = onOpenChange || setInternalOpen
   const isEditMode = !!agent
 
-  // 載入知識庫列表
+  // 載入知識庫列表和 Persona 列表
   useEffect(() => {
     if (isOpen) {
       loadKnowledgeBases()
+      loadPersonas()
     }
   }, [isOpen])
 
@@ -117,6 +131,25 @@ export function AgentEditor({
       toast.error(t('errors.loadKnowledgeFailed') || '載入知識庫失敗')
     } finally {
       setIsLoadingKnowledge(false)
+    }
+  }
+
+  const loadPersonas = async () => {
+    try {
+      setIsLoadingPersonas(true)
+      const response = await fetch('/api/personas')
+
+      if (!response.ok) {
+        throw new Error('Failed to load personas')
+      }
+
+      const data = await response.json()
+      setAvailablePersonas(data.data || [])
+    } catch (error) {
+      console.error('[AgentEditor] Load personas error:', error)
+      toast.error('載入 Persona 列表失敗')
+    } finally {
+      setIsLoadingPersonas(false)
     }
   }
 
@@ -379,19 +412,58 @@ export function AgentEditor({
               <TabsContent value="persona" className="space-y-4 mt-4">
                 <div className="space-y-2">
                   <Label htmlFor="personaId">{t('persona')} *</Label>
-                  <Select
-                    value={formData.personaId}
-                    onValueChange={(value) => updateField('personaId', value)}
-                  >
-                    <SelectTrigger>
-                      <SelectValue placeholder={t('selectPersona')} />
-                    </SelectTrigger>
-                    <SelectContent>
-                      {/* TODO: 從 API 載入 Persona 列表 */}
-                      <SelectItem value="system-cdo-advisor">CDO 商務顧問</SelectItem>
-                      <SelectItem value="system-tech-advisor">技術顧問</SelectItem>
-                    </SelectContent>
-                  </Select>
+                  {isLoadingPersonas ? (
+                    <div className="flex items-center justify-center py-4 border rounded-lg">
+                      <Loader2 className="w-5 h-5 animate-spin text-blue-600 mr-2" />
+                      <span className="text-sm text-gray-600">載入 Persona 列表...</span>
+                    </div>
+                  ) : (
+                    <Select
+                      value={formData.personaId}
+                      onValueChange={(value) => updateField('personaId', value)}
+                    >
+                      <SelectTrigger className="bg-white">
+                        <SelectValue placeholder={t('selectPersona')} />
+                      </SelectTrigger>
+                      <SelectContent className="bg-white">
+                        {availablePersonas.length === 0 ? (
+                          <div className="text-center py-4 text-sm text-gray-500">
+                            尚未建立任何 Persona
+                          </div>
+                        ) : (
+                          availablePersonas.map((persona) => (
+                            <SelectItem key={persona.id} value={persona.id}>
+                              <div className="flex flex-col">
+                                <span className="font-medium">{persona.name}</span>
+                                <span className="text-xs text-gray-500">{persona.role} • {persona.language}</span>
+                              </div>
+                            </SelectItem>
+                          ))
+                        )}
+                      </SelectContent>
+                    </Select>
+                  )}
+                  {formData.personaId && availablePersonas.length > 0 && (
+                    <div className="text-xs text-gray-500 mt-2">
+                      {(() => {
+                        const selectedPersona = availablePersonas.find((p) => p.id === formData.personaId)
+                        return selectedPersona ? (
+                          <div className="bg-blue-50 border border-blue-200 rounded-lg p-3">
+                            <p className="font-medium text-blue-900 mb-1">{selectedPersona.name}</p>
+                            <p className="text-blue-700">{selectedPersona.description}</p>
+                            <div className="flex gap-2 mt-2">
+                              <span className="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-blue-100 text-blue-800">
+                                {selectedPersona.tone}
+                              </span>
+                              <span className="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-blue-100 text-blue-800">
+                                v{selectedPersona.version}
+                              </span>
+                            </div>
+                          </div>
+                        ) : null
+                      })()}
+                    </div>
+                  )}
                 </div>
 
                 <div className="space-y-2">
