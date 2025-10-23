@@ -14,7 +14,12 @@ Epic 2: 用戶管理與設定                ✅ 100% 完成
 Epic 3: 核心對話系統                  ✅ 100% 完成
 Epic 4: Lip Sync 系統                 ✅ 100% 完成
 Epic 5: Multi AI Agent 系統           🔄 進行中 (70% 完成)
-Epic 6: 知識庫管理系統                🔄 進行中 (估計 80% 完成)
+Epic 6: 知識庫管理系統                ✅ 核心完成 (90% 完成)
+  ├─ Persona 管理系統                 ✅ 100% 完成
+  ├─ FAQ 管理                         ✅ 100% 完成
+  ├─ KPI 字典                         ✅ 100% 完成
+  ├─ Decision Log                     ⏳ 待實作
+  └─ Meeting Summary                  ⏳ 待實作
 ```
 
 **最新進展** (2025-10-23):
@@ -22,6 +27,8 @@ Epic 6: 知識庫管理系統                🔄 進行中 (估計 80% 完成)
 - ✅ 完成系統架構深度分析 (35,000 字技術文檔)
 - ✅ 知識庫整合機制完整運作
 - ✅ Agent-Knowledge 多對多關聯實作完成
+- ✅ **Persona 管理系統完整重構** (6 API + 3 UI 元件 + 雙重刪除驗證)
+- ✅ 建立 54,000+ 字完整技術文檔 (設計 + 測試 + 問題記錄)
 
 ---
 
@@ -251,15 +258,42 @@ Epic 6: 知識庫管理系統                🔄 進行中 (估計 80% 完成)
 - ✅ Persona + FAQ + KPI + Decision + Meeting
 - ✅ 完整的 RAG 架構實作
 
-**Story 6.5**: 知識庫管理 UI (⏳ 50%)
-- ✅ Persona 章節導航與編輯器
+**Story 6.5**: 知識庫管理 UI (✅ 100%)
+- ✅ Persona 管理系統 (完整重構)
 - ✅ FAQ 管理頁面
 - ✅ KPI 字典管理
 - ⏳ Decision Log 管理 (佔位頁面已建立)
 - ⏳ Meeting Summary 管理 (佔位頁面已建立)
 - ⏳ 批量操作與匯入/匯出
 
-**完成時間**: 2025-10-22
+**Story 6.6**: Persona 管理系統完整重構 (✅ 100%) ⭐ NEW
+- ✅ 問題診斷: Persona 頁面誤用為檔案編輯器
+- ✅ 完整的 Persona CRUD API (6 個端點)
+  - POST /api/personas (建立, Zod 驗證)
+  - GET /api/personas (列表查詢)
+  - GET /api/personas/[id] (單一 Persona)
+  - PUT /api/personas/[id] (更新)
+  - DELETE /api/personas/[id] (含刪除驗證)
+  - GET /api/personas/[id]/agents (關聯 Agents 查詢)
+- ✅ 刪除驗證邏輯 (前端 + 後端雙重保護)
+  - 前端: 有關聯 Agent 時禁用刪除按鈕 + Tooltip
+  - 後端: API 檢查關聯並回傳完整 Agent 列表
+  - 對話框: 顯示關聯 Agent 列表，提示先處理
+- ✅ UI 元件 (3 個)
+  - PersonaCard.tsx (145 行) - 卡片式顯示
+  - PersonaForm.tsx (502 行) - 4 分頁表單
+  - 重寫 persona/page.tsx (639 行) - 列表管理介面
+- ✅ AgentEditor 動態載入 Personas
+  - 取代硬編碼選項 ("CDO 商務顧問", "技術顧問")
+  - 自動載入 /api/personas
+  - Persona 詳情預覽
+- ✅ Selection 背景修復 (所有下拉選單統一為白色)
+- ✅ Switch UI 元件建立
+  - 基於 @radix-ui/react-switch
+  - 支援 checked/onCheckedChange
+  - 無障礙功能完整
+
+**完成時間**: 2025-10-23
 **待完成**: Decision Log 和 Meeting Summary 完整實作
 **Git Commits**:
 - `feat: implement KnowledgeBase data model`
@@ -269,9 +303,15 @@ Epic 6: 知識庫管理系統                🔄 進行中 (估計 80% 完成)
 - `feat: implement Persona navigation and editor`
 - `feat: add FAQ management page`
 - `feat: add KPI Dictionary management`
+- `feat(knowledge): Persona 管理系統完整重構` (56b0ec2) ⭐ NEW
+  - 9 files changed, 4,039 insertions(+), 253 deletions(-)
+- `fix(ui): 新增 Switch 元件修復 PersonaForm build 錯誤` (4464c52) ⭐ NEW
 
 **技術文檔**:
-- `claudedocs/SYSTEM_ARCHITECTURE_KNOWLEDGE_INTEGRATION_ANALYSIS.md` (35,000 字深度分析) ⭐ NEW
+- `claudedocs/SYSTEM_ARCHITECTURE_KNOWLEDGE_INTEGRATION_ANALYSIS.md` (35,000 字深度分析)
+- `claudedocs/PERSONA_MANAGEMENT_REDESIGN_2025-10-23.md` (12,000 字設計文件) ⭐ NEW
+- `claudedocs/PERSONA_MANAGEMENT_TESTING_GUIDE.md` (15,000 字測試指南) ⭐ NEW
+- `claudedocs/PERSONA_SYSTEM_ISSUES_AND_FIXES_2025-10-23.md` (27,000+ 字完整記錄) ⭐ NEW
 
 ---
 
@@ -319,6 +359,44 @@ Epic 6: 知識庫管理系統                🔄 進行中 (估計 80% 完成)
 - **文檔**:
   - `claudedocs/AGENT_SELECTOR_FIX_2025-10-23.md`
   - `claudedocs/AGENT_SELECTOR_FLOW_FIX_2025-10-23.md`
+
+### 🟢 Feature Implementation
+
+#### 5. Persona 管理系統完整重構 ⭐ NEW
+- **問題**: Persona 頁面誤用為 Markdown 檔案編輯器，而非資料庫 CRUD 管理
+- **影響**:
+  - 無法列出已建立的 Persona
+  - 無法執行 CRUD 操作
+  - Agent 綁定資料庫記錄，但 UI 與資料模型不匹配
+  - AgentEditor 硬編碼 Persona 選項
+  - 缺少刪除驗證邏輯（資料完整性風險）
+- **解決**:
+  - 建立完整的 Persona REST API (6 個端點)
+  - 雙重刪除驗證（前端禁用 + 後端檢查）
+  - 3 個高品質 UI 元件（PersonaCard, PersonaForm, 列表頁面）
+  - AgentEditor 動態載入 Personas
+  - Selection 背景統一修復
+  - Switch UI 元件建立
+- **變更統計**:
+  - 12 files changed, 4,110 insertions(+), 253 deletions(-)
+  - 54,000+ 字技術文檔
+- **修改文件**:
+  - `app/api/personas/[id]/route.ts` (新增, 291 行)
+  - `app/api/personas/[id]/agents/route.ts` (新增, 124 行)
+  - `app/api/personas/route.ts` (更新, 新增 POST)
+  - `components/knowledge/PersonaCard.tsx` (新增, 145 行)
+  - `components/knowledge/PersonaForm.tsx` (新增, 502 行)
+  - `components/ui/switch.tsx` (新增, 47 行)
+  - `app/[locale]/(dashboard)/knowledge/persona/page.tsx` (重寫, 639 行)
+  - `components/agents/AgentEditor.tsx` (更新, 動態載入)
+  - `package.json` (新增 @radix-ui/react-switch)
+- **Git Commits**:
+  - `feat(knowledge): Persona 管理系統完整重構` (56b0ec2)
+  - `fix(ui): 新增 Switch 元件修復 PersonaForm build 錯誤` (4464c52)
+- **文檔**:
+  - `claudedocs/PERSONA_MANAGEMENT_REDESIGN_2025-10-23.md` (12,000 字設計文件)
+  - `claudedocs/PERSONA_MANAGEMENT_TESTING_GUIDE.md` (15,000 字測試指南)
+  - `claudedocs/PERSONA_SYSTEM_ISSUES_AND_FIXES_2025-10-23.md` (27,000+ 字完整記錄)
 
 ---
 
