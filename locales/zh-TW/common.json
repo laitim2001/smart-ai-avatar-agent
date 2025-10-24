@@ -336,6 +336,7 @@
     "knowledgeBasesDescription": "選擇要關聯到此 Agent 的知識庫，將增強 Agent 的回答能力",
     "noKnowledgeBases": "目前沒有可用的知識庫",
     "loading": "載入中...",
+    "loadingAgentData": "載入 Agent 資料...",
     "knowledgeBasesCount": "{count} 個知識庫",
     "conversations": "對話",
     "conversationsCount": "{count} 次對話",
@@ -346,6 +347,9 @@
     "select": "選擇",
     "edit": "編輯",
     "deleteSuccess": "Agent 刪除成功",
+    "loadFailed": "載入失敗",
+    "agentDoesNotExist": "Agent 不存在或無法載入",
+    "backToMarketplace": "返回 Agent 市集",
     "guide": {
       "title": "使用指南",
       "selectAgent": "點擊任一 Agent 卡片即可選擇並開始對話",
@@ -455,6 +459,335 @@
       "tags": "標籤",
       "tagsHint": "請選擇 1-5 個標籤",
       "characters": "字元"
+    }
+  },
+  "faq": {
+    "title": "FAQ 管理",
+    "description": "管理常見問題與回答知識庫",
+    "addButton": "新增 FAQ",
+    "editTitle": "編輯 FAQ",
+    "createTitle": "新增 FAQ",
+    "loading": "載入 FAQ 資料...",
+    "searchPlaceholder": "搜尋問題、答案、關鍵字...",
+    "allTag": "全部",
+    "noFaqs": "尚無 FAQ，點擊上方「新增 FAQ」按鈕開始建立",
+    "noResults": "沒有符合條件的 FAQ",
+    "form": {
+      "question": "問題",
+      "questionPlaceholder": "輸入常見問題...",
+      "answer": "回答",
+      "answerPlaceholder": "輸入詳細回答...",
+      "tags": "標籤 (逗號分隔)",
+      "tagsPlaceholder": "例: 數據, 報表, 分析",
+      "keywords": "關鍵字 (逗號分隔)",
+      "keywordsPlaceholder": "例: 數據導出, Excel, CSV",
+      "required": "*"
+    },
+    "stats": {
+      "usage": "使用次數",
+      "updated": "更新"
+    },
+    "actions": {
+      "edit": "編輯",
+      "delete": "刪除",
+      "cancel": "取消",
+      "create": "新增",
+      "update": "更新"
+    },
+    "messages": {
+      "createSuccess": "FAQ 新增成功！",
+      "createError": "新增失敗",
+      "updateSuccess": "FAQ 更新成功！",
+      "updateError": "更新失敗",
+      "deleteSuccess": "FAQ 刪除成功！",
+      "deleteError": "刪除失敗",
+      "deleteConfirm": "確定要刪除這個 FAQ 嗎？",
+      "loadError": "載入失敗"
+    }
+  },
+  "kpi": {
+    "title": "KPI 字典管理",
+    "description": "管理業務指標定義與計算邏輯",
+    "addButton": "新增 KPI",
+    "editTitle": "編輯 KPI",
+    "createTitle": "新增 KPI",
+    "loading": "載入 KPI 資料...",
+    "searchPlaceholder": "搜尋 KPI 名稱、定義、計算邏輯...",
+    "allTag": "全部",
+    "noKpis": "尚無 KPI，點擊上方「新增 KPI」按鈕開始建立",
+    "noResults": "沒有符合條件的 KPI",
+    "form": {
+      "name": "KPI 名稱",
+      "namePlaceholder": "例: 月活躍用戶數 (MAU)",
+      "definition": "定義",
+      "definitionPlaceholder": "描述這個 KPI 的業務意義...",
+      "calculation": "計算邏輯 (SQL)",
+      "calculationPlaceholder": "SELECT COUNT(DISTINCT user_id) FROM user_activity WHERE ...",
+      "dataSource": "資料來源",
+      "dataSourcePlaceholder": "例: user_activity 表",
+      "owner": "負責人",
+      "ownerPlaceholder": "例: 數據分析團隊",
+      "tags": "標籤 (逗號分隔)",
+      "tagsPlaceholder": "例: 用戶, 活躍度",
+      "updateFrequency": "更新頻率",
+      "required": "*"
+    },
+    "frequency": {
+      "realtime": "即時",
+      "hourly": "每小時",
+      "daily": "每日",
+      "weekly": "每週",
+      "monthly": "每月"
+    },
+    "stats": {
+      "dataSource": "資料來源",
+      "owner": "負責人",
+      "updateFrequency": "更新頻率",
+      "lastUpdated": "最後更新"
+    },
+    "actions": {
+      "edit": "編輯",
+      "delete": "刪除",
+      "cancel": "取消",
+      "create": "新增",
+      "update": "更新"
+    },
+    "messages": {
+      "createSuccess": "KPI 新增成功！",
+      "createError": "新增失敗",
+      "updateSuccess": "KPI 更新成功！",
+      "updateError": "更新失敗",
+      "deleteSuccess": "KPI 刪除成功！",
+      "deleteError": "刪除失敗",
+      "deleteConfirm": "確定要刪除這個 KPI 嗎？",
+      "loadError": "載入失敗"
+    }
+  },
+  "decisions": {
+    "title": "決策日誌管理",
+    "description": "記錄重要決策的背景、選項、理由與影響",
+    "addButton": "新增決策",
+    "loading": "載入決策日誌...",
+    "searchPlaceholder": "搜尋決策標題、背景、內容...",
+    "noDecisions": "尚無決策記錄",
+    "noDecisionsHint": "開始記錄您的第一個重要決策",
+    "noResults": "找不到符合條件的決策記錄",
+    "status": {
+      "all": "全部狀態",
+      "pending": "待決策",
+      "decided": "已決策",
+      "implemented": "已實作",
+      "cancelled": "已取消"
+    },
+    "stats": {
+      "total": "總決策數",
+      "pending": "待決策",
+      "implemented": "已實作",
+      "thisMonth": "本月決策"
+    },
+    "detail": {
+      "context": "背景說明",
+      "options": "選項比較",
+      "pros": "優點",
+      "cons": "缺點",
+      "estimatedCost": "預估成本",
+      "decision": "決策與理由",
+      "decisionResult": "決策結果",
+      "impact": "影響評估",
+      "reviewDate": "預定檢討日期"
+    },
+    "actions": {
+      "addDecision": "新增決策"
+    }
+  },
+  "meetings": {
+    "title": "會議摘要管理",
+    "description": "記錄會議重點、決策、待辦事項與後續行動",
+    "addButton": "新增會議",
+    "loading": "載入會議摘要...",
+    "searchPlaceholder": "搜尋會議標題、摘要、參與者...",
+    "noMeetings": "尚無會議記錄",
+    "noMeetingsHint": "開始記錄您的第一個會議摘要",
+    "noResults": "找不到符合條件的會議記錄",
+    "type": {
+      "all": "全部類型",
+      "planning": "規劃會議",
+      "review": "審查會議",
+      "technical": "技術討論",
+      "retrospective": "回顧會議",
+      "standup": "站會"
+    },
+    "archiveFilter": {
+      "active": "進行中",
+      "archived": "已歸檔",
+      "all": "全部"
+    },
+    "stats": {
+      "total": "會議總數",
+      "actionItems": "待辦事項",
+      "inProgress": "進行中",
+      "completed": "已完成"
+    },
+    "actionStatus": {
+      "pending": "待處理",
+      "in_progress": "進行中",
+      "completed": "已完成"
+    },
+    "detail": {
+      "attendees": "參與者",
+      "summary": "會議摘要",
+      "keyPoints": "重點摘要",
+      "actionItems": "待辦事項",
+      "decisions": "決策事項",
+      "nextSteps": "後續行動",
+      "assignee": "負責人",
+      "dueDate": "截止日",
+      "duration": "分鐘",
+      "participants": "人參與"
+    },
+    "actions": {
+      "batchArchive": "批次歸檔",
+      "batchRestore": "批次恢復",
+      "archive": "已歸檔",
+      "addMeeting": "新增會議"
+    },
+    "messages": {
+      "noArchivable": "沒有可歸檔的會議",
+      "noRestorable": "沒有可恢復的會議",
+      "archiveConfirm": "確定要歸檔 {count} 個會議嗎？",
+      "restoreConfirm": "確定要恢復 {count} 個會議嗎？",
+      "archiveSuccess": "成功歸檔 {count} 個會議",
+      "restoreSuccess": "成功恢復 {count} 個會議",
+      "operationError": "操作失敗，請重試"
+    }
+  },
+  "persona": {
+    "title": "Persona 管理",
+    "description": "定義 AI Agent 的角色、專業領域、溝通風格",
+    "create": "建立 Persona",
+    "edit": "編輯 Persona",
+    "createNew": "建立新 Persona",
+    "editExisting": "編輯 Persona",
+    "backToList": "返回列表",
+    "saveChanges": "儲存變更",
+    "saving": "儲存中...",
+    "creating": "建立中...",
+    "loading": "載入中...",
+    "noPersonas": "尚未建立任何 Persona",
+    "noMatch": "找不到符合條件的 Persona",
+    "clearFilters": "清除篩選",
+    "searchPlaceholder": "搜尋 Persona 名稱、角色、描述、能力...",
+    "stats": {
+      "total": "總 Persona 數",
+      "linkedAgents": "關聯 Agent 數",
+      "languages": "支援語言",
+      "active": "啟用中"
+    },
+    "filters": {
+      "allLanguages": "所有語言",
+      "allStatus": "所有狀態",
+      "active": "啟用中",
+      "inactive": "已停用",
+      "language": "語言"
+    },
+    "languages": {
+      "zhTW": "繁體中文",
+      "en": "English",
+      "ja": "日本語"
+    },
+    "form": {
+      "basicInfo": "基本資訊",
+      "systemPrompt": "System Prompt",
+      "features": "特徵配置",
+      "versionStatus": "版本與狀態",
+      "name": "Persona 名稱",
+      "namePlaceholder": "例如：CDO 商務顧問",
+      "role": "角色定位",
+      "rolePlaceholder": "例如：Chief Data Officer",
+      "description": "詳細描述",
+      "descriptionPlaceholder": "描述此 Persona 的專業領域、特點、適用場景...",
+      "language": "語言",
+      "tone": "語氣",
+      "toneOptions": {
+        "professional": "專業 (Professional)",
+        "friendly": "友好 (Friendly)",
+        "casual": "輕鬆 (Casual)",
+        "academic": "學術 (Academic)"
+      },
+      "style": "風格標籤",
+      "stylePlaceholder": "輸入風格標籤後按 Enter",
+      "capabilities": "能力標籤",
+      "capabilitiesPlaceholder": "輸入能力標籤後按 Enter",
+      "restrictions": "限制標籤",
+      "restrictionsPlaceholder": "輸入限制標籤後按 Enter",
+      "version": "版本號",
+      "versionPlaceholder": "1.0.0",
+      "versionHint": "使用 Semantic Versioning 格式（如 1.0.0, 1.2.3）",
+      "isActive": "啟用此 Persona",
+      "isActiveHint": "停用後，此 Persona 將不會顯示在 Agent 選擇清單中",
+      "systemPromptEditor": "編輯區",
+      "systemPromptPreview": "預覽區",
+      "systemPromptHint": "System Prompt 撰寫提示",
+      "systemPromptTips": {
+        "1": "明確定義角色和專業領域",
+        "2": "說明回應風格和語氣",
+        "3": "列出核心能力和知識範圍",
+        "4": "設定限制和不回答的主題",
+        "5": "提供範例對話模式"
+      },
+      "featuresHint": "特徵配置說明",
+      "featuresTips": {
+        "style": "風格標籤: 定義表達方式（如：分析型、創意型、系統性、同理心）",
+        "capabilities": "能力標籤: 列出專業領域與技能（如：數據分析、策略規劃、技術諮詢）",
+        "restrictions": "限制標籤: 不應討論的主題（如：醫療診斷、法律建議、投資建議）",
+        "note": "這些標籤會在對話時自動注入 System Prompt 中，幫助 AI 更準確地扮演角色"
+      },
+      "versionHintTitle": "版本控制提示",
+      "versionTips": {
+        "major": "主版本 (major): 重大變更，不向後相容",
+        "minor": "次版本 (minor): 新增功能，向後相容",
+        "patch": "修訂版本 (patch): Bug 修復，向後相容"
+      },
+      "wordCount": "字數",
+      "meetsRequirement": "符合要求",
+      "belowMinimum": "未達最低要求",
+      "minLength": "至少 {min} 字元"
+    },
+    "validation": {
+      "nameRequired": "請填寫所有必填欄位",
+      "descriptionTooShort": "描述至少需要 10 字元",
+      "systemPromptTooShort": "System Prompt 至少需要 100 字元"
+    },
+    "actions": {
+      "create": "建立",
+      "update": "更新",
+      "cancel": "取消",
+      "delete": "刪除",
+      "edit": "編輯"
+    },
+    "messages": {
+      "created": "Persona 已建立",
+      "updated": "Persona 已更新",
+      "deleted": "Persona 已刪除",
+      "loadFailed": "載入 Persona 失敗",
+      "createFailed": "建立失敗，請稍後再試",
+      "updateFailed": "更新失敗，請稍後再試"
+    },
+    "deleteDialog": {
+      "title": "確認刪除 Persona",
+      "cannotDelete": "無法刪除 Persona",
+      "description": "您確定要刪除 \"{name}\" 嗎？此操作無法復原。",
+      "inUse": "\"{name}\" 目前被以下 {count} 個 Agent 使用，無法刪除：",
+      "tip": "提示：請先將這些 Agent 切換到其他 Persona，或刪除這些 Agent 後再刪除此 Persona。",
+      "confirm": "確認刪除",
+      "understand": "了解"
+    },
+    "guide": {
+      "title": "使用指南",
+      "1": "建立 Persona 定義 AI Agent 的角色、專業領域、溝通風格",
+      "2": "每個 Agent 必須綁定一個 Persona，決定其行為和回應方式",
+      "3": "編輯 Persona 會影響所有使用它的 Agent",
+      "4": "如果 Persona 被 Agent 使用，需先解除綁定才能刪除"
     }
   }
 }

@@ -18,11 +18,13 @@ import {
   AlertCircle,
 } from 'lucide-react'
 import type { MeetingSummary, ActionItem } from '@/types/knowledge'
+import { useTranslations } from 'next-intl'
 
 /**
  * 會議摘要管理頁面
  */
 export default function MeetingsPage() {
+  const t = useTranslations()
   const [meetings, setMeetings] = useState<MeetingSummary[]>([])
   const [filteredMeetings, setFilteredMeetings] = useState<MeetingSummary[]>([])
   const [loading, setLoading] = useState(true)
@@ -88,27 +90,27 @@ export default function MeetingsPage() {
     const badges = {
       planning: (
         <span className="inline-flex items-center px-2 py-1 text-xs font-medium text-blue-700 bg-blue-50 rounded-full">
-          規劃會議
+          {t('meetings.type.planning')}
         </span>
       ),
       review: (
         <span className="inline-flex items-center px-2 py-1 text-xs font-medium text-purple-700 bg-purple-50 rounded-full">
-          審查會議
+          {t('meetings.type.review')}
         </span>
       ),
       technical: (
         <span className="inline-flex items-center px-2 py-1 text-xs font-medium text-green-700 bg-green-50 rounded-full">
-          技術討論
+          {t('meetings.type.technical')}
         </span>
       ),
       retrospective: (
         <span className="inline-flex items-center px-2 py-1 text-xs font-medium text-orange-700 bg-orange-50 rounded-full">
-          回顧會議
+          {t('meetings.type.retrospective')}
         </span>
       ),
       standup: (
         <span className="inline-flex items-center px-2 py-1 text-xs font-medium text-gray-700 bg-gray-50 rounded-full">
-          站會
+          {t('meetings.type.standup')}
         </span>
       ),
     }
@@ -121,19 +123,19 @@ export default function MeetingsPage() {
       pending: (
         <span className="inline-flex items-center gap-1 text-xs text-gray-600">
           <Circle className="h-3 w-3" />
-          待處理
+          {t('meetings.actionStatus.pending')}
         </span>
       ),
       in_progress: (
         <span className="inline-flex items-center gap-1 text-xs text-blue-600">
           <Clock className="h-3 w-3" />
-          進行中
+          {t('meetings.actionStatus.in_progress')}
         </span>
       ),
       completed: (
         <span className="inline-flex items-center gap-1 text-xs text-green-600">
           <CheckCircle2 className="h-3 w-3" />
-          已完成
+          {t('meetings.actionStatus.completed')}
         </span>
       ),
     }
@@ -200,7 +202,7 @@ export default function MeetingsPage() {
       <div className="flex items-center justify-center h-96">
         <div className="text-center">
           <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto mb-4"></div>
-          <p className="text-gray-600">載入會議摘要...</p>
+          <p className="text-gray-600">{t('meetings.loading')}</p>
         </div>
       </div>
     )
@@ -213,14 +215,14 @@ export default function MeetingsPage() {
         <div>
           <h1 className="text-3xl font-bold text-gray-900 flex items-center gap-3">
             <Users className="h-8 w-8 text-purple-600" />
-            會議摘要管理
+            {t('meetings.title')}
           </h1>
-          <p className="text-gray-600 mt-2">記錄會議重點、決策、待辦事項與後續行動</p>
+          <p className="text-gray-600 mt-2">{t('meetings.description')}</p>
         </div>
 
         <button className="px-4 py-2 text-sm font-medium text-white bg-purple-600 rounded-lg hover:bg-purple-700 transition-colors flex items-center gap-2">
           <Plus className="h-4 w-4" />
-          新增會議
+          {t('meetings.addButton')}
         </button>
       </div>
 
@@ -229,7 +231,7 @@ export default function MeetingsPage() {
         <div className="bg-white p-4 rounded-lg border border-gray-200">
           <div className="flex items-center justify-between">
             <div>
-              <p className="text-sm text-gray-600">會議總數</p>
+              <p className="text-sm text-gray-600">{t('meetings.stats.total')}</p>
               <p className="text-2xl font-bold text-gray-900">{meetings.length}</p>
             </div>
             <FileText className="h-8 w-8 text-gray-400" />
@@ -239,7 +241,7 @@ export default function MeetingsPage() {
         <div className="bg-white p-4 rounded-lg border border-gray-200">
           <div className="flex items-center justify-between">
             <div>
-              <p className="text-sm text-gray-600">待辦事項</p>
+              <p className="text-sm text-gray-600">{t('meetings.stats.actionItems')}</p>
               <p className="text-2xl font-bold text-orange-600">{actionStats.pending}</p>
             </div>
             <Circle className="h-8 w-8 text-orange-400" />
@@ -249,7 +251,7 @@ export default function MeetingsPage() {
         <div className="bg-white p-4 rounded-lg border border-gray-200">
           <div className="flex items-center justify-between">
             <div>
-              <p className="text-sm text-gray-600">進行中</p>
+              <p className="text-sm text-gray-600">{t('meetings.stats.inProgress')}</p>
               <p className="text-2xl font-bold text-blue-600">{actionStats.inProgress}</p>
             </div>
             <Clock className="h-8 w-8 text-blue-400" />
@@ -259,7 +261,7 @@ export default function MeetingsPage() {
         <div className="bg-white p-4 rounded-lg border border-gray-200">
           <div className="flex items-center justify-between">
             <div>
-              <p className="text-sm text-gray-600">已完成</p>
+              <p className="text-sm text-gray-600">{t('meetings.stats.completed')}</p>
               <p className="text-2xl font-bold text-green-600">{actionStats.completed}</p>
             </div>
             <CheckCircle2 className="h-8 w-8 text-green-400" />
@@ -273,7 +275,7 @@ export default function MeetingsPage() {
           <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
           <input
             type="text"
-            placeholder="搜尋會議標題、摘要、參與者..."
+            placeholder={t('meetings.searchPlaceholder')}
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
             className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent"
@@ -287,12 +289,12 @@ export default function MeetingsPage() {
             onChange={(e) => setTypeFilter(e.target.value)}
             className="px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent"
           >
-            <option value="all">全部類型</option>
-            <option value="planning">規劃會議</option>
-            <option value="review">審查會議</option>
-            <option value="technical">技術討論</option>
-            <option value="retrospective">回顧會議</option>
-            <option value="standup">站會</option>
+            <option value="all">{t('meetings.type.all')}</option>
+            <option value="planning">{t('meetings.type.planning')}</option>
+            <option value="review">{t('meetings.type.review')}</option>
+            <option value="technical">{t('meetings.type.technical')}</option>
+            <option value="retrospective">{t('meetings.type.retrospective')}</option>
+            <option value="standup">{t('meetings.type.standup')}</option>
           </select>
 
           <select
@@ -300,9 +302,9 @@ export default function MeetingsPage() {
             onChange={(e) => setArchivedFilter(e.target.value)}
             className="px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent"
           >
-            <option value="active">進行中</option>
-            <option value="archived">已歸檔</option>
-            <option value="all">全部</option>
+            <option value="active">{t('meetings.archiveFilter.active')}</option>
+            <option value="archived">{t('meetings.archiveFilter.archived')}</option>
+            <option value="all">{t('meetings.archiveFilter.all')}</option>
           </select>
         </div>
 
@@ -313,12 +315,12 @@ export default function MeetingsPage() {
           {archivedFilter === 'archived' ? (
             <>
               <ArchiveRestore className="h-4 w-4" />
-              批次恢復
+              {t('meetings.actions.batchRestore')}
             </>
           ) : (
             <>
               <Archive className="h-4 w-4" />
-              批次歸檔
+              {t('meetings.actions.batchArchive')}
             </>
           )}
         </button>
@@ -328,14 +330,14 @@ export default function MeetingsPage() {
       {filteredMeetings.length === 0 ? (
         <div className="bg-white rounded-lg border border-gray-200 p-12 text-center">
           <Users className="h-16 w-16 text-gray-300 mx-auto mb-4" />
-          <h3 className="text-lg font-semibold text-gray-900 mb-2">尚無會議記錄</h3>
+          <h3 className="text-lg font-semibold text-gray-900 mb-2">{t('meetings.noMeetings')}</h3>
           <p className="text-gray-600 mb-4">
             {searchQuery || typeFilter !== 'all' || archivedFilter !== 'active'
-              ? '找不到符合條件的會議記錄'
-              : '開始記錄您的第一個會議摘要'}
+              ? t('meetings.noResults')
+              : t('meetings.noMeetingsHint')}
           </p>
           <button className="px-4 py-2 text-sm font-medium text-white bg-purple-600 rounded-lg hover:bg-purple-700 transition-colors">
-            新增會議
+            {t('meetings.addButton')}
           </button>
         </div>
       ) : (
@@ -371,11 +373,11 @@ export default function MeetingsPage() {
                     </div>
                     <div className="flex items-center gap-1">
                       <Clock className="h-4 w-4" />
-                      {meeting.duration} 分鐘
+                      {meeting.duration} {t('meetings.detail.duration')}
                     </div>
                     <div className="flex items-center gap-1">
                       <Users className="h-4 w-4" />
-                      {meeting.attendees.length} 人參與
+                      {meeting.attendees.length} {t('meetings.detail.participants')}
                     </div>
                   </div>
                 </div>
@@ -388,16 +390,16 @@ export default function MeetingsPage() {
               {/* 待辦事項摘要 */}
               {meeting.actionItems && meeting.actionItems.length > 0 && (
                 <div className="flex items-center gap-4 mb-3">
-                  <span className="text-sm font-medium text-gray-700">待辦事項:</span>
+                  <span className="text-sm font-medium text-gray-700">{t('meetings.detail.actionItems')}:</span>
                   <div className="flex items-center gap-3 text-sm">
                     <span className="text-orange-600">
-                      {meeting.actionItems.filter((a) => a.status === 'pending').length} 待處理
+                      {meeting.actionItems.filter((a) => a.status === 'pending').length} {t('meetings.actionStatus.pending')}
                     </span>
                     <span className="text-blue-600">
-                      {meeting.actionItems.filter((a) => a.status === 'in_progress').length} 進行中
+                      {meeting.actionItems.filter((a) => a.status === 'in_progress').length} {t('meetings.actionStatus.in_progress')}
                     </span>
                     <span className="text-green-600">
-                      {meeting.actionItems.filter((a) => a.status === 'completed').length} 已完成
+                      {meeting.actionItems.filter((a) => a.status === 'completed').length} {t('meetings.actionStatus.completed')}
                     </span>
                   </div>
                 </div>
@@ -468,7 +470,7 @@ export default function MeetingsPage() {
               <div className="mb-6">
                 <h3 className="text-lg font-semibold text-gray-900 mb-2 flex items-center gap-2">
                   <Users className="h-5 w-5" />
-                  參與者
+                  {t('meetings.detail.attendees')}
                 </h3>
                 <div className="flex flex-wrap gap-2">
                   {selectedMeeting.attendees.map((attendee, idx) => (
@@ -484,14 +486,14 @@ export default function MeetingsPage() {
 
               {/* 會議摘要 */}
               <div className="mb-6">
-                <h3 className="text-lg font-semibold text-gray-900 mb-2">會議摘要</h3>
+                <h3 className="text-lg font-semibold text-gray-900 mb-2">{t('meetings.detail.summary')}</h3>
                 <p className="text-gray-700 whitespace-pre-wrap">{selectedMeeting.summary}</p>
               </div>
 
               {/* 重點摘要 */}
               {selectedMeeting.keyPoints && selectedMeeting.keyPoints.length > 0 && (
                 <div className="mb-6">
-                  <h3 className="text-lg font-semibold text-gray-900 mb-2">重點摘要</h3>
+                  <h3 className="text-lg font-semibold text-gray-900 mb-2">{t('meetings.detail.keyPoints')}</h3>
                   <ul className="space-y-2">
                     {selectedMeeting.keyPoints.map((point, idx) => (
                       <li key={idx} className="flex items-start gap-2 text-gray-700">
@@ -506,7 +508,7 @@ export default function MeetingsPage() {
               {/* 待辦事項 */}
               {selectedMeeting.actionItems && selectedMeeting.actionItems.length > 0 && (
                 <div className="mb-6">
-                  <h3 className="text-lg font-semibold text-gray-900 mb-3">待辦事項</h3>
+                  <h3 className="text-lg font-semibold text-gray-900 mb-3">{t('meetings.detail.actionItems')}</h3>
                   <div className="space-y-3">
                     {selectedMeeting.actionItems.map((action) => (
                       <div
@@ -518,8 +520,8 @@ export default function MeetingsPage() {
                           {getActionStatusBadge(action.status)}
                         </div>
                         <div className="flex items-center gap-4 text-sm text-gray-600">
-                          <span>負責人: {action.assignee}</span>
-                          <span>截止日: {action.dueDate}</span>
+                          <span>{t('meetings.detail.assignee')}: {action.assignee}</span>
+                          <span>{t('meetings.detail.dueDate')}: {action.dueDate}</span>
                         </div>
                       </div>
                     ))}
@@ -530,7 +532,7 @@ export default function MeetingsPage() {
               {/* 決策事項 */}
               {selectedMeeting.decisions && selectedMeeting.decisions.length > 0 && (
                 <div className="mb-6">
-                  <h3 className="text-lg font-semibold text-gray-900 mb-2">決策事項</h3>
+                  <h3 className="text-lg font-semibold text-gray-900 mb-2">{t('meetings.detail.decisions')}</h3>
                   <ul className="space-y-2">
                     {selectedMeeting.decisions.map((decision, idx) => (
                       <li
@@ -548,7 +550,7 @@ export default function MeetingsPage() {
               {/* 後續行動 */}
               {selectedMeeting.nextSteps && selectedMeeting.nextSteps.length > 0 && (
                 <div className="mb-6">
-                  <h3 className="text-lg font-semibold text-gray-900 mb-2">後續行動</h3>
+                  <h3 className="text-lg font-semibold text-gray-900 mb-2">{t('meetings.detail.nextSteps')}</h3>
                   <ul className="space-y-2">
                     {selectedMeeting.nextSteps.map((step, idx) => (
                       <li key={idx} className="flex items-start gap-2 text-gray-700">

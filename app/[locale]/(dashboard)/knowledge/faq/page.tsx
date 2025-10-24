@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from 'react'
 import { HelpCircle, Plus, Pencil, Trash2, Search, Tag, X } from 'lucide-react'
+import { useTranslations } from 'next-intl'
 
 interface FAQItem {
   id: string
@@ -18,6 +19,7 @@ interface FAQItem {
  * 提供 FAQ 的列表展示、CRUD 操作、搜尋、標籤分類等功能
  */
 export default function FAQPage() {
+  const t = useTranslations()
   const [faqs, setFaqs] = useState<FAQItem[]>([])
   const [filteredFaqs, setFilteredFaqs] = useState<FAQItem[]>([])
   const [loading, setLoading] = useState(true)
@@ -93,16 +95,16 @@ export default function FAQPage() {
       const result = await response.json()
 
       if (result.success) {
-        alert('✅ FAQ 新增成功！')
+        alert(t('faq.messages.createSuccess'))
         setIsCreating(false)
         setFormData({ question: '', answer: '', tags: '', keywords: '' })
         loadFaqs()
       } else {
-        alert(`❌ 新增失敗: ${result.error.message}`)
+        alert(`${t('faq.messages.createError')}: ${result.error.message}`)
       }
     } catch (error) {
       console.error('[FAQ 管理] 新增錯誤:', error)
-      alert('❌ 新增失敗')
+      alert(t('faq.messages.createError'))
     }
   }
 
@@ -125,21 +127,21 @@ export default function FAQPage() {
       const result = await response.json()
 
       if (result.success) {
-        alert('✅ FAQ 更新成功！')
+        alert(t('faq.messages.updateSuccess'))
         setEditingFaq(null)
         setFormData({ question: '', answer: '', tags: '', keywords: '' })
         loadFaqs()
       } else {
-        alert(`❌ 更新失敗: ${result.error.message}`)
+        alert(`${t('faq.messages.updateError')}: ${result.error.message}`)
       }
     } catch (error) {
       console.error('[FAQ 管理] 更新錯誤:', error)
-      alert('❌ 更新失敗')
+      alert(t('faq.messages.updateError'))
     }
   }
 
   const handleDelete = async (id: string) => {
-    if (!confirm('確定要刪除這個 FAQ 嗎？')) return
+    if (!confirm(t('faq.messages.deleteConfirm'))) return
 
     try {
       const response = await fetch(`/api/knowledge/faq?id=${id}`, {
@@ -149,14 +151,14 @@ export default function FAQPage() {
       const result = await response.json()
 
       if (result.success) {
-        alert('✅ FAQ 刪除成功！')
+        alert(t('faq.messages.deleteSuccess'))
         loadFaqs()
       } else {
-        alert(`❌ 刪除失敗: ${result.error.message}`)
+        alert(`${t('faq.messages.deleteError')}: ${result.error.message}`)
       }
     } catch (error) {
       console.error('[FAQ 管理] 刪除錯誤:', error)
-      alert('❌ 刪除失敗')
+      alert(t('faq.messages.deleteError'))
     }
   }
 
@@ -185,7 +187,7 @@ export default function FAQPage() {
       <div className="flex items-center justify-center h-96">
         <div className="text-center">
           <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto mb-4"></div>
-          <p className="text-gray-600">載入 FAQ 資料...</p>
+          <p className="text-gray-600">{t('faq.loading')}</p>
         </div>
       </div>
     )
@@ -198,9 +200,9 @@ export default function FAQPage() {
         <div>
           <h1 className="text-3xl font-bold text-gray-900 flex items-center gap-3">
             <HelpCircle className="h-8 w-8 text-green-600" />
-            FAQ 管理
+            {t('faq.title')}
           </h1>
-          <p className="text-gray-600 mt-2">管理常見問題與回答知識庫</p>
+          <p className="text-gray-600 mt-2">{t('faq.description')}</p>
         </div>
 
         <button
@@ -208,7 +210,7 @@ export default function FAQPage() {
           className="px-4 py-2 text-sm font-medium text-white bg-green-600 rounded-lg hover:bg-green-700 transition-colors flex items-center gap-2"
         >
           <Plus className="h-4 w-4" />
-          新增 FAQ
+          {t('faq.addButton')}
         </button>
       </div>
 
@@ -219,7 +221,7 @@ export default function FAQPage() {
           <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-gray-400" />
           <input
             type="text"
-            placeholder="搜尋問題、答案、關鍵字..."
+            placeholder={t('faq.searchPlaceholder')}
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
             className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent"
@@ -228,7 +230,7 @@ export default function FAQPage() {
 
         {/* 標籤篩選 */}
         <div className="flex items-center gap-2 flex-wrap">
-          <span className="text-sm text-gray-600">標籤:</span>
+          <span className="text-sm text-gray-600">{t('button.filter')}:</span>
           <button
             onClick={() => setSelectedTag(null)}
             className={`px-3 py-1 text-sm rounded-full transition-colors ${
@@ -237,7 +239,7 @@ export default function FAQPage() {
                 : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
             }`}
           >
-            全部 ({faqs.length})
+            {t('faq.allTag')} ({faqs.length})
           </button>
           {allTags.map((tag) => (
             <button
@@ -260,7 +262,7 @@ export default function FAQPage() {
         <div className="bg-white p-6 rounded-lg border-2 border-green-500 shadow-lg">
           <div className="flex items-center justify-between mb-4">
             <h2 className="text-xl font-semibold text-gray-900">
-              {editingFaq ? '編輯 FAQ' : '新增 FAQ'}
+              {editingFaq ? t('faq.editTitle') : t('faq.createTitle')}
             </h2>
             <button onClick={cancelEdit} className="text-gray-400 hover:text-gray-600">
               <X className="h-6 w-6" />
@@ -269,22 +271,26 @@ export default function FAQPage() {
 
           <div className="space-y-4">
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">問題 *</label>
+              <label className="block text-sm font-medium text-gray-700 mb-1">
+                {t('faq.form.question')} {t('faq.form.required')}
+              </label>
               <input
                 type="text"
                 value={formData.question}
                 onChange={(e) => setFormData({ ...formData, question: e.target.value })}
-                placeholder="輸入常見問題..."
+                placeholder={t('faq.form.questionPlaceholder')}
                 className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent"
               />
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">回答 *</label>
+              <label className="block text-sm font-medium text-gray-700 mb-1">
+                {t('faq.form.answer')} {t('faq.form.required')}
+              </label>
               <textarea
                 value={formData.answer}
                 onChange={(e) => setFormData({ ...formData, answer: e.target.value })}
-                placeholder="輸入詳細回答..."
+                placeholder={t('faq.form.answerPlaceholder')}
                 rows={6}
                 className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent resize-none"
               />
@@ -293,26 +299,26 @@ export default function FAQPage() {
             <div className="grid grid-cols-2 gap-4">
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-1">
-                  標籤 (逗號分隔)
+                  {t('faq.form.tags')}
                 </label>
                 <input
                   type="text"
                   value={formData.tags}
                   onChange={(e) => setFormData({ ...formData, tags: e.target.value })}
-                  placeholder="例: 數據, 報表, 分析"
+                  placeholder={t('faq.form.tagsPlaceholder')}
                   className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent"
                 />
               </div>
 
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-1">
-                  關鍵字 (逗號分隔)
+                  {t('faq.form.keywords')}
                 </label>
                 <input
                   type="text"
                   value={formData.keywords}
                   onChange={(e) => setFormData({ ...formData, keywords: e.target.value })}
-                  placeholder="例: 數據導出, Excel, CSV"
+                  placeholder={t('faq.form.keywordsPlaceholder')}
                   className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent"
                 />
               </div>
@@ -323,14 +329,14 @@ export default function FAQPage() {
                 onClick={cancelEdit}
                 className="px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-lg hover:bg-gray-50"
               >
-                取消
+                {t('faq.actions.cancel')}
               </button>
               <button
                 onClick={editingFaq ? handleUpdate : handleCreate}
                 disabled={!formData.question || !formData.answer}
                 className="px-4 py-2 text-sm font-medium text-white bg-green-600 rounded-lg hover:bg-green-700 disabled:opacity-50 disabled:cursor-not-allowed"
               >
-                {editingFaq ? '更新' : '新增'}
+                {editingFaq ? t('faq.actions.update') : t('faq.actions.create')}
               </button>
             </div>
           </div>
@@ -343,7 +349,7 @@ export default function FAQPage() {
           <div className="text-center py-12 bg-white rounded-lg border border-gray-200">
             <HelpCircle className="h-12 w-12 text-gray-300 mx-auto mb-3" />
             <p className="text-gray-600">
-              {faqs.length === 0 ? '尚無 FAQ，點擊上方「新增 FAQ」按鈕開始建立' : '沒有符合條件的 FAQ'}
+              {faqs.length === 0 ? t('faq.noFaqs') : t('faq.noResults')}
             </p>
           </div>
         ) : (
@@ -368,8 +374,8 @@ export default function FAQPage() {
                         ))}
                       </div>
                     )}
-                    <span>使用次數: {faq.usage}</span>
-                    <span>更新: {new Date(faq.lastModified).toLocaleDateString('zh-TW')}</span>
+                    <span>{t('faq.stats.usage')}: {faq.usage}</span>
+                    <span>{t('faq.stats.updated')}: {new Date(faq.lastModified).toLocaleDateString()}</span>
                   </div>
                 </div>
 
@@ -377,14 +383,14 @@ export default function FAQPage() {
                   <button
                     onClick={() => startEdit(faq)}
                     className="p-2 text-blue-600 hover:bg-blue-50 rounded-lg transition-colors"
-                    title="編輯"
+                    title={t('faq.actions.edit')}
                   >
                     <Pencil className="h-4 w-4" />
                   </button>
                   <button
                     onClick={() => handleDelete(faq.id)}
                     className="p-2 text-red-600 hover:bg-red-50 rounded-lg transition-colors"
-                    title="刪除"
+                    title={t('faq.actions.delete')}
                   >
                     <Trash2 className="h-4 w-4" />
                   </button>

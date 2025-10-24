@@ -16,11 +16,13 @@ import {
 } from 'lucide-react'
 import Link from 'next/link'
 import type { DecisionLogItem } from '@/types/knowledge'
+import { useTranslations } from 'next-intl'
 
 /**
  * 決策日誌管理頁面
  */
 export default function DecisionsPage() {
+  const t = useTranslations()
   const [decisions, setDecisions] = useState<DecisionLogItem[]>([])
   const [filteredDecisions, setFilteredDecisions] = useState<DecisionLogItem[]>([])
   const [loading, setLoading] = useState(true)
@@ -79,25 +81,25 @@ export default function DecisionsPage() {
       pending: (
         <span className="inline-flex items-center gap-1 px-2 py-1 text-xs font-medium text-orange-700 bg-orange-50 rounded-full">
           <Clock className="h-3 w-3" />
-          待決策
+          {t('decisions.status.pending')}
         </span>
       ),
       decided: (
         <span className="inline-flex items-center gap-1 px-2 py-1 text-xs font-medium text-blue-700 bg-blue-50 rounded-full">
           <CheckCircle2 className="h-3 w-3" />
-          已決策
+          {t('decisions.status.decided')}
         </span>
       ),
       implemented: (
         <span className="inline-flex items-center gap-1 px-2 py-1 text-xs font-medium text-green-700 bg-green-50 rounded-full">
           <CheckCircle2 className="h-3 w-3" />
-          已實作
+          {t('decisions.status.implemented')}
         </span>
       ),
       cancelled: (
         <span className="inline-flex items-center gap-1 px-2 py-1 text-xs font-medium text-gray-700 bg-gray-50 rounded-full">
           <XCircle className="h-3 w-3" />
-          已取消
+          {t('decisions.status.cancelled')}
         </span>
       ),
     }
@@ -109,7 +111,7 @@ export default function DecisionsPage() {
       <div className="flex items-center justify-center h-96">
         <div className="text-center">
           <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto mb-4"></div>
-          <p className="text-gray-600">載入決策日誌...</p>
+          <p className="text-gray-600">{t('decisions.loading')}</p>
         </div>
       </div>
     )
@@ -122,14 +124,14 @@ export default function DecisionsPage() {
         <div>
           <h1 className="text-3xl font-bold text-gray-900 flex items-center gap-3">
             <FileText className="h-8 w-8 text-orange-600" />
-            決策日誌管理
+            {t('decisions.title')}
           </h1>
-          <p className="text-gray-600 mt-2">記錄重要決策的背景、選項、理由與影響</p>
+          <p className="text-gray-600 mt-2">{t('decisions.description')}</p>
         </div>
 
         <button className="px-4 py-2 text-sm font-medium text-white bg-orange-600 rounded-lg hover:bg-orange-700 transition-colors flex items-center gap-2">
           <Plus className="h-4 w-4" />
-          新增決策
+          {t('decisions.addButton')}
         </button>
       </div>
 
@@ -138,7 +140,7 @@ export default function DecisionsPage() {
         <div className="bg-white p-4 rounded-lg border border-gray-200">
           <div className="flex items-center justify-between">
             <div>
-              <p className="text-sm text-gray-600">總決策數</p>
+              <p className="text-sm text-gray-600">{t('decisions.stats.total')}</p>
               <p className="text-2xl font-bold text-gray-900">{decisions.length}</p>
             </div>
             <FileText className="h-8 w-8 text-gray-400" />
@@ -148,7 +150,7 @@ export default function DecisionsPage() {
         <div className="bg-white p-4 rounded-lg border border-gray-200">
           <div className="flex items-center justify-between">
             <div>
-              <p className="text-sm text-gray-600">待決策</p>
+              <p className="text-sm text-gray-600">{t('decisions.stats.pending')}</p>
               <p className="text-2xl font-bold text-orange-600">
                 {decisions.filter((d) => d.status === 'pending').length}
               </p>
@@ -160,7 +162,7 @@ export default function DecisionsPage() {
         <div className="bg-white p-4 rounded-lg border border-gray-200">
           <div className="flex items-center justify-between">
             <div>
-              <p className="text-sm text-gray-600">已實作</p>
+              <p className="text-sm text-gray-600">{t('decisions.stats.implemented')}</p>
               <p className="text-2xl font-bold text-green-600">
                 {decisions.filter((d) => d.status === 'implemented').length}
               </p>
@@ -172,7 +174,7 @@ export default function DecisionsPage() {
         <div className="bg-white p-4 rounded-lg border border-gray-200">
           <div className="flex items-center justify-between">
             <div>
-              <p className="text-sm text-gray-600">本月決策</p>
+              <p className="text-sm text-gray-600">{t('decisions.stats.thisMonth')}</p>
               <p className="text-2xl font-bold text-blue-600">
                 {
                   decisions.filter(
@@ -192,7 +194,7 @@ export default function DecisionsPage() {
           <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
           <input
             type="text"
-            placeholder="搜尋決策標題、背景、內容..."
+            placeholder={t('decisions.searchPlaceholder')}
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
             className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent"
@@ -206,11 +208,11 @@ export default function DecisionsPage() {
             onChange={(e) => setStatusFilter(e.target.value)}
             className="px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent"
           >
-            <option value="all">全部狀態</option>
-            <option value="pending">待決策</option>
-            <option value="decided">已決策</option>
-            <option value="implemented">已實作</option>
-            <option value="cancelled">已取消</option>
+            <option value="all">{t('decisions.status.all')}</option>
+            <option value="pending">{t('decisions.status.pending')}</option>
+            <option value="decided">{t('decisions.status.decided')}</option>
+            <option value="implemented">{t('decisions.status.implemented')}</option>
+            <option value="cancelled">{t('decisions.status.cancelled')}</option>
           </select>
         </div>
       </div>
@@ -219,14 +221,14 @@ export default function DecisionsPage() {
       {filteredDecisions.length === 0 ? (
         <div className="bg-white rounded-lg border border-gray-200 p-12 text-center">
           <FileText className="h-16 w-16 text-gray-300 mx-auto mb-4" />
-          <h3 className="text-lg font-semibold text-gray-900 mb-2">尚無決策記錄</h3>
+          <h3 className="text-lg font-semibold text-gray-900 mb-2">{t('decisions.noDecisions')}</h3>
           <p className="text-gray-600 mb-4">
             {searchQuery || statusFilter !== 'all'
-              ? '找不到符合條件的決策記錄'
-              : '開始記錄您的第一個重要決策'}
+              ? t('decisions.noResults')
+              : t('decisions.noDecisionsHint')}
           </p>
           <button className="px-4 py-2 text-sm font-medium text-white bg-orange-600 rounded-lg hover:bg-orange-700 transition-colors">
-            新增決策
+            {t('decisions.addButton')}
           </button>
         </div>
       ) : (
@@ -266,7 +268,7 @@ export default function DecisionsPage() {
 
               {/* 決策結果 */}
               <div className="bg-green-50 border border-green-200 rounded-lg p-3 mb-3">
-                <p className="text-sm font-medium text-green-900 mb-1">✓ 決策結果</p>
+                <p className="text-sm font-medium text-green-900 mb-1">✓ {t('decisions.detail.decisionResult')}</p>
                 <p className="text-sm text-green-800">{decision.decision}</p>
               </div>
 
@@ -319,13 +321,13 @@ export default function DecisionsPage() {
 
               {/* 背景 */}
               <div className="mb-6">
-                <h3 className="text-lg font-semibold text-gray-900 mb-2">背景說明</h3>
+                <h3 className="text-lg font-semibold text-gray-900 mb-2">{t('decisions.detail.context')}</h3>
                 <p className="text-gray-700 whitespace-pre-wrap">{selectedDecision.context}</p>
               </div>
 
               {/* 選項比較 */}
               <div className="mb-6">
-                <h3 className="text-lg font-semibold text-gray-900 mb-3">選項比較</h3>
+                <h3 className="text-lg font-semibold text-gray-900 mb-3">{t('decisions.detail.options')}</h3>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   {selectedDecision.options.map((option, idx) => (
                     <div
@@ -335,7 +337,7 @@ export default function DecisionsPage() {
                       <h4 className="font-semibold text-gray-900 mb-3">{option.title}</h4>
 
                       <div className="mb-3">
-                        <p className="text-sm font-medium text-green-700 mb-1">✓ 優點</p>
+                        <p className="text-sm font-medium text-green-700 mb-1">✓ {t('decisions.detail.pros')}</p>
                         <ul className="text-sm text-gray-700 space-y-1">
                           {option.pros.map((pro, i) => (
                             <li key={i}>• {pro}</li>
@@ -344,7 +346,7 @@ export default function DecisionsPage() {
                       </div>
 
                       <div className="mb-3">
-                        <p className="text-sm font-medium text-red-700 mb-1">✗ 缺點</p>
+                        <p className="text-sm font-medium text-red-700 mb-1">✗ {t('decisions.detail.cons')}</p>
                         <ul className="text-sm text-gray-700 space-y-1">
                           {option.cons.map((con, i) => (
                             <li key={i}>• {con}</li>
@@ -354,7 +356,7 @@ export default function DecisionsPage() {
 
                       {option.estimatedCost && (
                         <div className="text-sm">
-                          <span className="font-medium text-gray-700">預估成本: </span>
+                          <span className="font-medium text-gray-700">{t('decisions.detail.estimatedCost')}: </span>
                           <span className="text-gray-600">{option.estimatedCost}</span>
                         </div>
                       )}
@@ -365,7 +367,7 @@ export default function DecisionsPage() {
 
               {/* 決策與理由 */}
               <div className="mb-6">
-                <h3 className="text-lg font-semibold text-gray-900 mb-2">決策與理由</h3>
+                <h3 className="text-lg font-semibold text-gray-900 mb-2">{t('decisions.detail.decision')}</h3>
                 <div className="bg-green-50 border border-green-200 rounded-lg p-4">
                   <p className="font-semibold text-green-900 mb-2">
                     ✓ {selectedDecision.decision}
@@ -378,7 +380,7 @@ export default function DecisionsPage() {
 
               {/* 影響評估 */}
               <div className="mb-6">
-                <h3 className="text-lg font-semibold text-gray-900 mb-2">影響評估</h3>
+                <h3 className="text-lg font-semibold text-gray-900 mb-2">{t('decisions.detail.impact')}</h3>
                 <ul className="space-y-2">
                   {selectedDecision.impact.map((item, idx) => (
                     <li key={idx} className="flex items-start gap-2 text-gray-700">
@@ -393,7 +395,7 @@ export default function DecisionsPage() {
               {selectedDecision.reviewDate && (
                 <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
                   <p className="text-sm font-medium text-blue-900">
-                    📅 預定檢討日期: {selectedDecision.reviewDate}
+                    📅 {t('decisions.detail.reviewDate')}: {selectedDecision.reviewDate}
                   </p>
                 </div>
               )}

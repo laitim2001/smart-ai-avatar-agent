@@ -295,6 +295,8 @@
     "systemAgents": "System Agents",
     "publicAgents": "Public Agents",
     "myAgents": "My Agents",
+    "system": "System",
+    "popularAgents": "Popular Recommendations",
     "systemAgent": "System",
     "name": "Name",
     "namePlaceholder": "Enter Agent name",
@@ -310,6 +312,12 @@
       "business": "Business",
       "educational": "Educational"
     },
+    "stats": {
+      "totalAgents": "Total Agents",
+      "systemAgents": "System Agents",
+      "publicAgents": "Public Agents",
+      "totalConversations": "Total Conversations"
+    },
     "persona": "Persona",
     "selectPersona": "Select Persona",
     "personaConfig": "Persona Configuration",
@@ -323,7 +331,10 @@
     "isPrivate": "Private",
     "basicInfo": "Basic Information",
     "advancedConfig": "Advanced Configuration",
+    "knowledgeConfig": "Knowledge Base Configuration",
     "knowledgeBases": "Knowledge Bases",
+    "knowledgeBasesDescription": "Select knowledge bases to associate with this Agent to enhance its response capabilities",
+    "noKnowledgeBases": "No knowledge bases available",
     "knowledgeBasesCount": "{count} Knowledge Bases",
     "conversations": "Conversations",
     "conversationsCount": "{count} Conversations",
@@ -331,6 +342,20 @@
     "usageCount": "{count} Uses",
     "lastUpdated": "Last Updated",
     "createdAt": "Created",
+    "select": "Select",
+    "edit": "Edit",
+    "deleteSuccess": "Agent deleted successfully",
+    "loadingAgentData": "Loading Agent data...",
+    "loadFailed": "Load Failed",
+    "agentDoesNotExist": "Agent does not exist or cannot be loaded",
+    "backToMarketplace": "Back to Agent Marketplace",
+    "guide": {
+      "title": "User Guide",
+      "selectAgent": "Click any Agent card to select and start conversation",
+      "createCustom": "Create custom Agents for specific needs",
+      "configurePersona": "Configure Persona to define Agent's personality and expertise",
+      "linkKnowledge": "Link knowledge bases to improve Agent response accuracy"
+    },
     "actions": {
       "select": "Select",
       "edit": "Edit",
@@ -344,10 +369,13 @@
       "personaRequired": "Please select a Persona",
       "languageRequired": "At least one supported language is required",
       "loadFailed": "Failed to load Agents",
+      "loadKnowledgeFailed": "Failed to load knowledge bases",
       "createFailed": "Failed to create Agent",
       "updateFailed": "Failed to update Agent",
       "deleteFailed": "Failed to delete Agent",
-      "submitFailed": "Submission failed, please try again"
+      "submitFailed": "Submission failed, please try again",
+      "conversationStartFailed": "Unable to start conversation, please try again later",
+      "conversationCreateFailed": "Failed to create conversation"
     },
     "success": {
       "created": "Agent created successfully",
@@ -358,6 +386,7 @@
     "deleteConfirmTitle": "Delete Agent",
     "deleteConfirmDescription": "Are you sure you want to delete Agent \"{name}\"? This action cannot be undone.",
     "selectedForConversation": "Selected {name} for conversation",
+    "conversationWith": "Conversation with {name}",
     "agentsFound": "Agents",
     "confirm": "Confirm",
     "cancel": "Cancel",
@@ -365,6 +394,206 @@
     "update": "Update",
     "create": "Create",
     "submitting": "Submitting..."
+  },
+  "faq": {
+    "title": "FAQ Management",
+    "description": "Manage frequently asked questions and answers knowledge base",
+    "addButton": "Add FAQ",
+    "editTitle": "Edit FAQ",
+    "createTitle": "Add FAQ",
+    "loading": "Loading FAQ data...",
+    "searchPlaceholder": "Search questions, answers, keywords...",
+    "allTag": "All",
+    "noFaqs": "No FAQs yet, click 'Add FAQ' button above to start creating",
+    "noResults": "No matching FAQs found",
+    "form": {
+      "question": "Question",
+      "questionPlaceholder": "Enter frequently asked question...",
+      "answer": "Answer",
+      "answerPlaceholder": "Enter detailed answer...",
+      "tags": "Tags (comma separated)",
+      "tagsPlaceholder": "e.g., Data, Reports, Analysis",
+      "keywords": "Keywords (comma separated)",
+      "keywordsPlaceholder": "e.g., Data Export, Excel, CSV",
+      "required": "*"
+    },
+    "stats": {
+      "usage": "Usage Count",
+      "updated": "Updated"
+    },
+    "actions": {
+      "edit": "Edit",
+      "delete": "Delete",
+      "cancel": "Cancel",
+      "create": "Add",
+      "update": "Update"
+    },
+    "messages": {
+      "createSuccess": "FAQ added successfully!",
+      "createError": "Failed to add",
+      "updateSuccess": "FAQ updated successfully!",
+      "updateError": "Failed to update",
+      "deleteSuccess": "FAQ deleted successfully!",
+      "deleteError": "Failed to delete",
+      "deleteConfirm": "Are you sure you want to delete this FAQ?",
+      "loadError": "Failed to load"
+    }
+  },
+  "kpi": {
+    "title": "KPI Dictionary Management",
+    "description": "Manage business metric definitions and calculation logic",
+    "addButton": "Add KPI",
+    "editTitle": "Edit KPI",
+    "createTitle": "Add KPI",
+    "loading": "Loading KPI data...",
+    "searchPlaceholder": "Search KPI name, definition, calculation logic...",
+    "allTag": "All",
+    "noKpis": "No KPIs yet, click 'Add KPI' button above to start creating",
+    "noResults": "No matching KPIs found",
+    "form": {
+      "name": "KPI Name",
+      "namePlaceholder": "e.g., Monthly Active Users (MAU)",
+      "definition": "Definition",
+      "definitionPlaceholder": "Describe the business meaning of this KPI...",
+      "calculation": "Calculation Logic (SQL)",
+      "calculationPlaceholder": "SELECT COUNT(DISTINCT user_id) FROM user_activity WHERE ...",
+      "dataSource": "Data Source",
+      "dataSourcePlaceholder": "e.g., user_activity table",
+      "owner": "Owner",
+      "ownerPlaceholder": "e.g., Data Analytics Team",
+      "tags": "Tags (comma separated)",
+      "tagsPlaceholder": "e.g., Users, Engagement",
+      "updateFrequency": "Update Frequency",
+      "required": "*"
+    },
+    "frequency": {
+      "realtime": "Real-time",
+      "hourly": "Hourly",
+      "daily": "Daily",
+      "weekly": "Weekly",
+      "monthly": "Monthly"
+    },
+    "stats": {
+      "dataSource": "Data Source",
+      "owner": "Owner",
+      "updateFrequency": "Update Frequency",
+      "lastUpdated": "Last Updated"
+    },
+    "actions": {
+      "edit": "Edit",
+      "delete": "Delete",
+      "cancel": "Cancel",
+      "create": "Add",
+      "update": "Update"
+    },
+    "messages": {
+      "createSuccess": "KPI added successfully!",
+      "createError": "Failed to add",
+      "updateSuccess": "KPI updated successfully!",
+      "updateError": "Failed to update",
+      "deleteSuccess": "KPI deleted successfully!",
+      "deleteError": "Failed to delete",
+      "deleteConfirm": "Are you sure you want to delete this KPI?",
+      "loadError": "Failed to load"
+    }
+  },
+  "decisions": {
+    "title": "Decision Logs Management",
+    "description": "Record important decisions with context, options, rationale, and impact",
+    "addButton": "Add Decision",
+    "loading": "Loading decision logs...",
+    "searchPlaceholder": "Search decision title, context, content...",
+    "noDecisions": "No decision records yet",
+    "noDecisionsHint": "Start recording your first important decision",
+    "noResults": "No matching decision records found",
+    "status": {
+      "all": "All Status",
+      "pending": "Pending",
+      "decided": "Decided",
+      "implemented": "Implemented",
+      "cancelled": "Cancelled"
+    },
+    "stats": {
+      "total": "Total Decisions",
+      "pending": "Pending",
+      "implemented": "Implemented",
+      "thisMonth": "This Month"
+    },
+    "detail": {
+      "context": "Context",
+      "options": "Options Comparison",
+      "pros": "Pros",
+      "cons": "Cons",
+      "estimatedCost": "Estimated Cost",
+      "decision": "Decision & Rationale",
+      "decisionResult": "Decision Result",
+      "impact": "Impact Assessment",
+      "reviewDate": "Scheduled Review Date"
+    },
+    "actions": {
+      "addDecision": "Add Decision"
+    }
+  },
+  "meetings": {
+    "title": "Meeting Summaries Management",
+    "description": "Record meeting highlights, decisions, action items, and next steps",
+    "addButton": "Add Meeting",
+    "loading": "Loading meeting summaries...",
+    "searchPlaceholder": "Search meeting title, summary, attendees...",
+    "noMeetings": "No meeting records yet",
+    "noMeetingsHint": "Start recording your first meeting summary",
+    "noResults": "No matching meeting records found",
+    "type": {
+      "all": "All Types",
+      "planning": "Planning",
+      "review": "Review",
+      "technical": "Technical",
+      "retrospective": "Retrospective",
+      "standup": "Stand-up"
+    },
+    "archiveFilter": {
+      "active": "Active",
+      "archived": "Archived",
+      "all": "All"
+    },
+    "stats": {
+      "total": "Total Meetings",
+      "actionItems": "Action Items",
+      "inProgress": "In Progress",
+      "completed": "Completed"
+    },
+    "actionStatus": {
+      "pending": "Pending",
+      "in_progress": "In Progress",
+      "completed": "Completed"
+    },
+    "detail": {
+      "attendees": "Attendees",
+      "summary": "Meeting Summary",
+      "keyPoints": "Key Points",
+      "actionItems": "Action Items",
+      "decisions": "Decisions",
+      "nextSteps": "Next Steps",
+      "assignee": "Assignee",
+      "dueDate": "Due Date",
+      "duration": "minutes",
+      "participants": "participants"
+    },
+    "actions": {
+      "batchArchive": "Batch Archive",
+      "batchRestore": "Batch Restore",
+      "archive": "Archived",
+      "addMeeting": "Add Meeting"
+    },
+    "messages": {
+      "noArchivable": "No meetings to archive",
+      "noRestorable": "No meetings to restore",
+      "archiveConfirm": "Are you sure you want to archive {count} meetings?",
+      "restoreConfirm": "Are you sure you want to restore {count} meetings?",
+      "archiveSuccess": "Successfully archived {count} meetings",
+      "restoreSuccess": "Successfully restored {count} meetings",
+      "operationError": "Operation failed, please try again"
+    }
   },
   "prompt": {
     "title": "Conversation Topics",

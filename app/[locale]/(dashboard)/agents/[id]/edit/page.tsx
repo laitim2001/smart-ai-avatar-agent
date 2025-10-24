@@ -11,11 +11,13 @@ import { useParams, useRouter } from 'next/navigation'
 import { AgentForm } from '@/components/agents/AgentForm'
 import { useAgentStore, Agent } from '@/stores/agentStore'
 import { Loader2 } from 'lucide-react'
+import { useTranslations } from 'next-intl'
 
 export default function EditAgentPage() {
   const params = useParams()
   const router = useRouter()
   const agentId = params.id as string
+  const t = useTranslations('agents')
 
   const { loadAgentDetail } = useAgentStore()
   const [agent, setAgent] = useState<Agent | null>(null)
@@ -30,14 +32,14 @@ export default function EditAgentPage() {
         const agentDetail = await loadAgentDetail(agentId)
 
         if (!agentDetail) {
-          setError('Agent does not exist or cannot be loaded')
+          setError(t('agentDoesNotExist'))
           return
         }
 
         setAgent(agentDetail)
       } catch (err) {
         console.error('[EditAgentPage] Load agent error:', err)
-        setError('Failed to load Agent')
+        setError(t('errors.loadFailed'))
       } finally {
         setIsLoading(false)
       }
@@ -46,7 +48,7 @@ export default function EditAgentPage() {
     if (agentId) {
       loadAgent()
     }
-  }, [agentId, loadAgentDetail])
+  }, [agentId, loadAgentDetail, t])
 
   const handleSuccess = (updatedAgent: Agent) => {
     router.push('/agents')
@@ -63,7 +65,7 @@ export default function EditAgentPage() {
         <div className="flex items-center justify-center h-96">
           <div className="text-center">
             <Loader2 className="w-12 h-12 animate-spin text-blue-600 mx-auto mb-4" />
-            <p className="text-gray-600">Loading Agent data...</p>
+            <p className="text-gray-600">{t('loadingAgentData')}</p>
           </div>
         </div>
       </div>
@@ -77,13 +79,13 @@ export default function EditAgentPage() {
         <div className="flex items-center justify-center h-96">
           <div className="text-center">
             <div className="text-red-600 text-6xl mb-4">⚠️</div>
-            <h2 className="text-2xl font-bold text-gray-900 mb-2">Load Failed</h2>
-            <p className="text-gray-600 mb-6">{error || 'Agent does not exist'}</p>
+            <h2 className="text-2xl font-bold text-gray-900 mb-2">{t('loadFailed')}</h2>
+            <p className="text-gray-600 mb-6">{error || t('agentDoesNotExist')}</p>
             <button
               onClick={() => router.push('/agents')}
               className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
             >
-              Back to Agent Marketplace
+              {t('backToMarketplace')}
             </button>
           </div>
         </div>

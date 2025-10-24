@@ -7,9 +7,9 @@
 'use client'
 
 import { useEffect, useState } from 'react'
+import { useRouter } from 'next/navigation'
 import { Users, Search, Plus, Loader2, Bot, Globe, CheckCircle, AlertCircle, TrendingUp } from 'lucide-react'
 import { PersonaCard } from '@/components/knowledge/PersonaCard'
-import { PersonaForm } from '@/components/knowledge/PersonaForm'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
@@ -24,6 +24,7 @@ import {
   AlertDialogTitle,
 } from '@/components/ui/alert-dialog'
 import { toast } from 'sonner'
+import { useTranslations } from 'next-intl'
 
 interface Persona {
   id: string
@@ -50,16 +51,14 @@ interface Persona {
  * Persona 管理主頁面
  */
 export default function PersonaManagementPage() {
+  const router = useRouter()
+  const t = useTranslations()
   const [personas, setPersonas] = useState<Persona[]>([])
   const [filteredPersonas, setFilteredPersonas] = useState<Persona[]>([])
   const [isLoading, setIsLoading] = useState(true)
   const [searchQuery, setSearchQuery] = useState('')
   const [languageFilter, setLanguageFilter] = useState<string>('all')
   const [statusFilter, setStatusFilter] = useState<string>('all')
-
-  // 表單狀態
-  const [isFormOpen, setIsFormOpen] = useState(false)
-  const [editingPersona, setEditingPersona] = useState<Persona | null>(null)
 
   // 刪除狀態
   const [deletingPersona, setDeletingPersona] = useState<{
@@ -95,11 +94,11 @@ export default function PersonaManagementPage() {
         setPersonas(personasWithCount)
         setFilteredPersonas(personasWithCount)
       } else {
-        toast.error('載入 Persona 列表失敗')
+        toast.error(t('persona.messages.loadFailed'))
       }
     } catch (error) {
       console.error('[Load Personas Error]', error)
-      toast.error('載入 Persona 列表失敗')
+      toast.error(t('persona.messages.loadFailed'))
     } finally {
       setIsLoading(false)
     }
@@ -147,29 +146,14 @@ export default function PersonaManagementPage() {
   const uniqueLanguages = [...new Set(personas.map((p) => p.language))].length
   const activePersonas = personas.filter((p) => p.isActive).length
 
-  // 處理建立 Persona
+  // 處理建立 Persona - 導航到獨立頁面
   const handleCreate = () => {
-    setEditingPersona(null)
-    setIsFormOpen(true)
+    router.push('/knowledge/persona/new')
   }
 
-  // 處理編輯 Persona
-  const handleEdit = async (persona: Persona) => {
-    try {
-      // 載入完整的 Persona 資料
-      const response = await fetch(`/api/personas/${persona.id}`)
-      const data = await response.json()
-
-      if (data.success) {
-        setEditingPersona(data.data)
-        setIsFormOpen(true)
-      } else {
-        toast.error('載入 Persona 詳情失敗')
-      }
-    } catch (error) {
-      console.error('[Load Persona Detail Error]', error)
-      toast.error('載入 Persona 詳情失敗')
-    }
+  // 處理編輯 Persona - 導航到獨立頁面
+  const handleEdit = (persona: Persona) => {
+    router.push(`/knowledge/persona/${persona.id}/edit`)
   }
 
   // 處理刪除 Persona（顯示確認對話框）
@@ -188,7 +172,7 @@ export default function PersonaManagementPage() {
       }
     } catch (error) {
       console.error('[Check Linked Agents Error]', error)
-      toast.error('檢查 Persona 關聯失敗')
+      toast.error(t('persona.messages.loadFailed'))
     }
   }
 
@@ -204,14 +188,14 @@ export default function PersonaManagementPage() {
       const data = await response.json()
 
       if (data.success) {
-        toast.success('Persona 已刪除')
+        toast.success(t('persona.messages.deleted'))
         loadPersonas() // 重新載入列表
       } else {
-        toast.error(data.error?.message || '刪除失敗')
+        toast.error(data.error?.message || t('button.delete'))
       }
     } catch (error) {
       console.error('[Delete Persona Error]', error)
-      toast.error('刪除 Persona 失敗')
+      toast.error(t('persona.messages.loadFailed'))
     } finally {
       setDeletingPersona(null)
     }
@@ -225,10 +209,10 @@ export default function PersonaManagementPage() {
           <div>
             <h1 className="text-4xl font-bold flex items-center gap-3">
               <Users className="w-10 h-10" />
-              Persona 管理
+              {t('persona.title')}
             </h1>
             <p className="text-purple-100 mt-2 text-lg">
-              定義 AI Agent 的角色、專業領域、溝通風格
+              {t('persona.description')}
             </p>
           </div>
 
@@ -238,7 +222,7 @@ export default function PersonaManagementPage() {
             onClick={handleCreate}
           >
             <Plus className="w-5 h-5" />
-            建立 Persona
+            {t('persona.create')}
           </Button>
         </div>
       </div>
@@ -248,7 +232,7 @@ export default function PersonaManagementPage() {
         <div className="bg-white p-6 rounded-lg border border-gray-200 shadow-sm hover:shadow-md transition-shadow">
           <div className="flex items-center justify-between">
             <div>
-              <p className="text-sm text-gray-600 mb-1">總 Persona 數</p>
+              <p className="text-sm text-gray-600 mb-1">{t('persona.stats.total')}</p>
               <p className="text-3xl font-bold text-gray-900">{totalPersonas}</p>
             </div>
             <div className="flex h-12 w-12 items-center justify-center rounded-full bg-blue-50">
@@ -260,7 +244,7 @@ export default function PersonaManagementPage() {
         <div className="bg-white p-6 rounded-lg border border-gray-200 shadow-sm hover:shadow-md transition-shadow">
           <div className="flex items-center justify-between">
             <div>
-              <p className="text-sm text-gray-600 mb-1">關聯 Agent 數</p>
+              <p className="text-sm text-gray-600 mb-1">{t('persona.stats.linkedAgents')}</p>
               <p className="text-3xl font-bold text-gray-900">{totalLinkedAgents}</p>
             </div>
             <div className="flex h-12 w-12 items-center justify-center rounded-full bg-green-50">
@@ -272,7 +256,7 @@ export default function PersonaManagementPage() {
         <div className="bg-white p-6 rounded-lg border border-gray-200 shadow-sm hover:shadow-md transition-shadow">
           <div className="flex items-center justify-between">
             <div>
-              <p className="text-sm text-gray-600 mb-1">支援語言</p>
+              <p className="text-sm text-gray-600 mb-1">{t('persona.stats.languages')}</p>
               <p className="text-3xl font-bold text-gray-900">{uniqueLanguages}</p>
             </div>
             <div className="flex h-12 w-12 items-center justify-center rounded-full bg-purple-50">
@@ -284,7 +268,7 @@ export default function PersonaManagementPage() {
         <div className="bg-white p-6 rounded-lg border border-gray-200 shadow-sm hover:shadow-md transition-shadow">
           <div className="flex items-center justify-between">
             <div>
-              <p className="text-sm text-gray-600 mb-1">啟用中</p>
+              <p className="text-sm text-gray-600 mb-1">{t('persona.stats.active')}</p>
               <p className="text-3xl font-bold text-gray-900">{activePersonas}</p>
             </div>
             <div className="flex h-12 w-12 items-center justify-center rounded-full bg-yellow-50">
@@ -299,7 +283,7 @@ export default function PersonaManagementPage() {
         <div className="relative flex-1">
           <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
           <Input
-            placeholder="搜尋 Persona 名稱、角色、描述、能力..."
+            placeholder={t('persona.searchPlaceholder')}
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
             className="pl-10"
@@ -308,24 +292,24 @@ export default function PersonaManagementPage() {
 
         <Select value={languageFilter} onValueChange={setLanguageFilter}>
           <SelectTrigger className="w-full sm:w-[180px] bg-white">
-            <SelectValue placeholder="選擇語言" />
+            <SelectValue placeholder={t('persona.filters.language')} />
           </SelectTrigger>
           <SelectContent className="bg-white">
-            <SelectItem value="all">所有語言</SelectItem>
-            <SelectItem value="zh-TW">繁體中文</SelectItem>
-            <SelectItem value="en">English</SelectItem>
-            <SelectItem value="ja">日本語</SelectItem>
+            <SelectItem value="all">{t('persona.filters.allLanguages')}</SelectItem>
+            <SelectItem value="zh-TW">{t('persona.languages.zhTW')}</SelectItem>
+            <SelectItem value="en">{t('persona.languages.en')}</SelectItem>
+            <SelectItem value="ja">{t('persona.languages.ja')}</SelectItem>
           </SelectContent>
         </Select>
 
         <Select value={statusFilter} onValueChange={setStatusFilter}>
           <SelectTrigger className="w-full sm:w-[180px] bg-white">
-            <SelectValue placeholder="選擇狀態" />
+            <SelectValue placeholder={t('button.filter')} />
           </SelectTrigger>
           <SelectContent className="bg-white">
-            <SelectItem value="all">所有狀態</SelectItem>
-            <SelectItem value="active">啟用中</SelectItem>
-            <SelectItem value="inactive">已停用</SelectItem>
+            <SelectItem value="all">{t('persona.filters.allStatus')}</SelectItem>
+            <SelectItem value="active">{t('persona.filters.active')}</SelectItem>
+            <SelectItem value="inactive">{t('persona.filters.inactive')}</SelectItem>
           </SelectContent>
         </Select>
       </div>
@@ -340,8 +324,8 @@ export default function PersonaManagementPage() {
           <Users className="w-16 h-16 mx-auto mb-4 opacity-50 text-gray-400" />
           <p className="text-lg text-gray-600 mb-4">
             {searchQuery || languageFilter !== 'all' || statusFilter !== 'all'
-              ? '找不到符合條件的 Persona'
-              : '尚未建立任何 Persona'}
+              ? t('persona.noMatch')
+              : t('persona.noPersonas')}
           </p>
           <Button
             variant="outline"
@@ -351,7 +335,7 @@ export default function PersonaManagementPage() {
               setStatusFilter('all')
             }}
           >
-            清除篩選
+            {t('persona.clearFilters')}
           </Button>
         </div>
       ) : (
@@ -371,23 +355,15 @@ export default function PersonaManagementPage() {
       <div className="bg-purple-50 border border-purple-200 rounded-lg p-6">
         <h3 className="font-semibold text-purple-900 mb-3 flex items-center gap-2">
           <TrendingUp className="h-5 w-5" />
-          使用指南
+          {t('persona.guide.title')}
         </h3>
         <ul className="space-y-2 text-sm text-purple-800">
-          <li>• 建立 Persona 定義 AI Agent 的角色、專業領域、溝通風格</li>
-          <li>• 每個 Agent 必須綁定一個 Persona，決定其行為和回應方式</li>
-          <li>• 編輯 Persona 會影響所有使用它的 Agent</li>
-          <li>• 如果 Persona 被 Agent 使用，需先解除綁定才能刪除</li>
+          <li>• {t('persona.guide.1')}</li>
+          <li>• {t('persona.guide.2')}</li>
+          <li>• {t('persona.guide.3')}</li>
+          <li>• {t('persona.guide.4')}</li>
         </ul>
       </div>
-
-      {/* Persona 表單對話框 */}
-      <PersonaForm
-        persona={editingPersona}
-        open={isFormOpen}
-        onOpenChange={setIsFormOpen}
-        onSuccess={loadPersonas}
-      />
 
       {/* 刪除確認對話框 */}
       <AlertDialog
@@ -398,26 +374,26 @@ export default function PersonaManagementPage() {
           <AlertDialogHeader>
             <AlertDialogTitle className={deletingPersona?.canDelete ? '' : 'flex items-center gap-2 text-orange-600'}>
               {deletingPersona?.canDelete ? (
-                '確認刪除 Persona'
+                t('persona.deleteDialog.title')
               ) : (
                 <>
                   <AlertCircle className="w-5 h-5" />
-                  無法刪除 Persona
+                  {t('persona.deleteDialog.cannotDelete')}
                 </>
               )}
             </AlertDialogTitle>
             <AlertDialogDescription>
               {deletingPersona?.canDelete ? (
                 <div>
-                  您確定要刪除 <span className="font-semibold">"{deletingPersona.persona.name}"</span> 嗎？
-                  <br />
-                  此操作無法復原。
+                  {t('persona.deleteDialog.description', { name: deletingPersona.persona.name })}
                 </div>
               ) : (
                 <div className="space-y-3">
                   <p>
-                    <span className="font-semibold">"{deletingPersona?.persona.name}"</span> 目前被以下{' '}
-                    {deletingPersona?.linkedAgents.length} 個 Agent 使用，無法刪除：
+                    {t('persona.deleteDialog.inUse', {
+                      name: deletingPersona?.persona.name,
+                      count: deletingPersona?.linkedAgents.length
+                    })}
                   </p>
 
                   <div className="bg-orange-50 border border-orange-200 rounded-lg p-3 max-h-[200px] overflow-y-auto">
@@ -433,20 +409,20 @@ export default function PersonaManagementPage() {
                   </div>
 
                   <p className="text-sm text-gray-600">
-                    💡 提示：請先將這些 Agent 切換到其他 Persona，或刪除這些 Agent 後再刪除此 Persona。
+                    {t('persona.deleteDialog.tip')}
                   </p>
                 </div>
               )}
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
-            <AlertDialogCancel>{deletingPersona?.canDelete ? '取消' : '了解'}</AlertDialogCancel>
+            <AlertDialogCancel>{deletingPersona?.canDelete ? t('button.cancel') : t('persona.deleteDialog.understand')}</AlertDialogCancel>
             {deletingPersona?.canDelete && (
               <AlertDialogAction
                 onClick={confirmDelete}
                 className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
               >
-                確認刪除
+                {t('persona.deleteDialog.confirmDelete')}
               </AlertDialogAction>
             )}
           </AlertDialogFooter>

@@ -171,14 +171,14 @@ export default function AgentMarketPage() {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
-          title: `與 ${agent.name} 的對話`,
+          title: t('conversationWith', { name: agent.name }),
           avatarId: agent.avatar?.id || null,
           agentId: agent.id, // 關聯 Agent
         }),
       })
 
       if (!response.ok) {
-        throw new Error('建立對話失敗')
+        throw new Error(t('errors.conversationCreateFailed'))
       }
 
       const data = await response.json()
@@ -189,7 +189,7 @@ export default function AgentMarketPage() {
       router.push(`/conversations?id=${newConversation.id}`)
     } catch (error) {
       console.error('[Agent Select Error]', error)
-      toast.error('無法開始對話，請稍後再試')
+      toast.error(t('errors.conversationStartFailed'))
     }
   }
 

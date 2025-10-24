@@ -295,6 +295,8 @@
     "systemAgents": "システムAgent",
     "publicAgents": "公開Agent",
     "myAgents": "マイAgent",
+    "system": "システム",
+    "popularAgents": "人気のおすすめ",
     "systemAgent": "システム",
     "name": "名前",
     "namePlaceholder": "Agent名を入力",
@@ -310,6 +312,12 @@
       "business": "ビジネス",
       "educational": "教育"
     },
+    "stats": {
+      "totalAgents": "総Agent数",
+      "systemAgents": "システムAgent",
+      "publicAgents": "公開Agent",
+      "totalConversations": "総会話数"
+    },
     "persona": "Persona",
     "selectPersona": "Personaを選択",
     "personaConfig": "Persona構成",
@@ -323,7 +331,10 @@
     "isPrivate": "非公開",
     "basicInfo": "基本情報",
     "advancedConfig": "詳細設定",
+    "knowledgeConfig": "知識ベース設定",
     "knowledgeBases": "知識ベース",
+    "knowledgeBasesDescription": "このAgentに関連付ける知識ベースを選択して、応答能力を強化します",
+    "noKnowledgeBases": "利用可能な知識ベースがありません",
     "knowledgeBasesCount": "{count}個の知識ベース",
     "conversations": "会話",
     "conversationsCount": "{count}回の会話",
@@ -331,6 +342,20 @@
     "usageCount": "{count}回使用",
     "lastUpdated": "最終更新",
     "createdAt": "作成日時",
+    "select": "選択",
+    "edit": "編集",
+    "deleteSuccess": "Agentを削除しました",
+    "loadingAgentData": "Agentデータを読み込み中...",
+    "loadFailed": "読み込み失敗",
+    "agentDoesNotExist": "Agentが存在しないか、読み込めません",
+    "backToMarketplace": "Agentマーケットに戻る",
+    "guide": {
+      "title": "使用ガイド",
+      "selectAgent": "Agentカードをクリックして選択し、会話を開始",
+      "createCustom": "特定のニーズに合わせてカスタムAgentを作成",
+      "configurePersona": "Personaを設定してAgentの性格と専門分野を定義",
+      "linkKnowledge": "知識ベースをリンクしてAgent応答精度を向上"
+    },
     "actions": {
       "select": "選択",
       "edit": "編集",
@@ -344,10 +369,13 @@
       "personaRequired": "Personaを選択してください",
       "languageRequired": "少なくとも1つの対応言語が必要です",
       "loadFailed": "Agentの読み込みに失敗しました",
+      "loadKnowledgeFailed": "知識ベースの読み込みに失敗しました",
       "createFailed": "Agentの作成に失敗しました",
       "updateFailed": "Agentの更新に失敗しました",
       "deleteFailed": "Agentの削除に失敗しました",
-      "submitFailed": "送信に失敗しました。もう一度お試しください"
+      "submitFailed": "送信に失敗しました。もう一度お試しください",
+      "conversationStartFailed": "会話を開始できません。後でもう一度お試しください",
+      "conversationCreateFailed": "会話の作成に失敗しました"
     },
     "success": {
       "created": "Agentが正常に作成されました",
@@ -358,6 +386,7 @@
     "deleteConfirmTitle": "Agentを削除",
     "deleteConfirmDescription": "Agent「{name}」を削除してもよろしいですか？この操作は元に戻せません。",
     "selectedForConversation": "{name}を会話用に選択しました",
+    "conversationWith": "{name}との会話",
     "agentsFound": "エージェント",
     "confirm": "確認",
     "cancel": "キャンセル",
@@ -432,6 +461,297 @@
       "tags": "タグ",
       "tagsHint": "1〜5個のタグを選択",
       "characters": "文字"
+    }
+  },
+  "faq": {
+    "title": "FAQ管理",
+    "description": "よくある質問と回答のナレッジベースを管理",
+    "addButton": "FAQを追加",
+    "form": {
+      "question": "質問",
+      "questionPlaceholder": "よくある質問を入力...",
+      "answer": "回答",
+      "answerPlaceholder": "詳しい回答を入力...",
+      "category": "カテゴリ",
+      "categoryPlaceholder": "カテゴリを入力 (オプション)...",
+      "tags": "タグ",
+      "tagsPlaceholder": "タグをカンマで区切って入力 (オプション)...",
+      "priority": "優先度",
+      "priorityPlaceholder": "1-10の優先度を入力..."
+    },
+    "actions": {
+      "edit": "編集",
+      "delete": "削除",
+      "cancel": "キャンセル",
+      "create": "作成",
+      "update": "更新",
+      "confirm": "確認"
+    },
+    "messages": {
+      "createSuccess": "FAQが正常に追加されました！",
+      "updateSuccess": "FAQが正常に更新されました！",
+      "deleteSuccess": "FAQが正常に削除されました！",
+      "createFailed": "FAQの追加に失敗しました",
+      "updateFailed": "FAQの更新に失敗しました",
+      "deleteFailed": "FAQの削除に失敗しました",
+      "deleteConfirm": "このFAQを削除してもよろしいですか？この操作は元に戻せません。",
+      "loadFailed": "FAQリストの読み込みに失敗しました"
+    },
+    "stats": {
+      "totalFaqs": "総FAQ数",
+      "categoriesCount": "カテゴリ数",
+      "recentlyUpdated": "最近更新されたFAQ"
+    },
+    "noData": {
+      "title": "まだFAQがありません",
+      "description": "最初のFAQを追加してナレッジベースの構築を開始しましょう",
+      "action": "FAQを追加"
+    },
+    "search": "FAQを検索...",
+    "filterByCategory": "カテゴリでフィルター",
+    "allCategories": "すべてのカテゴリ"
+  },
+  "kpi": {
+    "title": "KPI辞書",
+    "description": "ビジネス指標の定義と計算ロジックを管理",
+    "addButton": "KPIを追加",
+    "form": {
+      "name": "KPI名",
+      "namePlaceholder": "KPI名を入力...",
+      "description": "説明",
+      "descriptionPlaceholder": "KPIの説明を入力...",
+      "category": "カテゴリ",
+      "categoryPlaceholder": "カテゴリを入力...",
+      "unit": "単位",
+      "unitPlaceholder": "単位を入力 (例: 件、%、円)...",
+      "formula": "計算式",
+      "formulaPlaceholder": "計算式を入力 (オプション)...",
+      "sqlQuery": "SQLクエリ",
+      "sqlQueryPlaceholder": "データ取得用のSQLクエリを入力 (オプション)...",
+      "updateFrequency": "更新頻度",
+      "updateFrequencyPlaceholder": "更新頻度を選択...",
+      "owner": "責任者",
+      "ownerPlaceholder": "責任者名を入力...",
+      "target": "目標値",
+      "targetPlaceholder": "目標値を入力 (オプション)...",
+      "threshold": "しきい値",
+      "thresholdPlaceholder": "アラートのしきい値を入力 (オプション)..."
+    },
+    "actions": {
+      "edit": "編集",
+      "delete": "削除",
+      "cancel": "キャンセル",
+      "create": "作成",
+      "update": "更新",
+      "confirm": "確認",
+      "viewDetail": "詳細を表示"
+    },
+    "messages": {
+      "createSuccess": "KPIが正常に追加されました！",
+      "updateSuccess": "KPIが正常に更新されました！",
+      "deleteSuccess": "KPIが正常に削除されました！",
+      "createFailed": "KPIの追加に失敗しました",
+      "updateFailed": "KPIの更新に失敗しました",
+      "deleteFailed": "KPIの削除に失敗しました",
+      "deleteConfirm": "このKPIを削除してもよろしいですか？この操作は元に戻せません。",
+      "loadFailed": "KPIリストの読み込みに失敗しました"
+    },
+    "stats": {
+      "totalKpis": "総KPI数",
+      "categoriesCount": "カテゴリ数",
+      "activeKpis": "アクティブなKPI"
+    },
+    "frequencies": {
+      "daily": "毎日",
+      "weekly": "毎週",
+      "monthly": "毎月",
+      "quarterly": "四半期ごと",
+      "yearly": "毎年",
+      "realtime": "リアルタイム"
+    },
+    "noData": {
+      "title": "まだKPIがありません",
+      "description": "最初のKPIを追加してビジネス指標の追跡を開始しましょう",
+      "action": "KPIを追加"
+    },
+    "search": "KPIを検索...",
+    "filterByCategory": "カテゴリでフィルター",
+    "allCategories": "すべてのカテゴリ",
+    "detail": {
+      "basicInfo": "基本情報",
+      "calculation": "計算情報",
+      "metadata": "メタデータ",
+      "createdAt": "作成日時",
+      "updatedAt": "最終更新",
+      "lastCalculated": "最終計算日時"
+    }
+  },
+  "decisions": {
+    "title": "決定ログ",
+    "description": "重要な決定の記録と追跡",
+    "addButton": "決定を追加",
+    "form": {
+      "title": "決定タイトル",
+      "titlePlaceholder": "決定のタイトルを入力...",
+      "description": "詳細説明",
+      "descriptionPlaceholder": "決定の背景と詳細を入力...",
+      "context": "背景",
+      "contextPlaceholder": "決定に至った背景を入力...",
+      "decision": "決定内容",
+      "decisionPlaceholder": "最終的な決定内容を入力...",
+      "rationale": "根拠",
+      "rationalePlaceholder": "決定の理由と根拠を入力...",
+      "alternatives": "代替案",
+      "alternativesPlaceholder": "検討された代替案を入力 (オプション)...",
+      "consequences": "影響",
+      "consequencesPlaceholder": "予想される影響を入力 (オプション)...",
+      "status": "ステータス",
+      "statusPlaceholder": "ステータスを選択...",
+      "decisionDate": "決定日",
+      "decisionDatePlaceholder": "決定日を選択...",
+      "decisionMakers": "決定者",
+      "decisionMakersPlaceholder": "決定者の名前を入力...",
+      "stakeholders": "関係者",
+      "stakeholdersPlaceholder": "関係者の名前を入力 (オプション)...",
+      "tags": "タグ",
+      "tagsPlaceholder": "タグをカンマで区切って入力 (オプション)..."
+    },
+    "actions": {
+      "edit": "編集",
+      "delete": "削除",
+      "cancel": "キャンセル",
+      "create": "作成",
+      "update": "更新",
+      "confirm": "確認",
+      "viewDetail": "詳細を表示"
+    },
+    "messages": {
+      "createSuccess": "決定が正常に追加されました！",
+      "updateSuccess": "決定が正常に更新されました！",
+      "deleteSuccess": "決定が正常に削除されました！",
+      "createFailed": "決定の追加に失敗しました",
+      "updateFailed": "決定の更新に失敗しました",
+      "deleteFailed": "決定の削除に失敗しました",
+      "deleteConfirm": "この決定ログを削除してもよろしいですか？この操作は元に戻せません。",
+      "loadFailed": "決定ログリストの読み込みに失敗しました"
+    },
+    "stats": {
+      "totalDecisions": "総決定数",
+      "pendingDecisions": "保留中の決定",
+      "implementedDecisions": "実装済みの決定"
+    },
+    "statuses": {
+      "proposed": "提案",
+      "approved": "承認済み",
+      "implemented": "実装済み",
+      "rejected": "却下",
+      "deferred": "延期"
+    },
+    "noData": {
+      "title": "まだ決定ログがありません",
+      "description": "最初の決定ログを追加して意思決定プロセスの記録を開始しましょう",
+      "action": "決定を追加"
+    },
+    "search": "決定を検索...",
+    "filterByStatus": "ステータスでフィルター",
+    "allStatuses": "すべてのステータス",
+    "detail": {
+      "basicInfo": "基本情報",
+      "decisionDetails": "決定詳細",
+      "metadata": "メタデータ",
+      "createdAt": "作成日時",
+      "updatedAt": "最終更新"
+    }
+  },
+  "meetings": {
+    "title": "会議要約",
+    "description": "会議記録とアクションアイテムを管理",
+    "addButton": "会議を追加",
+    "form": {
+      "title": "会議タイトル",
+      "titlePlaceholder": "会議のタイトルを入力...",
+      "type": "会議タイプ",
+      "typePlaceholder": "会議タイプを選択...",
+      "date": "会議日時",
+      "datePlaceholder": "会議の日時を選択...",
+      "duration": "所要時間 (分)",
+      "durationPlaceholder": "所要時間を入力...",
+      "attendees": "参加者",
+      "attendeesPlaceholder": "参加者の名前を入力...",
+      "agenda": "議題",
+      "agendaPlaceholder": "議題を入力...",
+      "summary": "会議要約",
+      "summaryPlaceholder": "会議の要約を入力...",
+      "keyPoints": "重要ポイント",
+      "keyPointsPlaceholder": "重要なポイントを入力 (オプション)...",
+      "decisions": "決定事項",
+      "decisionsPlaceholder": "会議で決定された事項を入力 (オプション)...",
+      "actionItems": "アクションアイテム",
+      "actionItemsPlaceholder": "アクションアイテムを入力 (オプション)...",
+      "nextSteps": "次のステップ",
+      "nextStepsPlaceholder": "次のステップを入力 (オプション)...",
+      "tags": "タグ",
+      "tagsPlaceholder": "タグをカンマで区切って入力 (オプション)..."
+    },
+    "actions": {
+      "edit": "編集",
+      "delete": "削除",
+      "cancel": "キャンセル",
+      "create": "作成",
+      "update": "更新",
+      "confirm": "確認",
+      "viewDetail": "詳細を表示",
+      "archive": "アーカイブ",
+      "unarchive": "アーカイブ解除"
+    },
+    "messages": {
+      "createSuccess": "会議が正常に追加されました！",
+      "updateSuccess": "会議が正常に更新されました！",
+      "deleteSuccess": "会議が正常に削除されました！",
+      "createFailed": "会議の追加に失敗しました",
+      "updateFailed": "会議の更新に失敗しました",
+      "deleteFailed": "会議の削除に失敗しました",
+      "deleteConfirm": "この会議記録を削除してもよろしいですか？この操作は元に戻せません。",
+      "loadFailed": "会議リストの読み込みに失敗しました",
+      "archiveSuccess": "会議が正常にアーカイブされました",
+      "unarchiveSuccess": "会議が正常にアーカイブ解除されました"
+    },
+    "stats": {
+      "totalMeetings": "総会議数",
+      "thisMonth": "今月の会議",
+      "actionItems": "アクションアイテム"
+    },
+    "types": {
+      "standup": "スタンドアップ",
+      "planning": "計画会議",
+      "review": "レビュー",
+      "retrospective": "ふりかえり",
+      "brainstorming": "ブレインストーミング",
+      "decision": "意思決定会議",
+      "general": "一般会議"
+    },
+    "actionStatuses": {
+      "pending": "保留中",
+      "inProgress": "進行中",
+      "completed": "完了",
+      "blocked": "ブロック中"
+    },
+    "noData": {
+      "title": "まだ会議記録がありません",
+      "description": "最初の会議記録を追加してチームコラボレーションの追跡を開始しましょう",
+      "action": "会議を追加"
+    },
+    "search": "会議を検索...",
+    "filterByType": "タイプでフィルター",
+    "allTypes": "すべてのタイプ",
+    "showArchived": "アーカイブを表示",
+    "hideArchived": "アーカイブを非表示",
+    "detail": {
+      "basicInfo": "基本情報",
+      "meetingDetails": "会議詳細",
+      "metadata": "メタデータ",
+      "createdAt": "作成日時",
+      "updatedAt": "最終更新"
     }
   }
 }

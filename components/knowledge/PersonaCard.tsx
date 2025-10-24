@@ -118,7 +118,7 @@ export function PersonaCard({ persona, onEdit, onDelete }: PersonaCardProps) {
       </CardContent>
 
       {/* 操作按鈕 */}
-      <CardFooter className="flex gap-2 bg-gray-50 border-t">
+      <CardFooter className="flex gap-2 bg-gray-50 border-t pt-4">
         <Button
           variant="outline"
           size="sm"
