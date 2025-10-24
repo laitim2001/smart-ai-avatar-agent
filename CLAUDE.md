@@ -37,9 +37,105 @@ npm run test:azure
 npm run generate-index    # Generate from scratch
 npm run validate-index    # Validate existing index
 npm run sync-index        # Sync with current codebase (preferred)
+
+# Database management (Prisma)
+npm run db:seed           # Seed database with initial data
+npm run db:export         # Export current database to JSON
+npm run db:import <file>  # Import database from JSON file
 ```
 
 **Important**: Always run `npm run sync-index` after completing features to update PROJECT_INDEX.md.
+
+## Database Setup (First Time)
+
+When setting up the project on a new machine, follow these steps to initialize the database:
+
+### 1. Start Docker Services
+
+First, ensure Docker is running and start the PostgreSQL database:
+
+```bash
+# Start PostgreSQL and Redis containers
+docker-compose up -d
+```
+
+This will start:
+- PostgreSQL on `localhost:5435` (database: `smart_avatar_dev`)
+- Redis on `localhost:6380`
+
+### 2. Run Prisma Migrations
+
+Apply the database schema:
+
+```bash
+# Generate Prisma client
+npx prisma generate
+
+# Run migrations to create tables
+npx prisma migrate dev
+```
+
+### 3. Seed Initial Data
+
+Populate the database with initial data (Personas, Agents, Knowledge Bases):
+
+```bash
+# Run seed script
+npm run db:seed
+```
+
+This will create:
+- **11 Avatars** (4 Female, 4 Male, 3 Neutral)
+- **15 Prompt Templates** (Learning, Work, Creative, etc.)
+- **3 Personas** (虛擬數據長, 創意寫作助手, 技術導師)
+- **2 Knowledge Bases** (CDO FAQ, CDO KPI Dictionary)
+- **3 AI Agents** (CDO 商業顧問, 創意寫作專家, 程式導師)
+
+### 4. Verify Setup
+
+You can verify the setup by:
+
+```bash
+# Open Prisma Studio to view database
+npx prisma studio
+```
+
+Then navigate to `http://localhost:5555` to see all data.
+
+## Sharing Data Between Developers
+
+### Export Current Database
+
+If you've created custom Personas or Agents you want to share:
+
+```bash
+# Export to JSON file in exports/ directory
+npm run db:export
+```
+
+This creates a timestamped JSON file like `exports/db-export-2025-10-24.json`
+
+### Import Shared Database
+
+To import data from a shared JSON file:
+
+```bash
+# Import from exported JSON file
+npm run db:import exports/db-export-2025-10-24.json
+```
+
+**Note**: Import uses `upsert`, so existing data with the same ID will be updated.
+
+### Add to Git (Optional)
+
+You can optionally commit export files to the repository:
+
+```bash
+git add exports/db-export-2025-10-24.json
+git commit -m "chore: add database export with custom personas"
+```
+
+Other developers can then import this data after cloning.
 
 ## Architecture Overview
 
